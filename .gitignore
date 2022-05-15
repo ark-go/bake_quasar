@@ -2,3 +2,5 @@ bin/
 .env
 node_modules/
 *.dump
+**/node_modules/
+*/node_modules/

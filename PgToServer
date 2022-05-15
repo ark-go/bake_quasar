@@ -1,0 +1,22 @@
+#!/bin/sh
+#
+# бекап базы на Arkadii отправка его на сервер и запуск там восстановления 
+#
+backdate=$(date +%d_%m_%Y_%H_%M)
+pg_dump kanbase -U postgres -h localhost -Fc \
+>> /home/arkadii/Projects/bake/$backdate-postgresql-bake.dump
+
+rsync -avzh \
+   /home/arkadii/Projects/bake/$backdate-postgresql-bake.dump \
+   nodeuser@tsg-18.ru:/home/nodeuser/node/bake/$backdate-postgresql-bake.dump \
+
+echo "Создали бекап и отправили, ждем restore"
+
+ssh nodeuser@tsg-18.ru "pg_restore -e -c --if-exists -h localhost -U postgres -d kanbase /home/nodeuser/node/bake/$backdate-postgresql-bake.dump"
+#ssh nodeuser@tsg-18.ru "pg_restore -e -C -h localhost -U postgres -d kanbase /home/nodeuser/node/Kanevsky/$backdate-postgresql-bake.dump"
+
+# если что удалить
+
+#backdate=$(date +%d_%m_%Y_%H_%M)
+#ssh nodeuser@tsg-18.ru "pg_dump treedb -U postgres -h localhost -Fc" \
+#>> /mnt/backupDiskStation/postgresql/$backdate-postgresql-tsg-18.dump

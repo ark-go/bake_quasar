@@ -1,0 +1,20 @@
+#!/bin/bash
+#
+# Копируем на рабочий сервер все вместе с node_modules -a будет добавлять только новые а
+# --delete будет удалять там , удаленное здесь.
+# мы не копируем .env и config.js  там своя конфигурация
+#
+rsync -avzh \
+   /home/arkadii/Projects/bake/ \
+   nodeuser@tsg-18.ru:/home/nodeuser/node/bake \
+   --progress \
+   --delete \
+   --include "server/node_modules/***" \
+   --include "quasar/node_modules/***" \
+   --exclude .git/ \
+   --exclude image/ \
+   --exclude server/.env \
+   --exclude server/config.js \
+   --exclude quasar/node_modules/.cache/terser-webpack-plugin/
+
+ssh nodeuser@tsg-18.ru 'pm2 restart bake-vite'

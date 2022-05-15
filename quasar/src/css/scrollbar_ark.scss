@@ -1,0 +1,35 @@
+.visible-scrollbar,
+.invisible-scrollbar,
+.ark-scroll {
+  display: block;
+  //  width: 10em;
+  overflow: auto;
+  //  height: 2em;
+}
+
+.invisible-scrollbar::-webkit-scrollbar {
+  display: none;
+}
+
+/* Demonstrate a "mostly customized" scrollbar
+   * (won't be visible otherwise if width/height is specified) */
+.ark-scroll::-webkit-scrollbar {
+  width: 5px;
+  height: 8px;
+  background-color: #aaa; /* or add it to the track */
+}
+
+/* Add a thumb */
+.ark-scroll::-webkit-scrollbar-thumb {
+  background: #000;
+}
+
+/*
+::-webkit-scrollbar— вся полоса прокрутки.
+::-webkit-scrollbar-button— кнопки на полосе прокрутки (стрелки вверх и вниз, прокручивающие по одной строке).
+::-webkit-scrollbar-thumb— перетаскиваемый маркер прокрутки.
+::-webkit-scrollbar-track— дорожка (индикатор прогресса) полосы прокрутки, где есть серая полоса поверх белой.
+::-webkit-scrollbar-track-piece— часть трека (прогресс-бар), не закрытая ручкой.
+::-webkit-scrollbar-corner— нижний угол полосы прокрутки, где встречаются горизонтальная и вертикальная полосы прокрутки. Часто это правый нижний угол окна браузера.
+::-webkit-resizer— перетаскиваемый маркер изменения размера, который появляется в нижнем углу некоторых элементов.
+*/

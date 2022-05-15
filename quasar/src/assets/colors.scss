@@ -1,0 +1,16 @@
+$white: #ffffff;
+$black: #000000;
+
+$light-0: darken($white, 3%);
+$light-1: darken($white, 5%);
+$light-2: darken($white, 6%);
+$light-3: darken($white, 12%);
+$light-4: darken($white, 14%);
+$light-5: darken($white, 16%);
+
+$dark-0: lighten($black, 24%);
+$dark-1: lighten($black, 28%);
+$dark-2: lighten($black, 32%);
+$dark-3: lighten($black, 36%);
+$dark-4: lighten($black, 40%);
+$dark-5: lighten($black, 44%);

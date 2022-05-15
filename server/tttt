@@ -1,0 +1,3 @@
+su postgres
+psql kanbase
+copy region(regnum,name) FROM '/var/local/regions.csv' DELIMITER ';' CSV HEADER;

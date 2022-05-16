@@ -53,12 +53,12 @@ export default boot(({ app }) => {
     const user = useUser();
     user.isAdmin = true;
     // исходящий  туда
-    const value = Cookies.getAll(); //
+    //const value = Cookies.getAll(); //
     //console.log("axios xxx:" + JSON.stringify(value));
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     console.log("TimeZone", tz);
     // const token = localStorage.getItem('token');
-    config.headers.Timezone = tz;
+    config.headers.timezone = tz;
     config.headers.Authorization = "xxArkxx1"; //token ? `Bearer ${token}` : '';
     return config;
   });

@@ -11,7 +11,9 @@
           @click="toggleLeftDrawer"
         />
 
-        <q-toolbar-title> Хлеб и Тандыр </q-toolbar-title>
+        <q-toolbar-title>
+          Хлеб и Тандыр {{ ioSocket.versionSite }}</q-toolbar-title
+        >
 
         <div>{{ username ? username : "v" + $q.version }},{{ user.email }}</div>
       </q-toolbar>
@@ -39,8 +41,17 @@
     </q-page-container>
     <q-footer ref="footer" id="footer">
       <q-toolbar>
+        <q-btn
+          flat
+          dense
+          round
+          :color="ioSocket.onLine ? 'green' : 'red'"
+          icon="star_rate"
+        />
         <q-toolbar-title>
-          {{ vidTable.specDocStore }} | {{ vidTable.store }} || {{ testName }}
+          <span style="font-size: 14px; color: rgb(104, 104, 235)">{{
+            ioSocket.timeServer
+          }}</span>
           <q-avatar> </q-avatar>
         </q-toolbar-title>
       </q-toolbar>
@@ -93,7 +104,6 @@
 </style>
 <script>
 import EssentialLink from "components/EssentialLink.vue";
-import { useState } from "src/utils/useState.js";
 import { defineComponent, ref, onMounted, watchEffect } from "vue";
 import { emitter } from "boot/axios";
 import FormLogin from "components/FormLogin.vue";
@@ -101,10 +111,10 @@ import pdfDialog from "components/pdfDialog/pdfDialog.vue";
 import { arkVuex } from "src/utils/arkVuex"; // const { pdfWindow } = createArkVuex();
 import { dataLoad } from "src/utils/ark.js";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
-import { useTest } from "stores/test.js";
+//import { useTest } from "stores/test.js";
 import { useUser } from "stores/storeUser.js";
 import { storeToRefs } from "pinia";
-//
+import { useIoSocket } from "stores/ioSocket.js";
 export default defineComponent({
   name: "MainLayout",
 
@@ -116,18 +126,11 @@ export default defineComponent({
 
   setup() {
     //const store = useTest();
-    const { testName } = storeToRefs(useTest());
+    const ioSocket = useIoSocket();
     const { info: user } = storeToRefs(useUser());
-
-    const { vidTable } = useState();
     const { pdfWindow } = arkVuex();
     // const command = ref(pdfWindow.command);
     const pdfModal = ref(pdfWindow.show);
-    // watchEffect(() => {
-    //   pdfModal.value = command.value.show;
-    // });
-    //  const state = vidTable.specDocStore;
-    console.log("Staate", vidTable.specDocStore);
     const leftDrawerOpen = ref(false);
     const username = ref("");
     const modalLoginOpen = ref(false);
@@ -161,10 +164,9 @@ export default defineComponent({
       console.log("Упдате то", to);
     });
     return {
+      ioSocket,
       user, //
-      testName, //
       pdfModal,
-      vidTable,
       modalLoginOpen,
       username,
       essentialLinks: linksList,

@@ -101,9 +101,11 @@ app.use((req, res, next) => {
   next();
 });
 app.use((req, res, next) => {
-  req.session.timezone = req?.headers?.timezone
-    ? req.headers.timezone
-    : "Europe/Moscow";
+  let cookieTimezone = req.cookies.timezone; // из куки
+  let headerTimezone = req?.headers?.timezone; // из  axios
+  let resTimezone = headerTimezone || cookieTimezone; // выберем что есть, сначала axios
+  // console.log(resTimezone, cookieTimezone, headerTimezone);
+  req.session.timezone = resTimezone || "Europe/Moscow"; // если ничего так и нет то москва
   next();
 });
 

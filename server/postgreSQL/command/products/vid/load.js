@@ -10,8 +10,8 @@ export async function load(pool, req, tabname, timezone, idOne) {
       ${tabname}.fullname,
       ${tabname}.unit_id,
       unit.name AS unit_name,
-      ${tabname}.producttype_id,
-      producttype.name AS producttype_name,
+      ${tabname}.productassortment_id,
+      productassortment.name AS productassortment_name,
       ${tabname}.description,
       -- -- -- -- 
       users.email AS "user_email",
@@ -20,7 +20,7 @@ export async function load(pool, req, tabname, timezone, idOne) {
       FROM ${tabname}
       LEFT JOIN  users ON users.id = ${tabname}.user_id
       LEFT JOIN  unit ON unit.id = ${tabname}.unit_id
-      LEFT JOIN  producttype ON producttype.id = ${tabname}.producttype_id
+      LEFT JOIN  productassortment ON productassortment.id = ${tabname}.productassortment_id
       ${wher}
       ORDER BY ${tabname}.name
 `,

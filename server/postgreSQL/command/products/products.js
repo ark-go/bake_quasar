@@ -2,6 +2,7 @@ import { botSendMessage } from "../../../tg/startTgBot.js";
 import { productrawvid } from "./rawVid/productrawvid.js";
 import { producttype } from "./type/producttype.js";
 import { productvid } from "./vid/productvid.js";
+import { productassortment } from "./assortment/productassortment.js";
 import { productraw } from "./raw/productraw.js";
 import { productsmain } from "./products/productsmain.js";
 import { productingred } from "./productingred/productingred.js";
@@ -48,6 +49,8 @@ export async function products(req, res) {
       return await producttype(pool, req, cmd, tabname, timezone);
     case "productvid":
       return await productvid(pool, req, cmd, tabname, timezone);
+    case "productassortment":
+      return await productassortment(pool, req, cmd, tabname, timezone);
     case "productraw":
       return await productraw(pool, req, cmd, tabname, timezone);
     case "products":

@@ -1,32 +1,19 @@
 export async function allSprav(pool, req, tabname, timezone) {
-  let unit = {
+  let producttype = {
     text: /*sql*/ `
             SELECT
             id,
             name
-            FROM unit
-            ORDER BY name
-      `,
-  };
-  let productassortment = {
-    text: /*sql*/ `
-            SELECT
-            id,
-            name
-            FROM productassortment
+            FROM producttype
             ORDER BY name
       `,
   };
 
   let allSprav = {};
   try {
-    let result = await pool.query(unit);
+    let result = await pool.query(producttype);
     result = result.rowCount > 0 ? result.rows : null;
-    allSprav.unit = result;
-
-    result = await pool.query(productassortment);
-    result = result.rowCount > 0 ? result.rows : null;
-    allSprav.productassortment = result;
+    allSprav.producttype = result;
     return {
       result: allSprav,
     };

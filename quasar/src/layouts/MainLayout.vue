@@ -47,6 +47,7 @@
           round
           :color="ioSocket.onLine ? 'green' : 'red'"
           icon="star_rate"
+          @click="getAllUsers"
         />
         <q-toolbar-title>
           <span style="font-size: 14px; color: rgb(104, 104, 235)">{{
@@ -115,6 +116,7 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { useUser } from "stores/storeUser.js";
 import { storeToRefs } from "pinia";
 import { useIoSocket } from "stores/ioSocket.js";
+import { useQuasar } from "quasar";
 export default defineComponent({
   name: "MainLayout",
 
@@ -126,6 +128,7 @@ export default defineComponent({
 
   setup() {
     //const store = useTest();
+    const { notify } = useQuasar();
     const ioSocket = useIoSocket();
     const { info: user } = storeToRefs(useUser());
     const { pdfWindow } = arkVuex();
@@ -173,6 +176,45 @@ export default defineComponent({
       leftDrawerOpen,
       toggleLeftDrawer() {
         leftDrawerOpen.value = !leftDrawerOpen.value;
+      },
+      getAllUsers() {
+        ioSocket.socket
+          .timeout(5000)
+          .emit("getAllUsers", "Хочу всех пользователей", (err, val) => {
+            if (err) {
+              console.log("IO emit timeout err", err);
+              notify({
+                color: "red-6",
+                textColor: "white",
+                icon: "bolt",
+                message: "Нет ответа",
+                //caption: "Перегрузить окно",
+                position: "center",
+                // avatar,
+                multiLine: true,
+                timeout: 0,
+                closeBtn: "Ok",
+                html: true,
+              });
+              // другая сторона не подтвердила событие в данную задержку
+            } else {
+              notify({
+                color: "brown",
+                classes: "glossy",
+                textColor: "white",
+                icon: "bolt",
+                message: "Пользователи OnLine",
+                caption: val.allUsers,
+                position: "center",
+                // avatar,
+                multiLine: true,
+                timeout: 0,
+                closeBtn: "Ok",
+                html: true,
+              });
+            }
+          });
+        // ioSocket.socket.emit("getAllUsers");
       },
     };
   },

@@ -6,7 +6,7 @@ export async function loadProducts(pool, req, tabname, timezone, idOne) {
       SELECT
       ${tabname}.id,
       ${tabname}.is_raw,
-      concat(productvid.name,' ',productvid.nameext,', ',${tabname}.name,' (',${tabname}.massa,')') AS name,
+      concat(productassortment.name,' ',productvid.name,' ',productvid.nameext,' ',${tabname}.name) AS name,
       concat('ТТК №',${tabname}.document_num) AS info,
       ${tabname}.description,
       ing.sumbrutto as massbrutto,
@@ -17,12 +17,13 @@ export async function loadProducts(pool, req, tabname, timezone, idOne) {
       -- ${tabname}.massfinish
       FROM ${tabname}
       LEFT JOIN  productvid ON productvid.id = ${tabname}.productvid_id
+      LEFT JOIN  productassortment ON productassortment.id = productvid.productassortment_id
       LEFT JOIN (SELECT products_id,sumbrutto,sumnetto,sumfinish
                FROM   productingred
                group by products_id,sumbrutto,sumnetto,sumfinish) 
                as ing ON products_id = ${tabname}.id 
        ${wher}
-      ORDER BY productvid.name, productvid.nameext, ${tabname}.name
+      ORDER BY productassortment.name, productvid.name, productvid.nameext, ${tabname}.name
 `,
     values: [],
   };

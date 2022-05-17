@@ -13,7 +13,7 @@ export async function pdfAll(pool, req, tabname, timezone, idOne) {
         concat('',${tabname}.document_num) AS prodttk, -- ТТК номер
         concat(${tabname}.name,', ','TTK№ ',${tabname}.document_num) AS prodnamedopttk, -- граммм + ttk
         productvid.nameext As nameextonly,
-        producttype.prefix AS prefix,
+        productassortment.prefix AS prefix,
         --
         ${tabname}.massa,
         ${tabname}.massfinish,
@@ -37,7 +37,7 @@ export async function pdfAll(pool, req, tabname, timezone, idOne) {
         
         LEFT JOIN  productvid ON productvid.id = ${tabname}.productvid_id
         LEFT JOIN  unit ON unit.id = productvid.unit_id
-        LEFT JOIN  producttype ON producttype.id =productvid.producttype_id
+        LEFT JOIN  productassortment ON productassortment.id =productvid.productassortment_id
         ${wher}
         ORDER BY productvid.name,productvid.nameext, ${tabname}.name
   `,

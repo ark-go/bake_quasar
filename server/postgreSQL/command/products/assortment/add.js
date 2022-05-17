@@ -1,36 +1,33 @@
+import { update } from "./update.js";
 import { load } from "./load.js";
 
-export async function update(pool, req, tabname, timezone) {
-  let id = req.body?.id;
+export async function add(pool, req, tabname, timezone) {
+  let name = req.body?.name && req.body.name.trim();
+  if (!name) {
+    return {
+      error: "Не хватает данных.",
+    };
+  }
+  console.log("FFFFFFF");
+  if (req.body?.id) {
+    return update(pool, req, tabname, timezone);
+  }
 
   let sqlP = {
     text: /*sql*/ `
-      UPDATE ${tabname} SET
-          name = $2,
-          nameext = $3,
-          fullname = $4,
-          unit_id = $5,
-          productassortment_id = $6,
-          description = $7,
-          user_id = $8,
-          user_date = CURRENT_TIMESTAMP
-      WHERE "id" = $1
+      INSERT INTO ${tabname} (name,producttype_id,prefix)
+      VALUES ($1,$2,$3)
       RETURNING *;
 
       `,
     values: [
-      id,
       req.body.name ? req.body.name.trim() : null,
-      req.body.nameext ? req.body.nameext.trim() : null,
-      req.body.fullname,
-      req.body.unit_id,
-      req.body.productassortment_id,
-      req.body.description,
-      req?.session?.user?.id,
+      req.body.producttype_id,
+      req.body.prefix,
     ],
   };
 
-  //  console.log(">>>", sqlP);
+  // console.log(">>>", sqlP);
 
   try {
     let result = await pool.query(sqlP);

@@ -19,7 +19,7 @@ export async function loadIngredient(pool, req, tabname, timezone, idOne) {
       ${tabname}.meta,
       -- ну участвует concat(productvid.name,' ',productvid.nameext,', ',products.name,' (',products.massa,')') AS name,
       COALESCE(
-         concat(productvidchild.name,' ',productvidchild.nameext,', ',productschild.name,' (',productschild.massa,')'),
+         concat(productassortment.name,'x ',productvidchild.name,'x ',productvidchild.nameext,' ',productschild.name,' (',productschild.massa,')'),
          productraw.name) AS name
 
       FROM ${tabname}
@@ -27,7 +27,8 @@ export async function loadIngredient(pool, req, tabname, timezone, idOne) {
       -- ну участвует LEFT JOIN  productvid ON productvid.id = products.productvid_id  -- часть от основного продукта
       LEFT JOIN  products as productschild ON productschild.id = ${tabname}.products_id_child  -- для вставленного продукта
       LEFT JOIN  productvid as productvidchild ON productvidchild.id = productschild.productvid_id -- часть от вставленного продукта
-       ${wher}
+      LEFT JOIN  productassortment ON productassortment.id = productvidchild.productassortment_id
+      ${wher}
       ORDER BY name
 `,
     values: [],

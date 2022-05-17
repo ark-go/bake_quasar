@@ -10,8 +10,8 @@ export async function load(pool, req, tabname, timezone, idOne) {
       -- unit.name AS unit_name,
       unit.name AS unit_name,
       ${tabname}.productvid_id,
-      concat(productvid.name,' ',productvid.nameext) AS productvid_name,
-      producttype.prefix AS prefix,
+      concat(productassortment.name,' ',productvid.name,' ',productvid.nameext) AS productvid_name,
+      productassortment.prefix AS prefix,
       ${tabname}.description,
       ${tabname}.document_num,
       -- ${tabname}.document_date,
@@ -26,10 +26,11 @@ export async function load(pool, req, tabname, timezone, idOne) {
       LEFT JOIN  users ON users.id = ${tabname}.user_id
       
       LEFT JOIN  productvid ON productvid.id = ${tabname}.productvid_id
+      LEFT JOIN  productassortment ON productassortment.id = productvid.productassortment_id
       LEFT JOIN  unit ON unit.id = productvid.unit_id
-      LEFT JOIN  producttype ON producttype.id = productvid.producttype_id
+    -- LEFT JOIN  productassortment ON productassortment.id = productvid.productassortment_id
        ${wher}
-      ORDER BY productvid.name, ${tabname}.name
+      ORDER BY productassortment.name, productvid.name,productvid.nameext, ${tabname}.name
 `,
     values: [timezone],
   };

@@ -7,13 +7,8 @@ export async function update(pool, req, tabname, timezone) {
     text: /*sql*/ `
       UPDATE ${tabname} SET
           name = $2,
-          nameext = $3,
-          fullname = $4,
-          unit_id = $5,
-          productassortment_id = $6,
-          description = $7,
-          user_id = $8,
-          user_date = CURRENT_TIMESTAMP
+          producttype_id = $3,
+          prefix = $4
       WHERE "id" = $1
       RETURNING *;
 
@@ -21,12 +16,8 @@ export async function update(pool, req, tabname, timezone) {
     values: [
       id,
       req.body.name ? req.body.name.trim() : null,
-      req.body.nameext ? req.body.nameext.trim() : null,
-      req.body.fullname,
-      req.body.unit_id,
-      req.body.productassortment_id,
-      req.body.description,
-      req?.session?.user?.id,
+      req.body.producttype_id,
+      req.body.prefix,
     ],
   };
 

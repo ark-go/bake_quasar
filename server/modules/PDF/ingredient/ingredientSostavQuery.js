@@ -37,7 +37,7 @@ export async function ingredientSostavQuery(req, res) {
     )
     --   ----
     SELECT 
-    concat(vidmain.name,' ',vidmain.nameext,' ',prodmain.name,' (', prodmain.massa,')') as main_product,
+    concat(productassortment.name,' ',vidmain.name,' ',vidmain.nameext,' ',prodmain.name) as main_product,
     prodmain.document_num AS document_num_pf,
     -- prodmain.massbrutto AS massbrutto_pf,
     -- prodmain.massnetto AS massnetto_pf,
@@ -54,7 +54,7 @@ export async function ingredientSostavQuery(req, res) {
         CASE WHEN ing.is_raw IS TRUE THEN 
         concat(productraw.name) 
        ELSE 
-       concat(productvid.name,' ',productvid.nameext,' ', products.name,' (',products.massa,')') 
+       concat(productassortment.name,' ',productvid.name,' ',productvid.nameext,' ', products.name) 
        
 
     END AS name,
@@ -68,7 +68,9 @@ export async function ingredientSostavQuery(req, res) {
     LEFT JOIN products ON products.id = ing.products_id_child
     LEFT JOIN products as prodmain ON prodmain.id = ing.products_id
     LEFT JOIN productvid ON productvid.id = products.productvid_id
+    
       LEFT JOIN productvid as vidmain ON vidmain.id = prodmain.productvid_id
+      LEFT JOIN productassortment ON productassortment.id = vidmain.productassortment_id
     LEFT JOIN productraw ON productraw.id = ing.productraw_id
     
     ORDER BY main_product, typeprod DESC, name

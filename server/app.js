@@ -101,11 +101,19 @@ app.use((req, res, next) => {
   next();
 });
 app.use((req, res, next) => {
-  let cookieTimezone = req.cookies.timezone; // из куки
+  let userBrowser = {};
+  try {
+    userBrowser = JSON.parse(req.cookies.browser);
+  } catch (e) {
+    process.stdout.write("Без куки о браузере\r");
+  }
+  let cookieTimezone = userBrowser?.timezone; // из куки
   let headerTimezone = req?.headers?.timezone; // из  axios
   let resTimezone = headerTimezone || cookieTimezone; // выберем что есть, сначала axios
-  // console.log(resTimezone, cookieTimezone, headerTimezone);
+
   req.session.timezone = resTimezone || "Europe/Moscow"; // если ничего так и нет то москва
+  req.session.userBrowser = userBrowser;
+  req.session.ipAddress = req.headers["x-forwarded-for"];
   next();
 });
 
@@ -129,7 +137,7 @@ if (app.get("env") === "development") {
     res.status(err.status || 500).json({
       message: err.message,
       errorStatus: err.status,
-      error: "Проверьте URL",
+      error: "Проверьте URL1",
       errorStack: err.stack,
     });
   });

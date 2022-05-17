@@ -8,6 +8,7 @@ export const useIoSocket = defineStore("IoSocket", {
       timeServer: "",
       onLine: false,
       versionSite: "",
+      socket: null,
     };
   },
 });

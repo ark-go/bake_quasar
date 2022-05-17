@@ -11,10 +11,11 @@ export async function allSprav(pool, req, tabname, timezone) {
   let productvid = {
     text: /*sql*/ `
             SELECT
-            id,
-            concat(name,' ',nameext) AS name
+            productvid.id,
+            concat(productassortment.name,' ',productvid.name,' ',productvid.nameext) AS name
             --name
             FROM productvid
+            LEFT JOIN  productassortment ON productassortment.id = productvid.productassortment_id
             ORDER BY name
       `,
   };

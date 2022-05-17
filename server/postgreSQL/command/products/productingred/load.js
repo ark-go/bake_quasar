@@ -26,7 +26,7 @@ export async function load(pool, req, tabname, timezone, idOne) {
       CASE WHEN ${tabname}.is_raw = TRUE THEN
               productraw.name
            ELSE
-              concat(productvidchild.name,' ',productvidchild.nameext,', ',productschild.name,' (',productschild.massa,')')
+              concat(productassortment.name,' ', productvidchild.name,' ',productvidchild.nameext,', ',productschild.name)
            END
            AS name
       -- COALESCE(
@@ -38,6 +38,7 @@ export async function load(pool, req, tabname, timezone, idOne) {
       -- ну участвует LEFT JOIN  productvid ON productvid.id = products.productvid_id  -- часть от основного продукта
       LEFT JOIN  products as productschild ON productschild.id = ${tabname}.products_id_child  -- для вставленного продукта
       LEFT JOIN  productvid as productvidchild ON productvidchild.id = productschild.productvid_id -- часть от вставленного продукта
+      LEFT JOIN  productassortment ON productassortment.id = productvidchild.productassortment_id
       LEFT JOIN  productraw ON productraw.id = ${tabname}.productraw_id -- часть от вставленного продукта
       WHERE ${tabname}.products_id = $1
       ORDER BY name

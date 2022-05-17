@@ -125,6 +125,13 @@ export default defineComponent({
           );
 
           break;
+        case "productassortment":
+          currentTabname.value = "productassortment";
+          currentTable.value = defineAsyncComponent(() =>
+            import("./productassortment/Table.vue")
+          );
+
+          break;
         case "productvid":
           currentTabname.value = "productvid";
           currentTable.value = defineAsyncComponent(() =>
@@ -182,71 +189,6 @@ export default defineComponent({
         nextTick(() => {
           showPdfDialog.value = true;
         });
-        // let routeData = router.resolve({
-        //   name: "products",
-        //   params: { cmd: "ww" },
-        // });
-        // window.open(routeData.href, "_blank");
-
-        //console.log("нажал", currentTabname.value);
-        // router.push({
-        //   name: "pdf",
-        //   query: {
-        //     pdfOpts: { tabname: currentTabname.value },
-        //   },
-        // });
-        //! let urlq = await getPDF(currentTabname.value);
-        //! console.log("нажал pdff", urlq);
-        // $router.push({
-        //   name: "pdf",
-        //   params: urlq,
-        // });
-        //!  pdfWindow.command = { ...urlq };
-        //!  pdfWindow.show = true;
-        // if (currentTabname.value) {
-        //   let res = await dataLoad(
-        //     "/api/pdfmain",
-        //     { pdfOpts: { tabname: currentTabname.value } },
-        //     "Запрос разрешения PDF"
-        //   );
-        //   if (!res.result) {
-        //     return;
-        //   }
-        //   console.log("PDF=" + res.result);
-        //   let url =
-        //     "/api/pdfget?key=" +
-        //     res.result +
-        //     "&tabname=" +
-        //     currentTabname.value;
-        //   $q.notify({
-        //     color: "silver",
-        //     textColor: "white",
-        //     icon: "thumb_up",
-        //     message: "Открыть PDF ?",
-        //     caption: "откроется в новом окне",
-        //     position: "center",
-        //     // avatar,
-        //     multiLine: true,
-        //     timeout: 0,
-        //     actions: [
-        //       {
-        //         label: "Открыть",
-        //         color: "green",
-        //         handler: () => {
-        //           console.log("Запрос" + url);
-        //           window.open(url, "_blank");
-        //         },
-        //       },
-        //       {
-        //         label: "Не хочу",
-        //         color: "yellow",
-        //         handler: () => {
-        //           /* console.log('wooow') */
-        //         },
-        //       },
-        //     ],
-        //   });
-        // }
       }
     }
     return {

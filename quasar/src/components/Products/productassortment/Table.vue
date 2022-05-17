@@ -23,8 +23,6 @@
           :propsV="props"
           @on-btn-edit="onEdit"
           @on-btn-delete="onDelete"
-          @onRowClick="onRowClick"
-          :selected-row="selectedRow"
         ></table-body>
       </template>
       <template v-slot:top-left>
@@ -102,7 +100,7 @@ export default defineComponent({
     const visibleColumns = ref([]);
     const showDialog = ref(false);
     const rowCurrent = ref({});
-    const allSprav = ref();
+    const allSprav = ref({});
     //const visibleOffDefault = ref([]);
     //const columns = ref([]);
     onMounted(async () => {
@@ -117,15 +115,14 @@ export default defineComponent({
     }
     function columnFilter() {
       visibleColumns.value = [];
-      // columns.forEach((item, index, array) => {
-      //   if (visibleOffDefault.includes(item.name)) return;
-      //   visibleColumns.value.push(item.name);
-      // });
+      columns.forEach((item, index, array) => {
+        if (visibleOffDefault.includes(item.name)) return;
+        visibleColumns.value.push(item.name);
+      });
     }
 
     async function loadTable() {
-      let mess = "Загрузка Видов продукции";
-      console.log("load: ", props.tabname);
+      let mess = "Загрузка типов продукции";
       let res = await dataLoad(
         "/api/products",
         { cmd: "load", tabname: props.tabname },
@@ -233,7 +230,7 @@ export default defineComponent({
       let res = await dataLoad(
         "/api/products",
         { cmd: "allSprav", tabname: props.tabname },
-        "Чтение справочников для вида продукции"
+        "Чтение справочников для ассортимента"
       );
       return res?.result || [];
     }
@@ -242,24 +239,9 @@ export default defineComponent({
       rowCurrent.value = row;
       showDialog.value = true;
     }
-    const selectedRow = ref([]);
-    function onRowClick(row) {
-      console.log("clicked on", row);
-
-      if (selectedRow.value.indexOf(row) == -1) {
-        selectedRow.value.length = 0;
-        selectedRow.value.push(row);
-      } else {
-        selectedRow.value.splice(selectedRow.value.indexOf(row), 1);
-      }
-    }
-
     return {
-      onRowClick,
-      selectedRow,
-      showDialog,
-      showDialogStart,
       allSprav,
+      showDialog,
       onDelete,
       onSave,
       rowCurrent,
@@ -271,6 +253,7 @@ export default defineComponent({
       columns,
       visibleColumns,
       visibleOffDefault,
+
       async onAdd(row) {
         await showDialogStart(row);
       },
@@ -280,46 +263,32 @@ export default defineComponent({
     };
   },
 });
-let visibleOffDefault = ["user_email", "user_date"];
+let visibleOffDefault = [
+  "user_email",
+  "user_date",
+  "territory_name",
+  "branch_name",
+  "address",
+  "dateopen",
+  "dateclose",
+  "area",
+  "kolbakers",
+  "description",
+];
 let columns = [
   {
-    name: "productassortment_name",
-    label: "Ассортимент",
-    align: "left",
-    field: "productassortment_name",
-    required: true,
-  },
-  {
-    name: "name_display",
+    name: "name",
     label: "Наименование",
     align: "left",
-    field: "name_display",
+    field: "name",
     required: true,
   },
-  // {
-  //   name: "fullname",
-  //   label: "Полное название",
-  //   align: "left",
-  //   field: "fullname",
-  // },
   {
-    name: "unit_name",
-    label: "ед.изм.",
+    name: "prefix",
+    label: "Префикс",
     align: "left",
-    field: "unit_name",
-    style: "width: 50px",
-    //required: true,
-  },
-  {
-    name: "description",
-    label: "Примечание",
-    align: "left",
-    field: "description",
+    field: "prefix",
+    required: true,
   },
 ];
 </script>
-<style lang="scss" scoped>
-.select-row {
-  color: red;
-}
-</style>

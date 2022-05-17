@@ -1,6 +1,6 @@
 {
   "name": "bake-and-tandoor",
-  "version": "0.10.10",
+  "version": "0.10.24",
   "description": "bake and tandoor",
   "productName": "bake",
   "author": "Arkadii <arkadii@yandex.ru>",
@@ -20,6 +20,7 @@
     "apexcharts": "^3.33.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
+    "detect-browser": "^5.3.0",
     "http-proxy-middleware": "^2.0.6",
     "mitt": "^3.0.0",
     "pinia": "^2.0.11",

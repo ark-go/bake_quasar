@@ -127,7 +127,7 @@ const dataTree = [
       },
       {
         key: 12,
-        label: "Вид продукции",
+        label: "Товар",
         table: "productvid",
       },
       { key: 13, label: "Cырьё", table: "productraw" },
@@ -146,7 +146,12 @@ const dataTree = [
         label: "Тип продукции",
         table: "producttype",
       },
-      { key: 22, label: "Вид сырья", table: "productrawvid" },
+      {
+        key: 22,
+        label: "Ассортимент",
+        table: "productassortment",
+      },
+      { key: 23, label: "Вид сырья", table: "productrawvid" },
     ],
 
     // let DialogForm = () => import('../components/DialogForm.vue')

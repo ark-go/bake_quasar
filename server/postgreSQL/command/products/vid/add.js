@@ -15,7 +15,7 @@ export async function add(pool, req, tabname, timezone) {
 
   let sqlP = {
     text: /*sql*/ `
-      INSERT INTO ${tabname} (name,nameext, fullname,unit_id,producttype_id,description, user_id, user_date)
+      INSERT INTO ${tabname} (name,nameext, fullname,unit_id,productassortment_id,description, user_id, user_date)
       VALUES ($1,$2,$3,$4,$5,$6,$7,CURRENT_TIMESTAMP)
       RETURNING *;
 
@@ -25,7 +25,7 @@ export async function add(pool, req, tabname, timezone) {
       req.body.nameext ? req.body.nameext.trim() : null,
       req.body.fullname,
       req.body.unit_id,
-      req.body.producttype_id,
+      req.body.productassortment_id,
       req.body.description,
       req?.session?.user?.id,
     ],

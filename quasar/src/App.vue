@@ -8,16 +8,20 @@ import { useIoSocket } from "stores/ioSocket.js";
 import { soundPlay } from "src/utils/sound.js";
 import { useQuasar } from "quasar";
 import { Cookies } from "quasar";
+import { detect } from "detect-browser";
+
 export default defineComponent({
   name: "App",
   setup() {
-    Cookies.set("timezone", Intl.DateTimeFormat().resolvedOptions().timeZone, {
-      RR: "wert",
-    });
+    let browser = detect();
+    browser.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // добавим таймзону
+    Cookies.set("browser", browser); // в отправку
+
     const { notify } = useQuasar();
     const ioSocket = useIoSocket();
     const socket = io();
     socket.on("connect", () => {
+      ioSocket.socket = socket;
       // первый коннект, при обрывах после не срабатывает, сработает уже подключенный
       socket.removeAllListeners();
       ioSocket.onLine = true;

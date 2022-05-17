@@ -23,9 +23,9 @@
       <div class="row" style="justify-content: center">
         <div class="column card-body">
           <field-select
-            label="Ассортимент"
-            :sprav="allSprav.productassortment"
-            v-model:selectId="currentRow.productassortment_id"
+            label="Тип продукта"
+            :sprav="allSprav.producttype"
+            v-model:selectId="currentRow.producttype_id"
           />
           <form-input
             dense
@@ -33,37 +33,19 @@
             hide-hint
             hide-bottom-space
             label="Наименование"
-            :lazy-rules="true"
+            :lazy-rules="false"
             :rules="[
               (val) => (!!val && val.length >= 2) || 'Ну хотябы два символа',
             ]"
           />
           <form-input
             dense
-            v-model="currentRow.nameext"
+            v-model="currentRow.prefix"
             hide-hint
             hide-bottom-space
-            label="Дополнительно"
-            clearable
-          />
-          <field-select
-            label="Единица измерения"
-            :sprav="allSprav.unit"
-            v-model:selectId="currentRow.unit_id"
-          />
-          <q-input
-            dense
-            label="Примечание"
-            :shadow-text="
-              currentRow.description
-                ? ''
-                : 'Введите дополнительные данные об этом виде продукта'
-            "
-            :model-value="currentRow.description"
-            @update:model-value="(val) => (currentRow.description = val)"
-            type="textarea"
-            autogrow
-            clearable
+            label="Префикс"
+            :lazy-rules="false"
+            :rules="[(val) => (!!val && val.length >= 2) || 'от двух символов']"
           />
         </div>
       </div>
@@ -83,18 +65,18 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted, watch, watchEffect } from "vue";
-import FieldSelect from "./FieldSelect.vue";
+import { defineComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 import FormInput from "./FormInput.vue";
+import FieldSelect from "./FieldSelect.vue";
 export default defineComponent({
-  name: "BakeryDialog",
+  name: "FormDialog",
   components: { FormInput, FieldSelect },
   props: {
     showDialog: Boolean,
     rowData: Object,
-    allSprav: Object,
     title: String,
+    allSprav: Object,
   },
   emits: ["update:showDialog"],
   setup(props, { emit }) {
@@ -103,7 +85,6 @@ export default defineComponent({
     async function onBeforeShowDialog() {
       // перед открытием, скопируем текущую строку таблицы если она есть
       currentRow.value = { ...props.rowData };
-      console.log("Показываем окно: ", currentRow.value);
     }
     return {
       emit,

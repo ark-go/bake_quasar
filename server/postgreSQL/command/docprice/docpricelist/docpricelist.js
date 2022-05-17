@@ -22,6 +22,8 @@ export async function docpricelist(pool, req, cmd, tabname) {
       return await load(pool, req, "docpricelist");
     case "loadProducts":
       return await loadProducts(pool, req, "products");
+    case "loadTovars":
+      return await loadTovars(pool, req, "productvid");
     // case "loadSprav":
     //   return await loadSprav(pool, req, "docpricelist"); //!здесь другая табличка
     case "add":

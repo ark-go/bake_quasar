@@ -1,6 +1,7 @@
 //import { loadSprav } from "./loadSprav.js";
 import { load } from "./load.js";
-import { loadProducts } from "./loadProducts.js";
+//import { loadProducts } from "./loadProducts.js";
+import { loadTovars } from "./loadTovars.js";
 import { add } from "./add.js";
 //import { update } from "./update.js";
 import { del } from "./delete.js";
@@ -20,8 +21,8 @@ export async function docpricelist(pool, req, cmd, tabname) {
   switch (cmd) {
     case "load":
       return await load(pool, req, "docpricelist");
-    case "loadProducts":
-      return await loadProducts(pool, req, "products");
+    // case "loadProducts":
+    //   return await loadProducts(pool, req, "products");
     case "loadTovars":
       return await loadTovars(pool, req, "productvid");
     // case "loadSprav":

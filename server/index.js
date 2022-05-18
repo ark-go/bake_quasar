@@ -2,6 +2,7 @@
 import dotenv from "dotenv";
 dotenv.config({ path: ".env" });
 
+//console.log("Environment", process.env);
 import { log } from "./utils/arkLog.js"; //  логи цветные...
 //import { initSoket } from "./modules/ioSocket/initSocket.js";
 import path from "path";

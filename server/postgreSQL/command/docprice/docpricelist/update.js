@@ -6,7 +6,7 @@ export async function update(pool, req, tabname) {
     text: /*sql*/ `
       UPDATE ${tabname} SET
       docprice_id = $2,
-      products_id = $3,
+      productvid_id = $3,
       article = $4,
       price_name = $5,
       cena = $6,
@@ -22,7 +22,7 @@ export async function update(pool, req, tabname) {
     values: [
       id,
       req.body.docprice_id,
-      req.body.products_id,
+      req.body.productvid_id,
       req.body.article,
       req.body.price_name,
       req.body.cena,

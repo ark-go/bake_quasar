@@ -15,8 +15,8 @@ export async function load(pool, req, tabname, idOne) {
       SELECT
       ${tabname}.id,
       ${tabname}.docprice_id,
-      ${tabname}.products_id,
-      concat(productvid.name,' ',products.name,' (',products.massa,') TTK№',products.document_num) AS own_name,
+      ${tabname}.productvid_id,
+      concat(producttype.prefix,' ',productassortment.name,' ',productvid.name,' ',productvid.nameext) AS own_name,
       ${tabname}.article,
       ${tabname}.price_name,
       ${tabname}.cena,
@@ -24,8 +24,9 @@ export async function load(pool, req, tabname, idOne) {
       -- -- -- -- 
       FROM ${tabname}
       LEFT JOIN  docprice ON docprice.id = ${tabname}.docprice_id
-      LEFT JOIN  products ON products.id = ${tabname}.products_id
-      LEFT JOIN  productvid ON productvid.id = products.productvid_id
+      LEFT JOIN  productvid ON productvid.id = ${tabname}.productvid_id
+      LEFT JOIN  productassortment ON productassortment.id = productvid.productassortment_id
+      LEFT JOIN  producttype ON producttype.id = productassortment.producttype_id
       
       WHERE ${wher}
       

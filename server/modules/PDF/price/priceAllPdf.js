@@ -14,7 +14,7 @@ var fonts = {
     bold: "node_modules/roboto-font/fonts/Roboto/roboto-medium-webfont.ttf",
     italics: "node_modules/roboto-font/fonts/Roboto/roboto-italic-webfont.ttf",
     bolditalics:
-      "node_modules/roboto-font/fonts/Roboto/roboto-mediumItalic-webfont.ttf",
+      "node_modules/roboto-font/fonts/Roboto/roboto-mediumitalic-webfont.ttf",
   },
 };
 // ----------------------------------------------------------------------------------
@@ -24,7 +24,8 @@ export async function priceAllPdf(req, res, result) {
   var printer = new PdfPrinter(fonts);
   var date = new Date();
   let dateCurr = date.toLocaleString("ru-RU", { hour12: false });
-  let pageOrient = "landscape"; //"portrait";
+  //let pageOrient = "landscape"; //"portrait";
+  let pageOrient = "portrait"; //"portrait";
 
   var docDefinition = {
     pageSize: "A4",
@@ -260,70 +261,43 @@ export async function priceAllPdf(req, res, result) {
       //   },
       // };
       let arrMain = [];
-      // сначала возьмем нужные данные из первого блока
+      // Пекарни   сначала возьмем нужные данные из первого блока
       arrMain.push({
-        text: element.bakery_name,
+        text: [
+          { text: element.bakery_name, fontSize: 16 },
+          {
+            text: "    " + element?.items[0]?.items[0].kagent_name,
+            italics: true,
+            fontSize: 12,
+            //margin: [20, 0, 0, 0], // [left, top, right, bottom]
+          },
+        ],
+        // element.bakery_name + "  " + element?.items[0]?.items[0].kagent_name,
         style: "mainRowsName",
-        colSpan: 8,
+        colSpan: 6,
         headlineLevel: 1,
+        fillColor: "#eeeeee",
+        margin: [5, 0, 0, 0], // [left, top, right, bottom]
       });
-      arrMain.push("");
-      // arrMain.push({ text: "", style: "mainRowsName" });
-      // if (element?.items.length > 0) {
-      //   arrMain.push({
-      //     text: element.items[0].Самбери || "",
-      //     style: "mainRows",
-      //   });
-      //   arrMain.push({
-      //     text: element.items[0].kagent_name || "",
-      //     style: "mainRows",
-      //   });
-      //   arrMain.push({
-      //     text: element.items[0].www || "",
-      //     style: "mainRows",
-      //   });
-      //   arrMain.push("");
-      //   // arrMain.push("");
-      //   // arrMain.push({
-      //   //   text: "", // пропорция которой нет
-      //   //   style: "mainRows",
-      //   // });
-      //   // arrMain.push({
-      //   //   text: element.items[0].www || "",
-      //   //   style: "mainRows",
-      //   // });
-      // } else {
-      //   arrMain.push("");
-      // }
+      //arrMain.push("");
 
-      // templateTable.table.body.push(arrMain);
-
-      // arrRes.push(templateTable); // вывод таблицы полуфабриката
-      // Дети  тут идут дети
-      //  console.log("items", element.items);// что печатаем
-      // если шаблон тут то разделим на таблицы
-      // let templateTableChild = {
-      //   fontSize: 10,
-      //   width: "auto",
-      //   layout: "lightHorizontalLines", // optional  без этого будут ячейки
-      //   table: {
-      //     body: [],
-      //   },
-      // };
       templateTableChild.table.body.push(arrMain); // первая стока от название самого продукта
-
+      //
       element.items.forEach((element) => {
         let productName = [];
         productName.push({
           text: element.product_name || "",
-          style: "childRowsOtstup1",
-          colSpan: 8,
+          //style: "childRowsOtstup1",
+          bold: true,
+          fontSize: 12,
+          margin: [15, 0, 5, 0],
+          colSpan: 6,
         });
         //console.log(">>>>>>", element.product_name);
         // productName.push("");
         // productName.push("");
         // productName.push("");
-        productName.push("");
+        //productName.push("");
         // productName.push("");
         templateTableChild.table.body.push(productName);
 
@@ -346,11 +320,11 @@ export async function priceAllPdf(req, res, result) {
             style: childStOtsup,
             alignment: "left",
           });
-          arr.push({
-            text: el.kagent_name,
-            style: childStOtsup,
-            alignment: "left",
-          });
+          // arr.push({
+          //   text: el.kagent_name,
+          //   style: childStOtsup,
+          //   alignment: "left",
+          // });
           arr.push({
             text: el.price_name || "",
             style: childSt,
@@ -359,7 +333,7 @@ export async function priceAllPdf(req, res, result) {
           //   text: el.product_name || "",
           //   style: childSt,
           // });
-          arr.push({ text: el.ttk || "", style: childSt });
+          // arr.push({ text: el.ttk || "", style: childSt });
           arr.push({ text: el.article || "", style: childSt });
           arr.push({
             text: el.date_start == el.maxdatestart ? "•" : "",
@@ -393,9 +367,9 @@ export async function priceAllPdf(req, res, result) {
     templateTableChild.table.body.unshift([
       { text: "Дата действия", style: "tableHeader" },
       { text: "№ доп", style: "tableHeader" },
-      { text: "Контрагент", style: "tableHeader" },
+      // { text: "Контрагент", style: "tableHeader" },
       { text: "Товар магазина", style: "tableHeader" },
-      { text: "ТТК", style: "tableHeader" },
+      // { text: "ТТК", style: "tableHeader" },
       { text: "Артикул м.", style: "tableHeader" },
       { text: "•", style: "tableHeader" },
       { text: "Цена", style: "tableHeader" },

@@ -286,6 +286,13 @@ let columns = [
     required: true,
   },
   {
+    name: "bakery_count",
+    label: "*",
+    align: "center",
+    field: "bakery_count",
+    required: true,
+  },
+  {
     name: "docnum",
     label: "№ Док-та",
     align: "left",

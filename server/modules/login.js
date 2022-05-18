@@ -138,14 +138,26 @@ async function getUser(req, res) {
         });
         return;
       } else {
+        // Подключились да??
         delete req.session.userTmp;
         let active = await updateActiveUser(req.session?.user?.id, true);
         req.session.user.active = active;
-        res.json({
-          loginYes: req.session.user.username || req.session.user.email,
-          username: result.username,
-          email: result.email,
+        //req.session.reload();
+        req.session.save(function (err) {
+          if (err) {
+            console.log("Ошибка при сохранении req.session");
+          }
+          res.json({
+            loginYes: req.session.user.username || req.session.user.email,
+            username: result.username,
+            email: result.email,
+          });
         });
+        // res.json({
+        //   loginYes: req.session.user.username || req.session.user.email,
+        //   username: result.username,
+        //   email: result.email,
+        // });
       }
       return;
     }

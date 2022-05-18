@@ -6,7 +6,8 @@ const require = createRequire(import.meta.url);
 const { name } = require("../package.json");
 
 const RedisStore = connectRedis(session);
-const redisClient = new Redis({
+export const redisClient = new Redis({
+  //showFriendlyErrorStack: true, // только для отладки.. для вывода нормальных ошибок
   keyPrefix: process.env.Redis_prefix
     ? process.env.Redis_prefix + ":"
     : name + ":",
@@ -16,5 +17,6 @@ const redisClient = new Redis({
   password: process.env.Redis_password,
   db: process.env.Redis_db,
 });
+
 //! redisClient.connect().catch(console.error)
 export const redisStore = new RedisStore({ client: redisClient });

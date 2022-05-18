@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh Lpr lFf">
+  <q-layout view="hHh Lpr fFf">
     <q-header elevated>
       <q-toolbar>
         <q-btn
@@ -8,18 +8,25 @@
           round
           icon="menu"
           aria-label="Menu"
-          @click="toggleLeftDrawer"
+          @click="leftDrawerOpen = !leftDrawerOpen"
         />
 
         <q-toolbar-title>
           Хлеб и Тандыр {{ ioSocket.versionSite }}</q-toolbar-title
         >
 
-        <div>{{ username ? username : "v" + $q.version }},{{ user.email }}</div>
+        <div>{{ userInfo.email }}</div>
+        <q-btn
+          dense
+          flat
+          round
+          icon="menu"
+          @click="rightDrawerOpen = !rightDrawerOpen"
+        />
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawerOpen" overlay bordered>
+    <q-drawer side="left" v-model="leftDrawerOpen" overlay bordered>
       <q-list>
         <q-item-label header> Выберите раздел </q-item-label>
 
@@ -30,7 +37,18 @@
         />
       </q-list>
     </q-drawer>
-
+    <q-drawer
+      side="right"
+      v-model="rightDrawerOpen"
+      overlay
+      bordered
+      behavior="mobile"
+      elevated
+    >
+      <q-list>
+        <q-item-label header> Хай! </q-item-label>
+      </q-list>
+    </q-drawer>
     <q-page-container>
       <!-- <router-view /> -->
       <router-view v-slot="{ Component }">
@@ -113,7 +131,8 @@ import { arkVuex } from "src/utils/arkVuex"; // const { pdfWindow } = createArkV
 import { dataLoad } from "src/utils/ark.js";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 //import { useTest } from "stores/test.js";
-import { useUser } from "stores/storeUser.js";
+import { useUserStore } from "stores/userStore.js";
+import { useMainStore } from "stores/mainStore.js";
 import { storeToRefs } from "pinia";
 import { useIoSocket } from "stores/ioSocket.js";
 import { useQuasar } from "quasar";
@@ -128,22 +147,20 @@ export default defineComponent({
 
   setup() {
     //const store = useTest();
+
+    const { rightDrawerOpen, leftDrawerOpen } = storeToRefs(useMainStore());
     const { notify } = useQuasar();
     const ioSocket = useIoSocket();
-    const { info: user } = storeToRefs(useUser());
+    const { userInfo } = storeToRefs(useUserStore());
     const { pdfWindow } = arkVuex();
     // const command = ref(pdfWindow.command);
     const pdfModal = ref(pdfWindow.show);
-    const leftDrawerOpen = ref(false);
     const username = ref("");
     const modalLoginOpen = ref(false);
     const emittMitt = () => {
       emitter.on("on-login", (mess) => {
         if (mess == "NoLogin") {
           modalLoginOpen.value = true;
-          username.value = "Не авторизован";
-        } else {
-          username.value = mess;
         }
       });
       emitter.on("close-login", () => {
@@ -167,16 +184,14 @@ export default defineComponent({
       console.log("Упдате то", to);
     });
     return {
+      rightDrawerOpen,
+      leftDrawerOpen,
       ioSocket,
-      user, //
+      userInfo, //
       pdfModal,
       modalLoginOpen,
       username,
       essentialLinks: linksList,
-      leftDrawerOpen,
-      toggleLeftDrawer() {
-        leftDrawerOpen.value = !leftDrawerOpen.value;
-      },
       getAllUsers() {
         ioSocket.socket
           .timeout(5000)

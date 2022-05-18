@@ -8,14 +8,14 @@ export async function add(pool, req, tabname) {
 
   let sqlP = {
     text: /*sql*/ `
-      INSERT INTO ${tabname} (docprice_id,products_id,article,price_name,cena,description,user_id,user_date,meta)
+      INSERT INTO ${tabname} (docprice_id,productvid_id,article,price_name,cena,description,user_id,user_date,meta)
       VALUES ($1,$2,$3,$4,$5,$6,$7,CURRENT_TIMESTAMP,$8)
       RETURNING *;
 
       `,
     values: [
       req.body.docprice_id,
-      req.body.products_id,
+      req.body.productvid_id,
       req.body.article,
       req.body.price_name,
       req.body.cena,

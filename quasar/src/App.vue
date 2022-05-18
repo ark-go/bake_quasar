@@ -3,13 +3,14 @@
 </template>
 <script>
 import { defineComponent } from "vue";
-import { io } from "socket.io-client";
+//import { io } from "socket.io-client";
 import { useIoSocket } from "stores/ioSocket.js";
 import { soundPlay } from "src/utils/sound.js";
 import { useQuasar } from "quasar";
 import { Cookies } from "quasar";
 import { detect } from "detect-browser";
-
+import { useUserStore } from "stores/userStore.js";
+import { axios } from "boot/axios";
 export default defineComponent({
   name: "App",
   setup() {
@@ -18,8 +19,11 @@ export default defineComponent({
     Cookies.set("browser", browser); // в отправку
 
     const { notify } = useQuasar();
+    const UserStore = useUserStore();
+    dataLoad(UserStore);
     const ioSocket = useIoSocket();
-    const socket = io();
+    //const socket = io();
+    const socket = ioSocket.socketMain;
     socket.on("connect", () => {
       ioSocket.socket = socket;
       // первый коннект, при обрывах после не срабатывает, сработает уже подключенный
@@ -102,6 +106,16 @@ export default defineComponent({
           },
         ],
       });
+    }
+    async function dataLoad(UserStore) {
+      try {
+        let resp = await axios.post("/api/isLogin", {});
+        let data = resp.data;
+        UserStore.userInfo = data;
+      } catch (err) {
+        console.log(err);
+        UserStore.userInfo = {};
+      }
     }
   },
 });

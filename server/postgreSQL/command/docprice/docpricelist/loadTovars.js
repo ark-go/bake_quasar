@@ -14,11 +14,11 @@ export async function loadTovars(pool, req, tabname, idOne) {
     text: /*sql*/ `
         SELECT
         ${tabname}.id,
-        concat(producttype.prefix,' ',productassortment.name,' ',${tabname}.name,' ',${tabname}.nameext) AS name, 
-        ${tabname}.article
+        concat(producttype.prefix,' ',productassortment.name,' ',${tabname}.name,' ',${tabname}.nameext) AS name
+        --${tabname}.article
         -- -- -- -- 
         FROM ${tabname}
-        LEFT JOIN  productassortment ON productassortment.id = ${tabname}.assortment_id
+        LEFT JOIN  productassortment ON productassortment.id = ${tabname}.productassortment_id
         LEFT JOIN  producttype ON producttype.id = productassortment.producttype_id
         --WHERE {wher}
         

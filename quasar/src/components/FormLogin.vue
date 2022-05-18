@@ -46,12 +46,12 @@ import { ref } from "vue";
 import { axios, emitter } from "boot/axios";
 import { useQuasar } from "quasar";
 import { useRouter, useRoute } from "vue-router";
-import { useUser } from "stores/storeUser.js";
+import { useUserStore } from "stores/userStore.js";
 import { storeToRefs } from "pinia";
 export default {
   name: "FormLogin",
   setup() {
-    const user = useUser(); //
+    const user = useUserStore(); //
     const router = useRouter();
     const { notify } = useQuasar();
     const login = ref("");
@@ -83,12 +83,12 @@ export default {
           icon: "report_problem",
         });
         if (loginResult?.email) {
-          user.info = loginResult;
-          emitter.emit("on-login", loginResult.email);
+          user.userInfo = loginResult;
+          //emitter.emit("on-login", loginResult.email);
           emitter.emit("close-login");
         }
-        //router.go(0); //! перезагрузка окна
-
+        router.go(); //! перезагрузка окна
+        //window.location.reload();
         //router.push({ path: "/" });
       }
     }

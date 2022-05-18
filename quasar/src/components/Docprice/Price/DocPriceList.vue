@@ -103,7 +103,7 @@ export default defineComponent({
       let res = await dataLoad(
         "/api/docprice",
         {
-          cmd: "loadProducts",
+          cmd: "loadTovars", // "loadProducts",
           tabname: "docpricelist",
         },
         mess
@@ -134,7 +134,7 @@ export default defineComponent({
         docPrice.currRowPrice.article = "";
         docPrice.currRowPrice.cena = "";
         docPrice.currRowPrice.description = "";
-        docPrice.currRowPrice.products_id = rowProducts.products_id;
+        docPrice.currRowPrice.productvid_id = rowProducts.productvid_id;
         docPrice.currRowPrice.price_name = rowProducts.price_name;
         showDialog.value = false;
         nextTick(() => {

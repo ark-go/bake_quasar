@@ -43,7 +43,7 @@
           <field-select
             label="Название продукта"
             :sprav="products"
-            v-model:selectId="currentRow.products_id"
+            v-model:selectId="currentRow.productvid_id"
           />
           <form-input
             dense

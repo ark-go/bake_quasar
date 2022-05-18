@@ -19,7 +19,7 @@ export async function load(pool, req, tabname, idOne) {
       kagent.name AS kagent_name,
       ${tabname}.docpricevid_id,
       docpricevid.name AS docpricevid_name,
-
+      (select count(*) from docbakery where docbakery.docprice_id = ${tabname}.id ) AS bakery_count,
       ${tabname}.description,
       -- -- -- -- 
       users.email AS "user_email",
@@ -50,7 +50,7 @@ export async function load(pool, req, tabname, idOne) {
   try {
     let result = await pool.query(sqlP);
     result = result.rowCount > 0 ? result.rows : null;
-    //   console.log("load", tabname, result, idOne);
+    //console.log("load", result);
     return {
       result: result,
     };

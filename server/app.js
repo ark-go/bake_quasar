@@ -63,7 +63,7 @@ app.use(
 );
 
 // ------------- redis store
-const { redisStore } = await import("./utils/ioredisStore.js");
+import { redisStore } from "./utils/ioredisStore.js";
 // ------- expressSession
 let expSession = expressSession({
   name: process.env.COOKIE_NAME,

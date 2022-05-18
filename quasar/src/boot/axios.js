@@ -2,7 +2,8 @@ import { boot } from "quasar/wrappers";
 import axios from "axios";
 import mitt from "mitt";
 import { Cookies } from "quasar";
-import { useUser } from "stores/storeUser.js";
+import { useUserStore } from "stores/userStore.js";
+
 const emitter = mitt();
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -39,18 +40,18 @@ export default boot(({ app }) => {
   // linux///
 
   axios.interceptors.response.use((response) => {
+    const user = useUserStore();
     // входящий сюда
     console.log("axios вход ", response.headers?.["x-info-site"]);
-    // if (response.headers?.["x-info-site"]) setIsLogin(true);
-    // else setIsLogin(false);
-    let info = response.headers?.["x-info-site"];
-
-    if (info) emitter.emit("on-login", info);
+    if (response.headers?.["x-info-site"] == "NoLogin") {
+      user.userInfo = {};
+      emitter.emit("on-login", "NoLogin");
+    }
     return response;
   });
 
   axios.interceptors.request.use(function (config) {
-    const user = useUser();
+    const user = useUserStore();
     user.isAdmin = true;
     // исходящий  туда
     //const value = Cookies.getAll(); //

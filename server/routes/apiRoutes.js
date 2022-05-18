@@ -1,5 +1,6 @@
 import express from "express";
 import { login } from "../modules/login.js";
+//import { isLogin } from "../modules/isLogin.js";
 import { usersLoad } from "../postgreSQL/command/usersLoad.js";
 import { bakehousesLoad } from "../postgreSQL/command/bakehousesLoad.js";
 import multer from "multer";
@@ -87,6 +88,14 @@ export async function apiRoutes() {
     }
   });
   // -------------------------------------------------------
+  router.post("/isLogin", async (req, res) => {
+    console.log("/isLogin");
+    res.json({
+      username: req.session.user.username || req.session.user.email,
+      email: req.session.user.email,
+      roles: req.session.user.roles,
+    });
+  });
   router.post("/pdfmain", async (req, res) => {
     console.log("/pdfmain");
     res.json(await pdfmain(req));

@@ -1,4 +1,6 @@
 import express from "express";
+import dotenv from "dotenv";
+dotenv.config();
 import { login } from "../modules/login.js";
 //import { isLogin } from "../modules/isLogin.js";
 import { usersLoad } from "../postgreSQL/command/usersLoad.js";
@@ -87,6 +89,13 @@ export async function apiRoutes() {
       next();
     }
   });
+  // -----------------------------------------------------
+  router.post("/unLogin", async (req, res) => {
+    console.log("/unLogin", process.env.COOKIE_NAME);
+    res.clearCookie(process.env.COOKIE_NAME);
+    req.session.destroy();
+    res.json({ result: true });
+  });
   // -------------------------------------------------------
   router.post("/isLogin", async (req, res) => {
     console.log("/isLogin");
@@ -96,6 +105,7 @@ export async function apiRoutes() {
       roles: req.session.user.roles,
     });
   });
+
   router.post("/pdfmain", async (req, res) => {
     console.log("/pdfmain");
     res.json(await pdfmain(req));

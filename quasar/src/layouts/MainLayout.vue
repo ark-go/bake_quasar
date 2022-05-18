@@ -15,7 +15,7 @@
           Хлеб и Тандыр {{ ioSocket.versionSite }}</q-toolbar-title
         >
 
-        <div>{{ userInfo.email }}</div>
+        <div>{{ userInfo.username || userInfo.email }}</div>
         <q-btn
           dense
           flat
@@ -45,9 +45,7 @@
       behavior="mobile"
       elevated
     >
-      <q-list>
-        <q-item-label header> Хай! </q-item-label>
-      </q-list>
+      <right-items></right-items>
     </q-drawer>
     <q-page-container>
       <!-- <router-view /> -->
@@ -123,6 +121,7 @@
 </style>
 <script>
 import EssentialLink from "components/EssentialLink.vue";
+import RightItems from "components/mainPage/rightDrawer/rightItems.vue";
 import { defineComponent, ref, onMounted, watchEffect } from "vue";
 import { emitter } from "boot/axios";
 import FormLogin from "components/FormLogin.vue";
@@ -143,6 +142,7 @@ export default defineComponent({
     EssentialLink,
     FormLogin,
     pdfDialog,
+    RightItems,
   },
 
   setup() {

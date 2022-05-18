@@ -111,6 +111,7 @@ export default defineComponent({
       try {
         let resp = await axios.post("/api/isLogin", {});
         let data = resp.data;
+        console.log("user", data);
         UserStore.userInfo = data;
       } catch (err) {
         console.log(err);

@@ -87,7 +87,9 @@ async function getUser(req, res) {
         let token = getToken2FA(req, result.fa2code);
         // если код введенный пользователем не подошел, отправим в телеграмм нужный код
         if (!verifyToken) {
-          botSendMessage("Ваш токен: " + token);
+          let sec = 60 - new Date().getSeconds();
+          sec = sec > 30 ? sec - 30 : sec; // 30 сек время действия кода
+          botSendMessage("Ваш токен: " + token + " ( " + sec + " время )");
         }
       } else {
         // в базе нет но есть в темпе проверяем по нему

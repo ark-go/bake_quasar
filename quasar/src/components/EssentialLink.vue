@@ -1,5 +1,5 @@
 <template>
-  <q-item clickable @click="onClick(link)">
+  <q-item v-if="visible" clickable @click="onClick(link)">
     <q-item-section v-if="icon" avatar>
       <q-icon :name="icon" />
     </q-item-section>
@@ -37,6 +37,10 @@ export default defineComponent({
     icon: {
       type: String,
       default: "",
+    },
+    visible: {
+      type: Boolean,
+      default: false,
     },
   },
   setup() {

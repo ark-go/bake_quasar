@@ -7,6 +7,7 @@ export const useMainStore = defineStore("MainStore", {
 
       rightDrawerOpen: false,
       leftDrawerOpen: false,
+      modalLoginOpen: false,
     };
   },
 });

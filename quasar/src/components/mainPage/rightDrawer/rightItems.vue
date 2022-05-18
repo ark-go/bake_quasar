@@ -1,11 +1,21 @@
 <template>
   <q-list>
-    <q-item clickable v-ripple @click="onClose">
+    <q-item v-if="userStore.userInfo.email" clickable v-ripple @click="onClose">
+      <q-item-section avatar>
+        <q-icon name="logout" color="red" />
+      </q-item-section>
       <q-item-section>
-        <q-item-label>{{ userStore.userInfo.username }}</q-item-label>
+        <q-item-label overline>Выход</q-item-label>
+        <q-item-label>{{ userStore.userInfo.username }} </q-item-label>
         <q-item-label caption>
           {{ userStore.userInfo.email }}
         </q-item-label>
+      </q-item-section>
+    </q-item>
+    <q-item v-else clickable v-ripple @click="onLogin">
+      <q-item-section>
+        <q-item-label>Вход</q-item-label>
+        <q-item-label caption> Вход на сайт </q-item-label>
       </q-item-section>
     </q-item>
   </q-list>

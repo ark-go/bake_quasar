@@ -23,7 +23,7 @@ export function botSendMessage(message, req) {
 
     if (idBotUser) {
       bot.telegram
-        .sendMessage(idBotUser, userEmail + ": " + message)
+        .sendMessage(idBotUser, userEmail + ": " + message) // { disable_notification: true, }
         .then(() => {})
         .catch((e) => {
           console.log("Ошибка бота1", e);

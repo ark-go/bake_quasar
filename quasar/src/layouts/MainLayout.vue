@@ -148,25 +148,35 @@ export default defineComponent({
   setup() {
     //const store = useTest();
 
-    const { rightDrawerOpen, leftDrawerOpen } = storeToRefs(useMainStore());
+    const { rightDrawerOpen, leftDrawerOpen, modalLoginOpen } = storeToRefs(
+      useMainStore()
+    );
     const { notify } = useQuasar();
     const ioSocket = useIoSocket();
     const { userInfo } = storeToRefs(useUserStore());
     const { pdfWindow } = arkVuex();
     // const command = ref(pdfWindow.command);
     const pdfModal = ref(pdfWindow.show);
+    const essentialLinks = ref([]);
     const username = ref("");
-    const modalLoginOpen = ref(false);
+    //const modalLoginOpen = ref(false);
     const emittMitt = () => {
       emitter.on("on-login", (mess) => {
         if (mess == "NoLogin") {
           modalLoginOpen.value = true;
         }
       });
-      emitter.on("close-login", () => {
-        modalLoginOpen.value = false;
-      });
+      // emitter.on("close-login", () => {
+      //   modalLoginOpen.value = false;
+      // });
     };
+    onMounted(() => {
+      console.log("User rol", userInfo.value.roles);
+      essentialLinks.value = linkList(
+        userInfo.value.roles,
+        userInfo.value.email
+      );
+    });
     onMounted(emittMitt);
     //! Здесь будем проверять доступ
     onBeforeRouteLeave(async (to, from) => {
@@ -191,7 +201,7 @@ export default defineComponent({
       pdfModal,
       modalLoginOpen,
       username,
-      essentialLinks: linksList,
+      essentialLinks,
       getAllUsers() {
         ioSocket.socket
           .timeout(5000)
@@ -234,97 +244,111 @@ export default defineComponent({
     };
   },
 });
-const linksList = [
-  {
-    title: "Вход",
-    caption: "Вход на сайт",
-    icon: "school",
-    link: "/login",
-  },
-  {
-    title: "Справочник",
-    caption: "Технические справочники",
-    icon: "code",
-    link: "/spravochnik",
-  },
-  {
-    title: "Контрагенты",
-    caption: "Партнеры",
-    icon: "code",
-    link: "/kagent",
-  },
-  {
-    title: "Пекарни",
-    caption: "Все пекарни",
-    icon: "home_work",
-    link: "/bakery",
-  },
-  {
-    title: "Продукция",
-    caption: "Номенклатура продукции",
-    icon: "home_work",
-    link: "/products",
-  },
-  {
-    title: "Цены",
-    caption: "Докумены для изменения цен",
-    icon: "attach_money",
-    link: "/docprice",
-  },
-  // {
-  //   title: "Номенклатура",
-  //   caption: "номенклатура ввод",
-  //   icon: "dynamic_form",
-  //   link: "/nomencl",
-  // },
-  {
-    title: "Спецификации магазина",
-    caption: "Спецификации магазинов",
-    icon: "code",
-    link: "/specstore",
-  },
-  // {
-  //   title: "Продажи",
-  //   caption: "продажи, регистрация",
-  //   icon: "dynamic_form",
-  //   link: "/prodaja",
-  // },
-  {
-    title: "Все",
-    caption: " таблицы",
-    icon: "dynamic_form",
-    link: "/tables",
-  },
-  {
-    title: "Пользователи",
-    caption: "что-то про таблицы",
-    icon: "code",
-    link: "/tables/users",
-  },
-  // {
-  //   title: "Пекарни",
-  //   caption: "Список",
-  //   icon: "code",
-  //   link: "/tables/bakehouses",
-  // },
+function linkList(roles = [], email) {
+  return [
+    {
+      title: "Вход",
+      caption: "Вход на сайт",
+      icon: "school",
+      link: "/login",
+      visible: !email,
+    },
+    {
+      title: "Справочник",
+      caption: "Технические справочники",
+      icon: "code",
+      link: "/spravochnik",
+      visible: roles.includes("USER"),
+    },
+    {
+      title: "Контрагенты",
+      caption: "Партнеры",
+      icon: "code",
+      link: "/kagent",
+      visible: roles.includes("USER"),
+    },
+    {
+      title: "Пекарни",
+      caption: "Все пекарни",
+      icon: "home_work",
+      link: "/bakery",
+      visible: roles.includes("USER"),
+    },
+    {
+      title: "Продукция",
+      caption: "Номенклатура продукции",
+      icon: "home_work",
+      link: "/products",
+      visible: roles.includes("USER"),
+    },
+    {
+      title: "Цены",
+      caption: "Докумены для изменения цен",
+      icon: "attach_money",
+      link: "/docprice",
+      visible: roles.includes("USER"),
+    },
+    // {
+    //   title: "Номенклатура",
+    //   caption: "номенклатура ввод",
+    //   icon: "dynamic_form",
+    //   link: "/nomencl",
+    // },
+    {
+      title: "Спецификации магазина",
+      caption: "Спецификации магазинов",
+      icon: "code",
+      link: "/specstore",
+      visible: roles.includes("ADMIN"),
+    },
+    // {
+    //   title: "Продажи",
+    //   caption: "продажи, регистрация",
+    //   icon: "dynamic_form",
+    //   link: "/prodaja",
+    // },
+    {
+      title: "Все",
+      caption: " таблицы",
+      icon: "dynamic_form",
+      link: "/tables",
+      visible: roles.includes("MODERATOR"),
+    },
+    {
+      title: "Пользователи",
+      caption: "что-то про таблицы",
+      icon: "code",
+      link: "/tables/users",
+      visible: roles.includes("MODERATOR"),
+    },
+    // {
+    //   title: "Пекарни",
+    //   caption: "Список",
+    //   icon: "code",
+    //   link: "/tables/bakehouses",
+    // },
 
-  {
-    title: "Фото",
-    caption: "Тест фотографии",
-    icon: "close",
-    link: "/photo",
-  },
-  {
-    title: "Загрузка XLS",
-    caption: "Тест",
-    icon: "close",
-    link: "/xls",
-  },
-  {
-    title: "Получим PDF",
-    caption: "pdf",
-    icon: "close",
-    link: "api/pdf",
-  },
-];
+    {
+      title: "Фото",
+      caption: "Тест фотографии",
+      icon: "close",
+      link: "/photo",
+      visible: roles.includes("ADMIN"),
+    },
+    {
+      title: "Загрузка XLS",
+      caption: "Тест",
+      icon: "close",
+      link: "/xls",
+      visible: roles.includes("ADMIN"),
+    },
+    {
+      title: "Получим PDF",
+      caption: "pdf",
+      icon: "close",
+      link: "api/pdf",
+      visible: roles.includes("ADMIN"),
+    },
+  ];
+}
 </script>

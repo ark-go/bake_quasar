@@ -43,9 +43,10 @@
 </template>
 <script>
 import { ref } from "vue";
-import { axios, emitter } from "boot/axios";
+import { axios } from "boot/axios";
 import { useQuasar } from "quasar";
 import { useRouter, useRoute } from "vue-router";
+import { useMainStore } from "stores/mainStore.js";
 import { useUserStore } from "stores/userStore.js";
 import { storeToRefs } from "pinia";
 export default {
@@ -53,6 +54,7 @@ export default {
   setup() {
     const user = useUserStore(); //
     const router = useRouter();
+    const mainStore = useMainStore();
     const { notify } = useQuasar();
     const login = ref("");
     const password = ref("");
@@ -84,8 +86,7 @@ export default {
         });
         if (loginResult?.email) {
           user.userInfo = loginResult;
-          //emitter.emit("on-login", loginResult.email);
-          emitter.emit("close-login");
+          mainStore.modalLoginOpen = false;
         }
         router.go(); //! перезагрузка окна
         //window.location.reload();

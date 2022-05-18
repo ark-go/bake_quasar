@@ -3,7 +3,7 @@ import axios from "axios";
 import mitt from "mitt";
 import { Cookies } from "quasar";
 import { useUserStore } from "stores/userStore.js";
-
+import { useMainStore } from "stores/mainStore.js";
 const emitter = mitt();
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -45,7 +45,9 @@ export default boot(({ app }) => {
     console.log("axios вход ", response.headers?.["x-info-site"]);
     if (response.headers?.["x-info-site"] == "NoLogin") {
       user.userInfo = {};
-      emitter.emit("on-login", "NoLogin");
+      let mainStore = useMainStore();
+      mainStore.modalLoginOpen = true;
+      // emitter.emit("on-login", "NoLogin");
     }
     return response;
   });

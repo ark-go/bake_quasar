@@ -42,7 +42,7 @@
   </div>
 </template>
 <script>
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import { axios } from "boot/axios";
 import { useQuasar } from "quasar";
 import { useRouter, useRoute } from "vue-router";
@@ -88,6 +88,7 @@ export default {
           user.userInfo = loginResult;
           mainStore.modalLoginOpen = false;
         }
+
         router.go(); //! перезагрузка окна
         //window.location.reload();
         //router.push({ path: "/" });

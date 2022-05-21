@@ -1,5 +1,6 @@
 export async function load(pool, req, tabname, timezone, idOne) {
   let wher = idOne ? "WHERE " + tabname + ".id = $2" : "";
+  // products
   let sqlP = {
     text: /*sql*/ `
       SELECT
@@ -9,11 +10,12 @@ export async function load(pool, req, tabname, timezone, idOne) {
       -- ${tabname}.unit_id,
       -- unit.name AS unit_name,
       unit.name AS unit_name,
+      (select count(*) from productingred where productingred.products_id = ${tabname}.id) AS count_ingredients,
       ${tabname}.productvid_id,
       concat(productassortment.name,' ',productvid.name,' ',productvid.nameext) AS productvid_name,
       productassortment.prefix AS prefix,
       ${tabname}.description,
-      ${tabname}.document_num,
+      ${tabname}.document_num, -- TTK
       -- ${tabname}.document_date,
       to_char(${tabname}.document_date,  'DD.MM.YYYY') as document_date,
       ${tabname}.article_buh,

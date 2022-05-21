@@ -12,7 +12,7 @@
     <div class="ark-grid">
       <div class="ark-grid-left">
         <transition appear name="comp-fade" mode="out-in">
-          <keep-alive include="products-tree">
+          <keep-alive include="ProductsTree">
             <products-tree
               v-if="!currentRowText"
               style="min-width: 100px"

@@ -195,8 +195,8 @@ export async function priceAllPdf(req, res, result) {
 
     //pdfDoc.pipe(fs.createWriteStream("tables5.pdf"));
     //res.setHeader("Content-Length", stat.size);
-    res.setHeader("Content-Type", "application/pdf");
-    //res.setHeader("Content-Disposition", "attachment; filename=Primer.pdf");
+    res.setHeader("Content-Type", "application/pdf"); // открыть или скачать
+    //res.setHeader("Content-Disposition", "attachment; filename=Primer.pdf"); // скачать
     // if (!req.body?.command) {
     //   pdfDoc.pipe(res);
     //   pdfDoc.end();
@@ -205,7 +205,7 @@ export async function priceAllPdf(req, res, result) {
     //     filename: fileName + " " + dateCurr + ".pdf",
     //   });
     // } else {
-    console.log("Выход pdf");
+    //console.log("Выход pdf");
     const pdfDocGenerator = pdfMake.createPdf(docDefinition);
     let g = await toDateUrl(pdfDocGenerator);
 

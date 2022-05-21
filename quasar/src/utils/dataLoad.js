@@ -1,5 +1,5 @@
 import { useState } from "src/utils/useState.js";
-import { Notify } from "quasar";
+import { Notify, Loading } from "quasar";
 import { axios } from "boot/axios";
 import { Dark } from "quasar";
 /**
@@ -22,6 +22,9 @@ export async function dataLoad(url, data, logInfo = "") {
     textColor: "white",
   });
   try {
+    Loading.show({
+      delay: 400, // ms
+    });
     let resp = await axios.post(url, data);
     let respData = resp.data;
     let keyRes = Object.keys(respData);
@@ -45,8 +48,10 @@ export async function dataLoad(url, data, logInfo = "") {
       timeout: 2500, // we will timeout it in 2.5s
       progress: true,
     });
+    Loading.hide();
     return respData;
   } catch (err) {
+    Loading.hide();
     console.log("XXXXXXXXX", err.toString());
     let caption = ["NoAccess", "noautorizate"].includes(err.toString())
       ? "У вас нет доступа!"

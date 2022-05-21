@@ -30,7 +30,7 @@
       </q-item-section>
     </q-item>
     <q-item
-      v-if="productOne"
+      v-if="productOne && selectedRowsVuex.products[0]?.count_ingredients > 0"
       clickable
       v-ripple
       @click="$emit('onClickPdf', selectedRowsVuex.products[0])"

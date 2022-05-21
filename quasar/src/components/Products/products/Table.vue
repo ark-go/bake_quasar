@@ -292,6 +292,13 @@ export default defineComponent({
 let visibleOffDefault = ["user_email", "user_date"];
 let columns = [
   {
+    name: "count_ingredients",
+    label: "*",
+    align: "right",
+    field: "count_ingredients",
+    required: true,
+  },
+  {
     name: "productvid_name",
     label: "Вид продукта",
     align: "left",

@@ -36,7 +36,7 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, onMounted, watch } from "vue";
 
 export default defineComponent({
   name: "ProductsTree",
@@ -55,34 +55,33 @@ export default defineComponent({
     // watch(selected, (val, m, k) => {
     //   console.log("SelecteNode", val, m, k);
     // });
-
+    onMounted(() => {
+      selected.value = "start"; // установим выбор
+      onSelected("start"); // вызовем событие?
+      // let nodeStat = refTree.value.getNodeByKey("start");
+      // console.log(nodeStat);
+      // nodeStat.selected = true;
+      //  onSelected("start");
+    });
+    function onSelected(key /* node-key */) {
+      let node = refTree.value.getNodeByKey(key);
+      let isExp = refTree.value.isExpanded(key);
+      console.log("раскрыт", key, isExp);
+      refTree.value.setExpanded(key, !isExp);
+      //node = refTree.value.getNodeByKey(key); // после снятия
+      if (node) emit("update:selectedNode", node);
+      console.log("on selected tree", key, node);
+      emit("onSelectedNode", node);
+    }
     return {
       refTree,
       filter,
       filterRef,
-
+      onSelected,
       dataTree,
       expanded,
       selected,
-      onSelected(key /* node-key */) {
-        let node = refTree.value.getNodeByKey(key);
-        let isExp = refTree.value.isExpanded(key);
-        console.log("раскрыт", key, isExp);
-        refTree.value.setExpanded(key, !isExp);
-        //node = refTree.value.getNodeByKey(key); // после снятия
-        if (node) emit("update:selectedNode", node);
-        console.log("on selected tree", key, node);
 
-        emit("onSelectedNode", node);
-        //props.onSelectedNode(node);
-
-        //  emit("onSelected", node);
-        // if (key) {
-        //   // null - если был выбран тотже
-        //   let isExpand = refTree.value.isExpanded(key);
-        //   refTree.value.setExpanded(key, !isExpand);
-        // }
-      },
       resetFilter() {
         filter.value = "";
         filterRef.value.focus();
@@ -116,42 +115,44 @@ export default defineComponent({
 const dataTree = [
   {
     key: 1,
-    label: "Продукция, сырьё",
+    label: "Продукция",
     //icon: "restaurant_menu",
     disabled: false,
     children: [
       {
-        key: 11,
+        key: "start",
         label: "Продукция",
         table: "products",
+        //selectable: true,
       },
       {
         key: 12,
         label: "Товар",
         table: "productvid",
       },
-      { key: 13, label: "Cырьё", table: "productraw" },
+      {
+        key: 13,
+        label: "Ассортимент",
+        table: "productassortment",
+      },
+      {
+        key: 14,
+        label: "Тип продукции",
+        table: "producttype",
+      },
     ],
 
     // let DialogForm = () => import('../components/DialogForm.vue')
   },
   {
     key: 2,
-    label: "Справочники",
+    label: "Сырье",
     //icon: "restaurant_menu",
     disabled: false,
     children: [
-      {
-        key: 21,
-        label: "Тип продукции",
-        table: "producttype",
-      },
-      {
-        key: 22,
-        label: "Ассортимент",
-        table: "productassortment",
-      },
-      { key: 23, label: "Вид сырья", table: "productrawvid" },
+      { key: 22, label: "Cырьё", table: "productraw" },
+
+      { key: 23, label: "Тип сырья", table: "productrawvid" },
     ],
 
     // let DialogForm = () => import('../components/DialogForm.vue')

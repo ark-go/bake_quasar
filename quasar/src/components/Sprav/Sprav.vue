@@ -1,6 +1,6 @@
 <template>
   <ark-card
-    title="Технические справочники"
+    title="Cправочники"
     subTitle=""
     style="width: 700px"
     :buttonArr="buttonArr"

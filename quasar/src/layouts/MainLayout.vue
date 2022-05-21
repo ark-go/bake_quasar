@@ -253,13 +253,7 @@ function linkList(roles = [], email) {
       link: "/login",
       visible: !email,
     },
-    {
-      title: "Справочник",
-      caption: "Технические справочники",
-      icon: "code",
-      link: "/spravochnik",
-      visible: roles.includes("USER"),
-    },
+
     {
       title: "Контрагенты",
       caption: "Партнеры",
@@ -286,6 +280,13 @@ function linkList(roles = [], email) {
       caption: "Докумены для изменения цен",
       icon: "attach_money",
       link: "/docprice",
+      visible: roles.includes("USER"),
+    },
+    {
+      title: "Справочники",
+      //  caption: "Технические справочники",
+      icon: "code",
+      link: "/spravochnik",
       visible: roles.includes("USER"),
     },
     // {

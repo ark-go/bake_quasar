@@ -39,6 +39,7 @@
                 >Maximize</q-tooltip
               >
             </q-btn>
+            {{ platform }}
             <q-btn dense flat icon="close" v-close-popup>
               <q-tooltip class="bg-white text-primary">Close</q-tooltip>
             </q-btn>
@@ -66,15 +67,18 @@
 import { ref, watchEffect } from "vue";
 import { arkVuex } from "src/utils/arkVuex"; // const { pdfWindow } = createArkVuex();
 import { dataLoad } from "src/utils/ark.js";
+import { useQuasar } from "quasar";
 import { dom } from "quasar";
 export default {
   setup() {
+    const q = useQuasar();
     const { pdfWindow } = arkVuex();
     const command = ref(pdfWindow.command);
     const pdfSrc = ref("");
     const dialog = ref(pdfWindow.show);
     const refFull = ref(0);
     const refHeader = ref(0);
+    const platform = ref("");
     const body = ref(0);
     const { style, height } = dom; //import { dom } from "quasar";
     console.log("SHOW SHOW SHOW", pdfWindow.show);
@@ -105,13 +109,48 @@ export default {
       if (res.error) {
         return console.log("Ошибка запроса PDF:", res.error);
       } else {
-        pdfSrc.value = res.result;
+        if (q.platform.is.android) {
+          platform.value = "Андроид";
+          reDataUrl(res.result);
+        } else {
+          platform.value = "Не андроид";
+          pdfSrc.value = res.result;
+        }
         console.log("pdfSrc", pdfSrc.value);
         dialog.value = true;
       }
     }
+    function reDataUrl(dataUrl) {
+      // let url = (
+      //   window.URL ||
+      //   window.webkitURL ||
+      //   window ||
+      //   {}
+      // ).createObjectURL(blob);
+      // workaround for mobile playback, where it didn't work on chrome/android.
+      // fetch blob at url using xhr, and use url generated from that blob.
+      // see issue: https://code.google.com/p/chromium/issues/detail?id=227476
+      // thanks, gbrlg
+      var xhr = new XMLHttpRequest();
+      xhr.open("GET", dataUrl, true);
+      xhr.responseType = "blob";
+      xhr.onreadystatechange = function () {
+        if (xhr.readyState === 4 && xhr.status == 200) {
+          var url = (
+            window.URL ||
+            window.webkitURL ||
+            window ||
+            {}
+          ).createObjectURL(xhr.response);
 
+          pdfSrc.value = url;
+          // now url is ready
+        }
+      };
+      xhr.send();
+    }
     return {
+      platform,
       pdfSrc,
       command,
       dialog,

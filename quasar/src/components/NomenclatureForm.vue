@@ -150,7 +150,7 @@ export default {
       // ---------- vidRaw ------------ Вид сырья
       vidRaw.value = {
         options: props.spravAll.value.vidraw,
-        nameLabel: "Вид сырья.",
+        nameLabel: "Тип сырья.",
       };
       vidRawCurr.value = null;
     }

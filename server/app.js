@@ -11,6 +11,7 @@ import connectPg from "connect-pg-simple";
 import { rootDir } from "./dirModule.cjs";
 import { mainRoutes } from "./routes/mainRoutes.js";
 import { bot, botSendMessage } from "./tg/startTgBot.js";
+import { configureSession } from "./configureSession.js";
 // globalThis.tgBot = function (message, id = process.env.TG_adminId) {
 //   try {
 //     bot.telegram.sendMessage(id, message);
@@ -29,18 +30,26 @@ app.set("trust proxy", 1); // ..говорим что доверяем перв�
 app.use(cookieParser());
 // ---------------------- helmet
 app.use(helmet());
+app.use(helmet.xssFilter()); // ARK: Обязательно проверить в Nginx и там установить !! add_header X-XSS-Protection "1; mode=block";
+app.use(helmet.hidePoweredBy({ setTo: "PHP 7.2.0" }));
+app.disable("x-powered-by");
+app.use(helmet.referrerPolicy({ policy: "same-origin" }));
+app.use(helmet.frameguard({ action: "sameorigin" }));
+app.use(noCache());
 app.use(
-  helmet({
-    xssFilter: false, // ARK: Обязательно проверить в Nginx и там установить !! add_header X-XSS-Protection "1; mode=block";
+  helmet.contentSecurityPolicy({
+    directives: {
+      frameAncestors: ["'self'", "https:", "data:"],
+      frameAncestors: ["'self'", "https:", "data:"],
+      // "font-src": ["'self'", "https:", "data:"],
+      // "style-src": ["'self'", "'unsafe-inline'"],
+    },
   })
 );
-app.use(helmet.hidePoweredBy({ setTo: "PHP 7.2.0" }));
-app.use(helmet.referrerPolicy({ policy: "same-origin" }));
-app.use(noCache());
-
 app.use(function (req, res, next) {
   // разрешаем грузить изображения с URL-адресами данных и PDF в том числе
-  res.setHeader("Content-Security-Policy", "img-src 'self' data:;");
+  //res.setHeader("Content-Security-Policy", "img-src 'self' 'data:';");
+  //res.setHeader("Content-Security-Policy", "frame-ancestors data:;");
   return next();
   // https://lollyrock.com/posts/content-security-policy/
   // шрифты Content-Security-Policy "font-src 'self' data:;"
@@ -61,38 +70,8 @@ app.use(
     parameterLimit: 300,
   })
 );
+const expSession = configureSession(app);
 
-// ------------- redis store
-import { redisStore } from "./utils/ioredisStore.js";
-// ------- expressSession
-let expSession = expressSession({
-  name: process.env.COOKIE_NAME,
-  secret: process.env.SESSION_SECRET, // Любой ключ но требуется переменная SESSION_SECRET
-  cookie: { secure: false, sameSite: true, maxAge: 7 * 60 * 60 * 24 * 1000 }, // дней сек мин часы 1000
-  resave: true, // false - не пересохранять сессиию если ничего не менялось
-  saveUninitialized: false, // если true, то в хранилище будут попадать пустые сессии
-  rolling: true, // нужно ли устанавливать идентификатор сессии cookie на каждый запрос
-  store: redisStore,
-  // store: new pgSession({
-  //   pool: pool, // Connection pool
-  // }),
-});
-app.use(expSession);
-// app.use(function (req, res, next) {
-//   // тут session уже из базы если были нужные куки
-//   console.log("смотрим:", req?.session?.showAd);
-//   if (!req?.session?.user?.id) {
-//     res.send("xernja takaja");
-//   } else {
-//     next();
-//   }
-// });
-app.use((req, res, next) => {
-  if (!req.session) {
-    console.log("ОШИБКА: нет сессии! инфо... не обрабатывается..");
-  }
-  next();
-});
 app.use((req, res, next) => {
   res.append(
     "x-info-site",
@@ -152,4 +131,23 @@ if (app.get("env") === "development") {
     console.log("Ошибка X00:", err.message, "\rstack error:", err.status);
   });
 }
+//--------------------- прочитаем роуты ----
+var route,
+  routes = [];
+
+app._router.stack.forEach(function (middleware) {
+  if (middleware.route) {
+    // routes registered directly on the app
+    routes.push(middleware.route);
+  } else if (middleware.name === "router") {
+    // router middleware
+    middleware.handle.stack.forEach(function (handler) {
+      route = handler.route;
+      console.log("rout", route);
+      route && routes.push(route);
+    });
+  }
+});
+console.log("Роуты", routes.length, routes);
+//---------------------- конец роутов
 export { app, expSession };

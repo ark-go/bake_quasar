@@ -17,7 +17,6 @@ export default defineComponent({
     let browser = detect();
     browser.timezone = Intl.DateTimeFormat().resolvedOptions().timeZone; // добавим таймзону
     Cookies.set("browser", browser); // в отправку
-
     const { notify } = useQuasar();
     const UserStore = useUserStore();
     dataLoad(UserStore);

@@ -289,7 +289,7 @@ let columns = [
   },
   {
     name: "productrawvid_name",
-    label: "Вид сырья",
+    label: "Тип сырья",
     align: "left",
     field: "productrawvid_name",
   },

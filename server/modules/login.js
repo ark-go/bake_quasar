@@ -27,7 +27,7 @@ async function getUser(req, res) {
   let result = await pool.query(sqlP);
   //console.log("userLoad", res);
   result = result.rowCount > 0 ? result.rows[0] : null;
-  req.session.test = { rr: "ЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖ" };
+  // req.session.test = { rr: "ЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖЖ" };
   if (result) {
     console.log("Найдены данные для:", result?.email);
     req.session.user = {
@@ -89,7 +89,9 @@ async function getUser(req, res) {
         if (!verifyToken) {
           let sec = 60 - new Date().getSeconds();
           sec = sec > 30 ? sec - 30 : sec; // 30 сек время действия кода
-          botSendMessage("Ваш токен: " + token + " ( " + sec + " время )");
+          botSendMessage(
+            "Ваш токен: " + token + " ( " + sec + " сек. осталось )"
+          );
         }
       } else {
         // в базе нет но есть в темпе проверяем по нему
@@ -144,22 +146,8 @@ async function getUser(req, res) {
         delete req.session.userTmp;
         let active = await updateActiveUser(req.session?.user?.id, true);
         req.session.user.active = active;
-        //req.session.reload();
-        req.session.save(function (err) {
-          if (err) {
-            console.log("Ошибка при сохранении req.session");
-          }
-          res.json({
-            loginYes: req.session.user.username || req.session.user.email,
-            username: result.username,
-            email: result.email,
-          });
-        });
-        // res.json({
-        //   loginYes: req.session.user.username || req.session.user.email,
-        //   username: result.username,
-        //   email: result.email,
-        // });
+        req.session.login(req.session.user); //! Внимание !
+        res.json({ loginYes: true });
       }
       return;
     }

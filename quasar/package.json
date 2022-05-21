@@ -1,6 +1,6 @@
 {
   "name": "bake-and-tandoor",
-  "version": "0.10.37",
+  "version": "0.10.47",
   "description": "bake and tandoor",
   "productName": "bake",
   "author": "Arkadii <arkadii@yandex.ru>",
@@ -16,7 +16,7 @@
   "dependencies": {
     "@babel/eslint-parser": "^7.17.0",
     "@quasar/babel-preset-app": "^2.0.1",
-    "@quasar/extras": "^1.0.0",
+    "@quasar/extras": "^1.14.0",
     "apexcharts": "^3.33.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
@@ -24,7 +24,7 @@
     "http-proxy-middleware": "^2.0.6",
     "mitt": "^3.0.0",
     "pinia": "^2.0.11",
-    "quasar": "^2.6.0",
+    "quasar": "^2.7.0",
     "simple-vue-camera": "^1.0.2",
     "socket.io-client": "^4.5.0",
     "vue": "^3.0.0",
@@ -34,7 +34,7 @@
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
-    "@quasar/app-vite": "^1.0.0-beta.14",
+    "@quasar/app-vite": "^1.0.0",
     "@quasar/quasar-app-extension-qpdfviewer": "^2.0.0-alpha.6",
     "autoprefixer": "^10.4.2",
     "electron": "^18.2.0",

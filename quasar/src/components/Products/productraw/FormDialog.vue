@@ -23,7 +23,7 @@
       <div class="row" style="justify-content: center">
         <div class="column card-body">
           <field-select
-            label="Вид сырья"
+            label="Тип сырья"
             :sprav="allSprav.productrawvid"
             v-model:selectId="currentRow.productrawvid_id"
           />

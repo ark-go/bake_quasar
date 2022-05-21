@@ -39,8 +39,8 @@ app.use(noCache());
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
-      frameAncestors: ["'self'", "https:", "data:"],
-      frameAncestors: ["'self'", "https:", "data:"],
+      frameAncestors: ["'self'", "data:"],
+      //frameAncestors: ["'self'", "https:", "data:"],
       // "font-src": ["'self'", "https:", "data:"],
       // "style-src": ["'self'", "'unsafe-inline'"],
     },

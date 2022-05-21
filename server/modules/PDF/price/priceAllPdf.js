@@ -206,7 +206,9 @@ export async function priceAllPdf(req, res, result) {
     //   });
     // } else {
     //console.log("Выход pdf");
+
     const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+
     let g = await toDateUrl(pdfDocGenerator);
 
     return {

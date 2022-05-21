@@ -164,8 +164,13 @@ export async function ingredientSostavPdf(req, res, result) {
     //     filename: "смотри меня " + dateCurr + ".pdf",
     //   });
     // } else {
-    console.log("Выход pdf");
+    console.log("Выход pdf ingredientSostavPDf");
     const pdfDocGenerator = pdfMake.createPdf(docDefinition);
+    // pdfDocGenerator.getBase64((b64)=>{
+    // return {
+    //   result: await toBase64(pdfDocGenerator),
+    // };
+    // })
     let g = await toDateUrl(pdfDocGenerator);
     // sendDocument(req, {
     //   source: pdfDocGenerator,
@@ -196,6 +201,13 @@ export async function ingredientSostavPdf(req, res, result) {
     return new Promise(function (resolve, reject) {
       pdfDocGenerator.getDataUrl((dataUrl) => {
         resolve(dataUrl);
+      });
+    });
+  }
+  function toBase64(pdfDocGenerator) {
+    return new Promise(function (resolve, reject) {
+      pdfDocGenerator.getBase64((base64) => {
+        resolve(base64);
       });
     });
   }

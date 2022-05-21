@@ -85,14 +85,20 @@ export default defineComponent({
       let mess = "Загрузка PDF";
       let res = await dataLoad("/api/pdfMainLoad", props.param, mess);
       if (res.result) {
-        //   if (q.platform.is.android) {
-        //     platform.value = "Андроид" + res.result;
-        //     //pdfData.value = res.result;
-        //  //   reDataUrl(res.result);
-        //   } else {
-        //  platform.value = "Не андроид";
-        pdfData.value = res.result;
-        //}
+        if (q.platform.is.android) {
+          platform.value = "Андроид"; // + res.result;
+          var url = (
+            window.URL ||
+            window.webkitURL ||
+            window ||
+            {}
+          ).createObjectURL(res.result);
+          pdfData.value = url;
+          //  //   reDataUrl(res.result);
+        } else {
+          //  platform.value = "Не андроид";
+          pdfData.value = res.result;
+        }
         //pdfData.value = res.result;
       } else {
         pdfData.value = null;

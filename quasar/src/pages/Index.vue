@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center"> Привет. </q-page>
+  <q-page class="flex flex-center"> Привет.! </q-page>
 </template>
 
 <script>

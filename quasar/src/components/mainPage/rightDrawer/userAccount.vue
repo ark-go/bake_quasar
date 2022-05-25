@@ -33,7 +33,7 @@ import { useMainStore } from "stores/mainStore.js";
 import { useRouter, useRoute } from "vue-router";
 
 export default defineComponent({
-  name: "RightItems",
+  name: "userAccount",
   setup() {
     const userStore = useUserStore();
     const mainStore = useMainStore();

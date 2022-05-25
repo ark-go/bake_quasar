@@ -2,7 +2,7 @@
   <ark-card
     title="Продукция"
     :subTitle="currentLabel"
-    style="width: 700px"
+    :style="{ width: cardMain.width.curr + 'px' }"
     :pageMaxHeight="pageMaxHeight"
     :buttonArr="buttonArr"
     @buttonClick="buttonClick"
@@ -56,6 +56,7 @@ import {
   computed,
   onActivated,
   nextTick,
+  onMounted,
 } from "vue";
 import { dataLoad } from "src/utils/ark.js";
 import NoTable from "components/Products/NoTable.vue";
@@ -69,6 +70,7 @@ import ProductsAction from "./ProductsAction.vue";
 import { emitter } from "../../boot/axios";
 import { getPDF } from "src/utils/getPDF.js";
 import PdfDialog from "./PdfDialog.vue";
+import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 //import { arkVuex } from "src/utils/arkVuex"; // const { pdfWindow } = createArkVuex();
 export default defineComponent({
   name: "f-products",
@@ -83,6 +85,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const { pdfWindow } = arkVuex();
     const $q = useQuasar();
+    const { cardMain, currentPage } = storeToRefs(usePagesSetupStore());
     const { selectedRowsVuex } = arkVuex();
     const selectedNode = ref({});
     const selectedNode2 = ref({});
@@ -92,6 +95,9 @@ export default defineComponent({
     const currentLabel = ref(null);
     const showPdfDialog = ref(false);
     const pdfDialogParam = ref({});
+    onMounted(() => {
+      currentPage.value = "products";
+    });
     const currentRowText = computed(() => {
       let row = selectedRowsVuex?.products[0];
       if (row) {
@@ -159,7 +165,6 @@ export default defineComponent({
 
     const buttonArr = ref([
       { key: "backRoute", name: "Назад" },
-      { key: "onToRecept", name: "Туда" },
       //  { key: "Добавить", name: "Второй" },
     ]);
     function buttonClick(val) {
@@ -192,6 +197,7 @@ export default defineComponent({
       }
     }
     return {
+      cardMain,
       pdfDialogParam,
       menuClick,
       showPdfDialog,
@@ -222,12 +228,15 @@ export default defineComponent({
   },
 });
 </script>
+
+<style lang="scss" scoped></style>
+
 <style lang="scss" scoped>
 .ark-grid {
   display: grid;
   //  padding: 6px;
   gap: 10px;
-  grid-template-columns: 40% 1fr;
+  grid-template-columns: 30% 1fr;
   overflow: auto; // для центра
   max-height: inherit; // размер центра
   .ark-grid-left {

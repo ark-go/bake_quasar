@@ -17,7 +17,7 @@
       title="Тип продукции"
       :rows="rows"
       :columns="columns"
-      :visible-columns="visibleColumns"
+      :visible-columns="cardMain.columnDocDocument"
       @row-dblclick="dblClickRow"
     >
       <template v-slot:body="props">
@@ -40,7 +40,7 @@
         <q-space />
 
         <q-select
-          v-model="visibleColumns"
+          v-model="cardMain.columnDocDocument"
           multiple
           dense
           options-dense
@@ -64,6 +64,7 @@
 import {
   defineComponent,
   ref,
+  reactive,
   onMounted,
   computed,
   watch,
@@ -77,6 +78,7 @@ import TableBody from "./TableBody.vue";
 import FindTable from "./FindTable.vue";
 import { useQuasar } from "quasar";
 import { useDocPrice } from "stores/storeDocPrice.js";
+import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 //import { emitter } from "src/boot/axios";
 //import { Meta } from "quasar";
 
@@ -96,17 +98,20 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const $q = useQuasar();
+    const { cardMain } = storeToRefs(usePagesSetupStore());
     const docPrice = useDocPrice();
     const rows = ref([]);
-    const visibleColumns = ref([]);
     const refTable = ref(null);
     const allSprav = ref();
+    const paginationСatalog = ref({
+      rowsPerPage: cardMain.value.rowsPerPage.curr,
+    });
+    // paginationСatalog.value.rowsPerPage = cardMain.value.rowsPerPage.curr;
+    watchEffect(() => {
+      paginationСatalog.value.rowsPerPage = cardMain.value.rowsPerPage.curr;
+    });
     //const visibleOffDefault = ref([]);
     //const columns = ref([]);
-    onMounted(async () => {
-      // await loadTable();
-      columnFilter();
-    });
     function onRowClick(row, isTableButton) {
       if (isTableButton) {
         docPrice.currRowDoc = row;
@@ -117,20 +122,6 @@ export default defineComponent({
         docPrice.currRowDoc = {};
       else docPrice.currRowDoc = row;
     }
-    // async function onSave(row) {
-    //   if (row?.id) console.log("Готов записывать Обновления", row);
-    //   else console.log("Готов записывать Новый объект", row);
-    //   console.log("SAVE1: ", row);
-    //   await addTable(row);
-    // }
-    function columnFilter() {
-      visibleColumns.value = [];
-      // columns.forEach((item, index, array) => {
-      //   if (visibleOffDefault.includes(item.name)) return;
-      //   visibleColumns.value.push(item.name);
-      // });
-    }
-
     async function loadTable(datRange = props.dateRange) {
       let mess = "Загрузка документов";
       let res = await dataLoad(
@@ -250,6 +241,7 @@ export default defineComponent({
       emit("onShowDialog", row);
     }
     return {
+      cardMain,
       docPrice,
       loadTable,
       addTable,
@@ -259,12 +251,9 @@ export default defineComponent({
       allSprav,
       onDelete,
       rows,
+      paginationСatalog,
       filter: ref(""),
-      paginationСatalog: ref({
-        rowsPerPage: 10,
-      }),
       columns,
-      visibleColumns,
       visibleOffDefault,
       async onAdd(row) {
         await showDialogStart(row);

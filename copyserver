@@ -12,7 +12,6 @@ rsync -avzh \
    --include "server/node_modules/***" \
    --include "quasar/node_modules/***" \
    --exclude .git/ \
-   --exclude image/ \
    --exclude server/.env \
    --exclude server/config.js \
    --exclude quasar/node_modules/.cache/terser-webpack-plugin/

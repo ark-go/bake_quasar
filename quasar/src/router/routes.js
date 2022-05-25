@@ -2,7 +2,12 @@ const routes = [
   {
     path: "/",
     component: () => import("layouts/MainLayout.vue"),
-    children: [{ path: "", component: () => import("pages/Index.vue") }],
+    children: [
+      {
+        path: "",
+        component: () => import("components/PageStart/PageStart.vue"),
+      },
+    ],
   },
   {
     path: "/charts",
@@ -119,6 +124,16 @@ const routes = [
       {
         path: "",
         component: () => import("components/Docprice/PageDocprice.vue"),
+      },
+    ],
+  },
+  {
+    path: "/bakeryttk",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("components/BakeryTTK/PageBakeryTTK.vue"),
       },
     ],
   },

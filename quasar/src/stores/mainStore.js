@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+//import { useQuasar } from "quasar";
 
 export const useMainStore = defineStore("MainStore", {
   state: () => {
@@ -10,4 +11,10 @@ export const useMainStore = defineStore("MainStore", {
       modalLoginOpen: false,
     };
   },
+  // getters: {
+  //   isMobile: (state) => {
+  // //    let { platform } = useQuasar();
+  // //    return platform.is.mobile;
+  //   },
+  // },
 });

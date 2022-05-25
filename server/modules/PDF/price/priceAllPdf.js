@@ -31,6 +31,14 @@ export async function priceAllPdf(req, res, result) {
     pageSize: "A4",
     pageOrientation: pageOrient,
     pageMargins: [25, 20, 15, 20], // [left, top, right, bottom]
+    info: {
+      creator: "ХиТ",
+      producer: "ХиТ",
+      title: "Тест",
+      //  author: 'john doe',
+      subject: "Отчет",
+      //  keywords: 'keywords for document',
+    },
     watermark: {
       text: "Лепешки",
       color: "silver",
@@ -210,7 +218,7 @@ export async function priceAllPdf(req, res, result) {
     const pdfDocGenerator = pdfMake.createPdf(docDefinition);
 
     let g = await toDateUrl(pdfDocGenerator);
-
+    // blob res.setHeader('Access-Control-Allow-Origin','*');
     return {
       result: g,
     };

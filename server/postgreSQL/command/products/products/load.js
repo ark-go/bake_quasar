@@ -10,6 +10,7 @@ export async function load(pool, req, tabname, timezone, idOne) {
       -- ${tabname}.unit_id,
       -- unit.name AS unit_name,
       unit.name AS unit_name,
+      producttype.prefix AS producttype_prefix,
       (select count(*) from productingred where productingred.products_id = ${tabname}.id) AS count_ingredients,
       ${tabname}.productvid_id,
       concat(productassortment.name,' ',productvid.name,' ',productvid.nameext) AS productvid_name,
@@ -29,6 +30,7 @@ export async function load(pool, req, tabname, timezone, idOne) {
       
       LEFT JOIN  productvid ON productvid.id = ${tabname}.productvid_id
       LEFT JOIN  productassortment ON productassortment.id = productvid.productassortment_id
+      LEFT JOIN  producttype ON producttype.id = productassortment.producttype_id
       LEFT JOIN  unit ON unit.id = productvid.unit_id
     -- LEFT JOIN  productassortment ON productassortment.id = productvid.productassortment_id
        ${wher}

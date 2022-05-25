@@ -7,6 +7,7 @@ export async function load(pool, req, tabname, timezone, idOne) {
       ${tabname}.name,
       ${tabname}.producttype_id,
       producttype.name AS producttype_name,
+      producttype.prefix AS producttype_prefix,
       ${tabname}.prefix
       -- -- -- -- 
       FROM ${tabname}

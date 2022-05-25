@@ -283,6 +283,12 @@ export default defineComponent({
 let visibleOffDefault = ["user_email", "user_date"];
 let columns = [
   {
+    name: "producttype_prefix",
+    label: "Тип",
+    align: "left",
+    field: "producttype_prefix",
+  },
+  {
     name: "productassortment_name",
     label: "Ассортимент",
     align: "left",

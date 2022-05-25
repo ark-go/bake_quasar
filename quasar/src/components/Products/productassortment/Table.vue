@@ -277,6 +277,12 @@ let visibleOffDefault = [
 ];
 let columns = [
   {
+    name: "producttype_prefix",
+    label: "Тип",
+    align: "left",
+    field: "producttype_prefix",
+  },
+  {
     name: "name",
     label: "Наименование",
     align: "left",

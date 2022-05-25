@@ -2,27 +2,47 @@
   <q-layout view="hHh Lpr fFf">
     <q-header elevated>
       <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
+        <div class="title-grid">
+          <div class="title-grid-item-left">
+            <q-btn
+              flat
+              dense
+              round
+              icon="menu"
+              aria-label="Menu"
+              @click="leftDrawerOpen = !leftDrawerOpen"
+            />
 
-        <q-toolbar-title>
-          Хлеб и Тандыр {{ ioSocket.versionSite }}</q-toolbar-title
-        >
-
-        <div>{{ userInfo.username || userInfo.email }}</div>
-        <q-btn
-          dense
-          flat
-          round
-          icon="menu"
-          @click="rightDrawerOpen = !rightDrawerOpen"
-        />
+            <q-toolbar-title>
+              <router-link to="/" style="color: white; text-decoration: none">
+                <q-avatar>
+                  <img src="/public/icons/favicon-96x96.png" />
+                </q-avatar>
+                {{ titleBrand }}
+              </router-link>
+            </q-toolbar-title>
+          </div>
+          <div class="title-grid-item-center">
+            <q-btn
+              flat
+              dense
+              round
+              icon="restaurant_menu"
+              to="/"
+              style="font-weight: bold"
+            />
+          </div>
+          <div class="title-grid-item-right">
+            <div>{{ userInfo.username || userInfo.email }}</div>
+            <q-btn
+              dense
+              flat
+              round
+              icon="menu"
+              @click="rightDrawerOpen = !rightDrawerOpen"
+            />
+          </div>
+        </div>
       </q-toolbar>
     </q-header>
 
@@ -47,7 +67,7 @@
     >
       <right-items></right-items>
     </q-drawer>
-    <q-page-container>
+    <q-page-container @click="onContainer" class="main-background">
       <!-- <router-view /> -->
       <router-view v-slot="{ Component }">
         <transition name="mode-fade">
@@ -71,6 +91,9 @@
           }}</span>
           <q-avatar> </q-avatar>
         </q-toolbar-title>
+        <div style="font-size: 20px; color: green">
+          {{ ioSocket.versionSite }}
+        </div>
       </q-toolbar>
     </q-footer>
   </q-layout>
@@ -87,6 +110,36 @@
     <pdf-dialog></pdf-dialog>
   </teleport>
 </template>
+<style lang="scss">
+.main-background {
+  background-image: url("/bg/pattern-vintage-small.svg");
+}
+</style>
+<style lang="scss" scoped>
+.title-grid {
+  display: grid;
+  grid-template-columns: 1fr auto 1fr;
+  grid-template-rows: 1fr;
+  width: 100%;
+  .title-grid-item-left {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-start;
+    align-items: center;
+    font-weight: bold;
+  }
+  .title-grid-item-center {
+    display: flex;
+    flex-direction: row;
+  }
+  .title-grid-item-right {
+    display: flex;
+    flex-direction: row;
+    justify-content: flex-end;
+    align-items: center;
+  }
+}
+</style>
 <style lang="scss" scoped>
 #footer {
   // background-color: rgb(161, 158, 158);
@@ -132,7 +185,8 @@ import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 //import { useTest } from "stores/test.js";
 import { useUserStore } from "stores/userStore.js";
 import { useMainStore } from "stores/mainStore.js";
-import { storeToRefs } from "pinia";
+import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
+//import { storeToRefs } from "pinia";
 import { useIoSocket } from "stores/ioSocket.js";
 import { useQuasar } from "quasar";
 export default defineComponent({
@@ -147,11 +201,15 @@ export default defineComponent({
 
   setup() {
     //const store = useTest();
-
+    const titleBrand = ref("");
+    onMounted(() => {
+      titleBrand.value = platform.is.mobile ? "ХиТ" : "Хлеб и Тандыр";
+    });
     const { rightDrawerOpen, leftDrawerOpen, modalLoginOpen } = storeToRefs(
       useMainStore()
     );
-    const { notify } = useQuasar();
+    const { currentPage } = storeToRefs(usePagesSetupStore());
+    const { notify, platform } = useQuasar();
     const ioSocket = useIoSocket();
     const { userInfo } = storeToRefs(useUserStore());
     const { pdfWindow } = arkVuex();
@@ -180,6 +238,7 @@ export default defineComponent({
     onMounted(emittMitt);
     //! Здесь будем проверять доступ
     onBeforeRouteLeave(async (to, from) => {
+      currentPage.value = "";
       console.log("Переход то", to);
       let check = await dataLoad("/api/accessCheck", { path: to.path }, "");
       if (check.error) {
@@ -194,6 +253,10 @@ export default defineComponent({
       console.log("Упдате то", to);
     });
     return {
+      titleBrand,
+      onContainer() {
+        leftDrawerOpen.value = false;
+      },
       rightDrawerOpen,
       leftDrawerOpen,
       ioSocket,
@@ -246,6 +309,13 @@ export default defineComponent({
 });
 function linkList(roles = [], email) {
   return [
+    {
+      title: "HOME",
+      caption: "На начальную страницу",
+      icon: "school",
+      link: "/",
+      visible: roles.includes("USER"),
+    },
     {
       title: "Вход",
       caption: "Вход на сайт",

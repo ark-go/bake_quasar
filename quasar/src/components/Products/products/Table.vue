@@ -299,6 +299,12 @@ let columns = [
     required: true,
   },
   {
+    name: "producttype_prefix",
+    label: "Тип",
+    align: "left",
+    field: "producttype_prefix",
+  },
+  {
     name: "productvid_name",
     label: "Вид продукта",
     align: "left",

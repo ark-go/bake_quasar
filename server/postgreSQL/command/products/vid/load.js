@@ -6,6 +6,7 @@ export async function load(pool, req, tabname, timezone, idOne) {
       ${tabname}.id,
       ${tabname}.name,
       ${tabname}.nameext,
+      producttype.prefix AS producttype_prefix,
       concat(${tabname}.name,' ',${tabname}.nameext) AS name_display,
       ${tabname}.fullname,
       ${tabname}.unit_id,
@@ -21,6 +22,7 @@ export async function load(pool, req, tabname, timezone, idOne) {
       LEFT JOIN  users ON users.id = ${tabname}.user_id
       LEFT JOIN  unit ON unit.id = ${tabname}.unit_id
       LEFT JOIN  productassortment ON productassortment.id = ${tabname}.productassortment_id
+      LEFT JOIN  producttype ON producttype.id = productassortment.producttype_id
       ${wher}
       ORDER BY ${tabname}.name
 `,

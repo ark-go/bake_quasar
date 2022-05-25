@@ -2,6 +2,7 @@
   <router-view />
 </template>
 <script>
+//import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { defineComponent } from "vue";
 //import { io } from "socket.io-client";
 import { useIoSocket } from "stores/ioSocket.js";
@@ -20,6 +21,7 @@ export default defineComponent({
     const { notify } = useQuasar();
     const UserStore = useUserStore();
     dataLoad(UserStore);
+
     const ioSocket = useIoSocket();
     //const socket = io();
     const socket = ioSocket.socketMain;

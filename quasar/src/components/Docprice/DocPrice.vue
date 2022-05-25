@@ -2,7 +2,7 @@
   <ark-card
     :title="title + ': ' + docPrice.currPanelName"
     :subTitle="subtitleDoc"
-    style="width: 700px"
+    :style="{ width: cardMain.width.curr + 'px' }"
     :buttonArr="buttonArr"
     :pageMaxHeight="pageMaxHeight"
     :heightRabZone="heightRabZone"
@@ -40,12 +40,20 @@
 import { useDocPrice } from "stores/storeDocPrice.js";
 import { useQuasar } from "quasar";
 import ArkCard from "components/Docprice/ArkCard.vue";
-import { defineComponent, ref, nextTick, onUnmounted, computed } from "vue";
+import {
+  defineComponent,
+  ref,
+  nextTick,
+  onUnmounted,
+  onMounted,
+  computed,
+} from "vue";
 import FormDialogDoc from "./FormDialogDoc.vue";
 import DocDocument from "./DocDocument.vue";
 import DocBake from "./Bake/DocBake.vue";
 import DocPriceList from "./Price/DocPriceList.vue";
 import PdfDialog from "./PdfDialog.vue";
+import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 export default defineComponent({
   name: "DocPrice",
   components: {
@@ -67,6 +75,8 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const $q = useQuasar();
+    const { cardMain, currentPage } = storeToRefs(usePagesSetupStore());
+    currentPage.value = "docPrice";
     const docPrice = useDocPrice();
     const refTableDoc = ref(null);
     const refDocDocument = ref(null);
@@ -85,6 +95,9 @@ export default defineComponent({
             " " +
             docPrice.currRowDoc.kagent_name
         : props.subTitle;
+    });
+    onMounted(() => {
+      currentPage.value = "docPrice";
     });
     onUnmounted(() => {
       docPrice.currRowDoc = {};
@@ -140,6 +153,7 @@ export default defineComponent({
       }
     }
     return {
+      cardMain,
       showPdfDialog,
       pdfDialogParam,
       menuClick,

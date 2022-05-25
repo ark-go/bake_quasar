@@ -106,6 +106,11 @@ export async function apiRoutes() {
     });
   });
 
+  router.post("/pdf", async (req, res) => {
+    console.log("/pdf");
+    await pdf(req,res);
+  });
+
   router.post("/pdfmain", async (req, res) => {
     console.log("/pdfmain");
     res.json(await pdfmain(req));
@@ -254,10 +259,10 @@ export async function apiRoutes() {
     console.log("/ingredientDel");
     res.json(await ingredientDel(req, res));
   });
-  router.get("/pdf", async (req, res) => {
-    console.log("/createPDF");
-    await createPDF(req, res);
-  });
+  // router.get("/pdf", async (req, res) => {
+  //   console.log("/createPDF");
+  //   await createPDF(req, res);
+  // });
   router.post("/storeLoad", async (req, res) => {
     console.log("/storeLoad");
     res.json(await storeLoad(req, res));

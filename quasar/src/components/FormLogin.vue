@@ -114,7 +114,13 @@ async function getQRcode(notify, login, password, FA2token) {
     let data = resp.data;
     return data;
   } catch (err) {
+    //console.dir(err);
     console.log(err);
+    if (err?.response?.status == 429) {
+      return {
+        error: "Не нажимайте часто кнопку.",
+      };
+    }
     return {
       error: "Login: Ошибка передачи данных",
     };

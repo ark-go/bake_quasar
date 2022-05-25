@@ -12,6 +12,10 @@ import { rootDir } from "./dirModule.cjs";
 import { mainRoutes } from "./routes/mainRoutes.js";
 import { bot, botSendMessage } from "./tg/startTgBot.js";
 import { configureSession } from "./configureSession.js";
+import {
+  rateLimiterMiddleware,
+  rateLimiterMiddlewareLogin,
+} from "./utils/rateLimiterMiddleware.js";
 // globalThis.tgBot = function (message, id = process.env.TG_adminId) {
 //   try {
 //     bot.telegram.sendMessage(id, message);
@@ -27,10 +31,13 @@ const pgSession = connectPg(expressSession);
 // --- ----- -- - -- - -- -- -
 let app = express();
 app.set("trust proxy", 1); // ..говорим что доверяем первому прокси и верим что там https
+
+app.use("/api/login/", rateLimiterMiddlewareLogin);
+app.use("/api/", rateLimiterMiddleware);
 app.use(cookieParser());
 // ---------------------- helmet
 app.use(helmet());
-app.use(helmet.xssFilter()); // ARK: Обязательно проверить в Nginx и там установить !! add_header X-XSS-Protection "1; mode=block";
+//app.use(helmet.xssFilter()); // ARK: Обязательно проверить в Nginx и там установить !! add_header X-XSS-Protection "1; mode=block";
 app.use(helmet.hidePoweredBy({ setTo: "PHP 7.2.0" }));
 app.disable("x-powered-by");
 app.use(helmet.referrerPolicy({ policy: "same-origin" }));
@@ -39,16 +46,34 @@ app.use(noCache());
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
-      frameAncestors: ["'self'", "data:"],
-      //frameAncestors: ["'self'", "https:", "data:"],
-      // "font-src": ["'self'", "https:", "data:"],
-      // "style-src": ["'self'", "'unsafe-inline'"],
+      "frame-src": ["'self'", "'unsafe-inline'", "data:"],
+      "media-src": ["'self'", "https:", "data:"],
+      "worker-src": ["'self'", "data:"],
+      "script-src-elem": ["'self'", "'unsafe-inline'"],
+      // "default-src": ["'self'", "'unsafe-inline'", "data:"],
+      "img-src": ["'self'", "data:"],
+      "object-src": ["'self'", "https:", "data:"],
+      // frameAncestors: ["img-src", "'self'", "https:", "data:"],
+      // frameAncestors: ["object-src", "'self'", "data:"],
+      //  "script-src": ["'unsafe-inline'"],
     },
   })
 );
+// app.use(
+//   helmet.contentSecurityPolicy({
+//     directives: {
+//       frameAncestors: ["'self'", "https:", "data:"],
+//       frameAncestors: ["img-src", "'self'", "https:", "data:"],
+//       frameAncestors: ["object-src", "'self'", "https:", "data:"],
+//       frameAncestors: ["frame-src", "'self'"],
+//       // "font-src": ["'self'", "https:", "data:"],
+//       // "style-src": ["'self'", "'unsafe-inline'"],
+//     },
+//   })
+// );
 app.use(function (req, res, next) {
   // разрешаем грузить изображения с URL-адресами данных и PDF в том числе
-  //res.setHeader("Content-Security-Policy", "img-src 'self' 'data:';");
+  // res.setHeader("Content-Security-Policy", "img-src 'self' 'data:';");
   //res.setHeader("Content-Security-Policy", "frame-ancestors data:;");
   return next();
   // https://lollyrock.com/posts/content-security-policy/
@@ -75,7 +100,7 @@ const expSession = configureSession(app);
 app.use((req, res, next) => {
   res.append(
     "x-info-site",
-    req.session?.user?.active ? req.session?.user?.email : "NoLogin"
+    req.session?.user?.active ? req.session?.user?.active : "NoLogin"
   ); // NoLogin - служебное слово
   next();
 });

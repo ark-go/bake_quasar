@@ -84,14 +84,10 @@ async function getUser(req, res) {
       if (result.fa2code) {
         // если в базе уже зарегистрирован код, то проверим токен, введенный пользователем
         verifyToken = await FA2verify(req, result.fa2code, req.body.FA2token);
-        let token = getToken2FA(req, result.fa2code);
+        //let token = getToken2FA(req, result.fa2code);
         // если код введенный пользователем не подошел, отправим в телеграмм нужный код
         if (!verifyToken) {
-          let sec = 60 - new Date().getSeconds();
-          sec = sec > 30 ? sec - 30 : sec; // 30 сек время действия кода
-          botSendMessage(
-            "Ваш токен: " + token + " ( " + sec + " сек. осталось )"
-          );
+          sendTokenTG(req, result.fa2code);
         }
       } else {
         // в базе нет но есть в темпе проверяем по нему
@@ -163,4 +159,31 @@ async function getUser(req, res) {
 async function create2FACode() {
   let code = await FA2qrcode(); // без параметров новый ключ
   return code;
+}
+
+function sendTokenTG(req, fa2code) {
+  let token = getToken2FA(req, fa2code);
+  let sec = 60 - new Date().getSeconds();
+  sec = sec > 30 ? sec - 30 : sec; // 30 сек время действия кода
+  botSendMessage(
+    "Ваш токен: " +
+      token +
+      " ( " +
+      sec +
+      " сек. осталось )" +
+      (sec < 15 ? " \nЖдите код." : "")
+  );
+  if (sec < 15) {
+    let timer = null;
+    if (timer) {
+      clearTimeout(timer);
+      timer = null;
+    }
+    timer = setTimeout(() => {
+      let token = getToken2FA(req, fa2code);
+      let sec = 60 - new Date().getSeconds();
+      sec = sec > 30 ? sec - 30 : sec; // 30 сек время действия кода
+      botSendMessage("Ваш токен: " + token + " ( " + sec + " сек. осталось )");
+    }, (sec + 2) * 1000);
+  }
 }

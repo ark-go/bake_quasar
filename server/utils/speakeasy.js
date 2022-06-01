@@ -11,7 +11,7 @@ import moment from "moment-timezone";
 
 // проверка кода введенного пользователем (userToken)
 export function FA2verify(req, base32secret, userToken) {
-  console.log("time", req.session.timezone);
+  // console.log("time", req.session.timezone);
   var verified = speakeasy.totp.verify({
     secret: base32secret,
     encoding: "base32",

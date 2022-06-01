@@ -12,7 +12,10 @@
 .notify-width {
   max-width: calc(100vw / 3);
 }
-
+.notify-error-top {
+  max-width: 300px;
+  min-width: 250px;
+}
 .modal {
   // лепешки
   position: absolute;

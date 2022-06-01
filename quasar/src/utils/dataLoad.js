@@ -58,7 +58,7 @@ export async function dataLoad(url, data, logInfo = "") {
       : logInfo + " : " + err.toString();
     notif(); // для закрытия того что не загрузилось.
     Notify.create({
-      classes: "notify-width",
+      classes: "notify-error-top",
       position: "top",
       // icon: "done", // we add an icon
       spinner: false, // we reset the spinner setting so the icon can be displayed

@@ -17,7 +17,7 @@ try {
 
 export function botSendMessage(message, req) {
   let idBotUser = "";
-  let userEmail = req?.session?.user?.email || "Юзер не определен";
+  let userEmail = req?.session?.user?.email || "?";
   try {
     idBotUser = req?.session?.user?.telegramId;
 

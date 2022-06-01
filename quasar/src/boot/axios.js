@@ -4,6 +4,7 @@ import mitt from "mitt";
 import { Cookies } from "quasar";
 import { useUserStore } from "stores/userStore.js";
 import { useMainStore } from "stores/mainStore.js";
+//import { useQuasar } from "quasar";
 const emitter = mitt();
 // Be careful when using SSR for cross-request state pollution
 // due to creating a Singleton instance here;
@@ -11,7 +12,7 @@ const emitter = mitt();
 // good idea to move this instance creation inside of the
 // "export default () => {}" function below (which runs individually
 // for each client)
-const api = axios.create({ baseURL: "http://172.16.172.10:8878" });
+//const api = axios.create({ baseURL: "http://172.16.172.10:8878" });
 
 export default boot(({ app }) => {
   // for use inside Vue files (Options API) through this.$axios and this.$api
@@ -20,7 +21,7 @@ export default boot(({ app }) => {
   // ^ ^ ^ this will allow you to use this.$axios (for Vue Options API form)
   //       so you won't necessarily have to import axios in each vue file
 
-  app.config.globalProperties.$api = api;
+  //app.config.globalProperties.$api = api;
   // ^ ^ ^ this will allow you to use this.$api (for Vue Options API form)
   //       so you can easily perform requests against your app's API
 
@@ -39,18 +40,37 @@ export default boot(({ app }) => {
   // Set the AUTH token for any request
   // linux///
 
-  axios.interceptors.response.use((response) => {
-    const user = useUserStore();
-    // входящий сюда
-    console.log("axios вход ", response.headers?.["x-info-site"]);
-    if (response.headers?.["x-info-site"] == "NoLogin") {
-      user.userInfo = {};
-      let mainStore = useMainStore();
-      mainStore.modalLoginOpen = true;
-      // emitter.emit("on-login", "NoLogin");
+  axios.interceptors.response.use(
+    (response) => {
+      const user = useUserStore();
+      // входящий сюда
+      console.log("axios вход ", response.headers?.["x-info-site"]);
+      console.log(response);
+      if (response.headers?.["x-info-site"] == "NoLogin") {
+        user.userInfo = {};
+        let mainStore = useMainStore();
+        mainStore.modalLoginOpen = true;
+        // emitter.emit("on-login", "NoLogin");
+      }
+
+      return response;
     }
-    return response;
-  });
+    // (error) => {
+    //   if (error.response) {
+    //     console.log("Ошипка ", error.response.status);
+    //     if (error.response.status == 429) {
+    //       // const $q = useQuasar();
+    //       // $q.notify({
+    //       //   classes: "notify-error-top",
+    //       //   color: "red",
+    //       //   position: "top",
+    //       //   message: "Слишком много запросов",
+    //       //   icon: "report_problem",
+    //       // });
+    //     }
+    //   }
+    // }
+  );
 
   axios.interceptors.request.use(function (config) {
     const user = useUserStore();
@@ -68,7 +88,7 @@ export default boot(({ app }) => {
   // -----XXXXXXXXXXX
 });
 
-export { axios, api, emitter };
+export { axios, emitter };
 
 /*
 

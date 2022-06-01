@@ -2,7 +2,7 @@ export async function accessCheck(req, res, next) {
   // console.log(req.body, req.session.user?.roles);
   if (
     !req.body?.path ||
-    !req?.session?.user?.active ||
+    !req?.session?.user?.status ||
     !req.session.user?.roles ||
     !Array.isArray(req.session.user.roles)
   ) {
@@ -27,6 +27,7 @@ export async function accessCheck(req, res, next) {
       //   itog = checkRole(req, ["MODERATOR"]);
       break;
     default:
+      itog = checkRole(req, ["USER"]);
       break;
   }
 

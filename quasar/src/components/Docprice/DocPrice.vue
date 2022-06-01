@@ -52,7 +52,7 @@ import FormDialogDoc from "./FormDialogDoc.vue";
 import DocDocument from "./DocDocument.vue";
 import DocBake from "./Bake/DocBake.vue";
 import DocPriceList from "./Price/DocPriceList.vue";
-import PdfDialog from "./PdfDialog.vue";
+import PdfDialog from "components/PDF/PdfDialog.vue";
 import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 export default defineComponent({
   name: "DocPrice",
@@ -142,8 +142,8 @@ export default defineComponent({
             typePdf: "base64", // file/base64
             tgFormat: "pdf", // pdf/jpg
             command: "priceAll",
-            commandExt: { actionType: data, fileName: "Прайс " + data },
-            fileName: "Смотреть меня",
+            actionType: data,
+            fileName: "Прайс",
             //  id: selectedRowsVuex?.products[0]?.id,
           };
           nextTick(() => {

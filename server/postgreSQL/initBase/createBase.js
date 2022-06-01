@@ -30,7 +30,7 @@ for (const val of [
   //"bakery/bakery", // trademark, territory, branch, city, kagent
 
   //"product/productinfo", // там Тип продукции и Вид продукции
-  "product/productassortment",
+  //"product/productassortment",
   //"product/productsall",
   //"product/products",
   //"exception/errormess",
@@ -49,6 +49,10 @@ for (const val of [
   //"price/docprice",
   //"price/docbakery",
   //"price/docpricelist",
+
+  //"departments/departments",
+
+  "users/users_login",
 ]) {
   await executeSql(val);
 }

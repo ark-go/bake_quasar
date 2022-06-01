@@ -73,6 +73,18 @@
         Продукты / Пекарни
       </div>
     </q-img>
+    <q-img
+      src="/images/2.webp"
+      loading="lazy"
+      spinner-color="white"
+      img-class="img-menu cursor-pointer"
+      :img-style="{ cursor: 'pointer' }"
+      @click="router.push({ path: '/departments' })"
+    >
+      <div class="absolute-bottom text-subtitle1 text-center cursor-pointer">
+        Дерево строим
+      </div>
+    </q-img>
   </div>
 </template>
 

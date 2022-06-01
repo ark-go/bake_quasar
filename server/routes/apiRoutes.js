@@ -1,7 +1,8 @@
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
-import { login } from "../modules/login.js";
+import { login } from "../modules/reguser/login.js";
+import { reguser } from "../modules/reguser/reguser.js";
 //import { isLogin } from "../modules/isLogin.js";
 import { usersLoad } from "../postgreSQL/command/usersLoad.js";
 import { bakehousesLoad } from "../postgreSQL/command/bakehousesLoad.js";
@@ -35,7 +36,7 @@ import { ingredientsLoad } from "../postgreSQL/command/ingredientsLoad.js";
 import { receptsNomenclLoad } from "../postgreSQL/command/receptsNomenclLoad.js";
 import { ingredientsAdd } from "../postgreSQL/command/ingredientsAdd.js";
 import { ingredientDel } from "../postgreSQL/command/ingredientDel.js";
-import { createPDF } from "../modules/pdfark/createPDF.js";
+//import { createPDF } from "../modules/pdfark/createPDF.js";
 import { storeLoad } from "../postgreSQL/command/storeLoad.js";
 import { specstoreLoad } from "../postgreSQL/command/specstoreLoad.js";
 import { specdocLoad } from "../postgreSQL/command/specdocLoad.js";
@@ -57,17 +58,24 @@ import { city } from "../postgreSQL/command/city/city.js";
 import { bakery } from "../postgreSQL/command/bakery/bakery.js";
 import { products } from "../postgreSQL/command/products/products.js";
 import { docprice } from "../postgreSQL/command/docprice/docprice.js";
-import { pdfmain } from "../modules/PDF/pdfmain.js";
-import { pdfMainLoad } from "../modules/PDF/pdfMainLoad.js";
-import { pdfget } from "../modules/PDF/pdfget.js";
-import { pdfmodal } from "../modules/PDF/pdfmodal.js";
+import { departments } from "../postgreSQL/command/departments/departments.js";
+//import { pdfmain } from "../modules/PDF/pdfmain.js";
+//import { pdfMainLoad } from "../modules/PDF/pdfMainLoad.js";
+import { pdf } from "../modules/PDF/pdf.js";
+//import { pdfget } from "../modules/PDF/pdfget.js";
+//import { pdfmodal } from "../modules/PDF/pdfmodal.js";
 import { accessCheck } from "../modules/access/accessCheck.js";
 const router = express.Router();
 
 export async function apiRoutes() {
   router.post("/login", async (req, res) => {
-    console.log("/login");
+    console.log("/login", req.session.user);
     await login(req, res);
+  });
+  router.post("/reguser", async (req, res) => {
+    console.log("/reguser");
+    res.append("x-info-site", "registration");
+    res.json(await reguser(req, res));
   });
   // проверка на сессию и наличию там User
   router.use(function (req, res, next) {
@@ -78,10 +86,10 @@ export async function apiRoutes() {
       ":",
       req?.session?.user?.email,
       "Active:",
-      req?.session?.user?.active,
+      req?.session?.user?.status,
       new Date().toLocaleString("ru")
     );
-    if (!req?.session?.user?.active) {
+    if (!req?.session?.user?.status == "Active") {
       res.status(200).json({
         error: "noautorizate", //! поменять на нет доступа
       });
@@ -98,35 +106,35 @@ export async function apiRoutes() {
   });
   // -------------------------------------------------------
   router.post("/isLogin", async (req, res) => {
-    console.log("/isLogin");
+    console.log("/isLogin", req.session);
     res.json({
-      username: req.session.user.username || req.session.user.email,
-      email: req.session.user.email,
-      roles: req.session.user.roles,
+      username: req.session.user?.username || req.session.user?.email,
+      email: req.session.user?.email,
+      roles: req.session.user?.roles,
     });
   });
 
   router.post("/pdf", async (req, res) => {
     console.log("/pdf");
-    await pdf(req,res);
+    await pdf(req, res);
   });
 
-  router.post("/pdfmain", async (req, res) => {
-    console.log("/pdfmain");
-    res.json(await pdfmain(req));
-  });
-  router.post("/pdfMainLoad", async (req, res) => {
-    console.log("/pdfMainLoad");
-    res.json(await pdfMainLoad(req, res));
-  });
-  router.get("/pdfget", async (req, res) => {
-    console.log("/pdfget");
-    await pdfget(req, res);
-  });
-  router.post("/pdfmodal", async (req, res) => {
-    console.log("/pdfmodal");
-    await pdfmodal(req, res);
-  });
+  // router.post("/pdfmain", async (req, res) => {
+  //   console.log("/pdfmain");
+  //   res.json(await pdfmain(req));
+  // });
+  // router.post("/pdfMainLoad", async (req, res) => {
+  //   console.log("/pdfMainLoad");
+  //   res.json(await pdfMainLoad(req, res));
+  // });
+  // router.get("/pdfget", async (req, res) => {
+  //   console.log("/pdfget");
+  //   await pdfget(req, res);
+  // });
+  // router.post("/pdfmodal", async (req, res) => {
+  //   console.log("/pdfmodal");
+  //   await pdfmodal(req, res);
+  // });
   // ----------------------------------------------------------
   router.post("/accessCheck", async (req, res) => {
     console.log("/accessCheck");
@@ -348,7 +356,10 @@ export async function apiRoutes() {
     console.log("/products", req.body?.cmd);
     res.json(await products(req, res));
   });
-
+  router.post("/departments", async (req, res) => {
+    console.log("/departments", req.body?.cmd);
+    res.json(await departments(req, res));
+  });
   router.get("/start", (req, res) => {
     // res.send("Privet world: " + JSON.stringify(req.session?.user));
     console.log("start");

@@ -25,7 +25,7 @@ export async function pdfMainLoad(req, res) {
   // if (req.body.command == "products") {
   //   return await ingredientSostavQuery(req, res);
   // }
-  let mess = `PDF: ${req.body?.command} / ${req.body?.commandExt?.actionType}`;
+  let mess = `PDF: ${req.body?.command} / ${req.body?.actionType}`;
   botSendMessage(mess, req);
 
   switch (req.body.command) {

@@ -84,24 +84,12 @@ export async function ingredientSostavQuery(req, res) {
     result = result.rowCount > 0 ? result.rows : null;
 
     if (!result) {
-      if (!req.body?.command) {
-        return res.status(404).send("Нет данных о продукте. ");
-      } else {
-        return {
-          error: "Нет данных о продукте.",
-        };
-      }
+      return res.status(404).json({ error: "Нет данных о продукте." });
     }
     console.log("Выбрано строк ingredientSostavQuery:", result?.length);
     return ingredientSostavPdf(req, res, toGroups(result));
   } catch (err) {
     console.log("Ошибка чтения ", err.toString());
-    if (!req.body?.command) {
-      return res.status(404).send("error: " + err.toString());
-    } else {
-      return {
-        error: err.toString(),
-      };
-    }
+    return res.status(500).json({ error: err.toString() });
   }
 }

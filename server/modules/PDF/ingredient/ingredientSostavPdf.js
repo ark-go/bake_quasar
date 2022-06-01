@@ -25,11 +25,22 @@ export async function ingredientSostavPdf(req, res, result) {
   var date = new Date();
   let dateCurr = date.toLocaleString("ru-RU", { hour12: false });
   let pageOrient = "portrait";
-
+  let fileName = "";
+  if (req.body?.fileName) {
+    fileName = req.body?.fileName;
+  }
   var docDefinition = {
     pageSize: "A4",
     pageOrientation: pageOrient,
     pageMargins: [25, 20, 15, 20], // [left, top, right, bottom]
+    info: {
+      creator: "ХиТ",
+      producer: "Х156",
+      title: fileName, // показывается в заголовке
+      //  author: 'john doe',
+      subject: "Отчет",
+      //  keywords: 'keywords for document',
+    },
     watermark: {
       text: "Лепешки",
       color: "silver",
@@ -140,11 +151,6 @@ export async function ingredientSostavPdf(req, res, result) {
   try {
     pdfDoc = printer.createPdfKitDocument(docDefinition);
     // Отправка telegramm
-    //  if (req.body?.command) {
-    let fileName = "смотри меня";
-    if (req.body?.commandExt?.fileName) {
-      fileName = req.body?.commandExt?.fileName;
-    }
     pdfDoc.end();
     sendDocument(req, {
       source: pdfDoc,
@@ -153,64 +159,40 @@ export async function ingredientSostavPdf(req, res, result) {
     //  }
 
     //pdfDoc.pipe(fs.createWriteStream("tables5.pdf"));
-    //res.setHeader("Content-Length", stat.size);
-    res.setHeader("Content-Type", "application/pdf");
-    //res.setHeader("Content-Disposition", "attachment; filename=Primer.pdf");
-    // if (!req.body?.command) {
-    //   pdfDoc.pipe(res);
     //   pdfDoc.end();
-    //   sendDocument(req, {
-    //     source: pdfDoc,
-    //     filename: "смотри меня " + dateCurr + ".pdf",
-    //   });
-    // } else {
+    // res.setHeader("Content-Type", "application/pdf");
+    // res.setHeader("Content-Disposition", "attachment; filename=Primer.pdf");
     console.log("Выход pdf ingredientSostavPDf");
     const pdfDocGenerator = pdfMake.createPdf(docDefinition);
-    // pdfDocGenerator.getBase64((b64)=>{
+    pdfDocGenerator.getBase64((data) => {
+      // console.log("getBase64", data);
+      res.type("text");
+      return res.send(data);
+    });
+
+    // let g = await toDateUrl(pdfDocGenerator);
     // return {
-    //   result: await toBase64(pdfDocGenerator),
+    //   result: g,
     // };
-    // })
-    let g = await toDateUrl(pdfDocGenerator);
-    // sendDocument(req, {
-    //   source: pdfDocGenerator,
-    //   filename: "смотри меня " + dateCurr + ".pdf",
-    // });
-    //console.log(">>", g);
-    return {
-      result: g,
-    };
-    // });
-    //   }
-
-    // "/home/arkadii/Projects/Kanevsky/quasar/tigr.png");
   } catch (err) {
-    console.log("pdef error", err.toString());
-
-    //return res.status(404).send("2387642) Ошибка запроса!");
-    if (!req.body?.command) {
-      return res.status(404).send("2387642) Ошибка запроса!");
-    } else {
-      return {
-        error: "2387642) Ошибка запроса!",
-      };
-    }
+    console.log("Не получился pdf", err.toString());
+    return res.status(500).json({ error: "Не получился pdf" });
   }
 
-  function toDateUrl(pdfDocGenerator) {
-    return new Promise(function (resolve, reject) {
-      pdfDocGenerator.getDataUrl((dataUrl) => {
-        resolve(dataUrl);
-      });
-    });
-  }
-  function toBase64(pdfDocGenerator) {
-    return new Promise(function (resolve, reject) {
-      pdfDocGenerator.getBase64((base64) => {
-        resolve(base64);
-      });
-    });
-  }
+  // function toDateUrl(pdfDocGenerator) {
+  //   return new Promise(function (resolve, reject) {
+  //     pdfDocGenerator.getDataUrl((dataUrl) => {
+  //       resolve(dataUrl);
+  //     });
+  //   });
+  // }
+  // function toBase64(pdfDocGenerator) {
+  //   return new Promise(function (resolve, reject) {
+  //     pdfDocGenerator.getBase64((base64) => {
+  //       resolve(base64);
+  //     });
+  //   });
+  // }
 
   // -----------------------------------------         -----------------------------------------------
   function X(resultArr) {

@@ -9,10 +9,8 @@ export async function priceAllQuery(req, res) {
   //req.session.user.currentPdf?.pdf?.tabname
   let wher = "";
   console.log("body", JSON.stringify(req.body, 0, 2));
-  if (req.body?.commandExt && req.body?.commandExt?.actionType) {
-    if (req.body.commandExt.actionType == "lastCena") {
-      wher = "WHERE date_start = maxdatestart";
-    }
+  if (req.body?.actionType == "lastCena") {
+    wher = "WHERE date_start = maxdatestart";
   }
 
   let sqlP = {
@@ -70,21 +68,13 @@ export async function priceAllQuery(req, res) {
     result = result.rowCount > 0 ? result.rows : null;
 
     if (!result) {
-      return {
-        error: "Нет данных о продукте.",
-      };
+      return res.status(404).json({ error: "Нет данных о продукте." });
     }
     console.log("Выбрано строк priceAllQuery:", result?.length);
-    // console.log(result);
-    //  console.log(JSON.stringify(toGroups(result), 0, 2));
+
     return priceAllPdf(req, res, toGroups(result));
-    // return {
-    //   error: "Нет данных о продукте.",
-    // };
   } catch (err) {
     console.log("Ошибка чтения ", err.toString());
-    return {
-      error: err.toString(),
-    };
+    return res.status(500).json({ error: err.toString() });
   }
 }

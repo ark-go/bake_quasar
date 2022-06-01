@@ -177,9 +177,10 @@ import EssentialLink from "components/EssentialLink.vue";
 import RightItems from "components/mainPage/rightDrawer/rightItems.vue";
 import { defineComponent, ref, onMounted, watchEffect } from "vue";
 import { emitter } from "boot/axios";
-import FormLogin from "components/FormLogin.vue";
-import pdfDialog from "components/pdfDialog/pdfDialog.vue";
-import { arkVuex } from "src/utils/arkVuex"; // const { pdfWindow } = createArkVuex();
+//import FormLogin from "components/FormLogin.vue";
+import FormLogin from "components/Registration/FormLogin.vue";
+import pdfDialog from "components/PDF/PdfDialog.vue";
+//import { arkVuex } from "src/utils/arkVuex"; // const { pdfWindow } = createArkVuex();
 import { dataLoad } from "src/utils/ark.js";
 import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 //import { useTest } from "stores/test.js";
@@ -212,9 +213,10 @@ export default defineComponent({
     const { notify, platform } = useQuasar();
     const ioSocket = useIoSocket();
     const { userInfo } = storeToRefs(useUserStore());
-    const { pdfWindow } = arkVuex();
+    const pdfModal = ref(false);
+    // const { pdfWindow } = arkVuex();
     // const command = ref(pdfWindow.command);
-    const pdfModal = ref(pdfWindow.show);
+    // const pdfModal = ref(pdfWindow.show);
     const essentialLinks = ref([]);
     const username = ref("");
     //const modalLoginOpen = ref(false);
@@ -237,13 +239,19 @@ export default defineComponent({
     });
     onMounted(emittMitt);
     //! Здесь будем проверять доступ
-    onBeforeRouteLeave(async (to, from) => {
+    onBeforeRouteLeave(async (to, from, next) => {
       currentPage.value = "";
       console.log("Переход то", to);
+      if (to.name == "registration") {
+        return next(true);
+      }
+
       let check = await dataLoad("/api/accessCheck", { path: to.path }, "");
       if (check.error) {
-        return false;
+        return next(false);
       }
+
+      return next(true);
       // https://router.vuejs.org/guide/advanced/composition-api.html#navigation-guards
       // const answer = window.confirm("Переходим ?");
       // // cancel the navigation and stay on the same page

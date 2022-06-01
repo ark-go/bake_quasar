@@ -25,7 +25,7 @@ const rateLimiterLlogin = new RateLimiterRedis({
   // для кнопки Логин
   storeClient: redisClient,
   keyPrefix: "rateLimiterMiddleware",
-  points: 2, // 2 запросов
+  points: 2, // 2 запросов в duration
   duration: 1, // за секунду с IP
   blockDuration: 10, //
 });

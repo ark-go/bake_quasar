@@ -174,15 +174,21 @@ module.exports = configure(function (/* ctx */) {
 
     // https://v2.quasar.dev/quasar-cli/developing-pwa/configuring-pwa
     pwa: {
-      workboxMode: "generateSW", // or 'injectManifest'
+      name: "Хлеб и Тандыр",
+      workboxMode: "injectManifest", // default "generateSW"
       injectPwaMetaTags: true,
       swFilename: "sw.js",
       manifestFilename: "manifest.json",
-      useCredentialsForManifestTag: false,
+      useCredentialsForManifestTag: false, // ="use-credentials"
+      //crossorigin="use-credentials"
       // extendGenerateSWOptions (cfg) {}
       // extendInjectManifestOptions (cfg) {},
       // extendManifestJson (json) {}
       // extendPWACustomSWConf (esbuildConf) {}
+      // workboxOptions: {  // only "generateSW"
+      //   skipWaiting: true,
+      //   clientsClaim: true
+      // }
     },
 
     // Full list of options: https://v2.quasar.dev/quasar-cli/developing-cordova-apps/configuring-cordova

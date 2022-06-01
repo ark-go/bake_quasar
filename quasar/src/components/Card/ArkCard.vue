@@ -72,14 +72,13 @@ export default {
   props: {
     title: String,
     subTitle: String,
-    buttonArr: Object,
+    buttonArr: [Object, Boolean],
     menuObj: Object,
     maxWidth: String,
   },
   setup(props, { emit }) {
-    const buttonArrProp = ref([]);
+    const buttonArrProp = ref();
     onMounted(() => {
-      buttonArrProp.value = props?.buttonArr;
       console.log("Чтото тут", props?.buttonArr);
       //   if (buttonArrProp.value.length > 0) {
       buttonArrProp.value = props.buttonArr; // кнопки пришли

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+    <title>Подтверждение email-адреса!</title>
+    <style>
+      .row {
+        display: flex;
+        flex-direction: row;
+        justify-content: center;
+      }
+      .tsg {
+        font-size: 25px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        color: blue;
+      }
+    </style>
+  </head>
+  <body>
+    <table
+      border="0"
+      cellpadding="0"
+      cellspacing="0"
+      style="margin: 0; padding: 0"
+      width="100%"
+    >
+      <tr>
+        <td>
+          <center>
+            <br />
+            <table
+              border="0"
+              cellpadding="0"
+              cellspacing="0"
+              style="margin: 0; padding: 0"
+              width="100%"
+            >
+              <tbody>
+                <tr>
+                  <td>
+                    <center>
+                      <table>
+                        <tr>
+                          <td>
+                            <div
+                              style="
+                                display: block;
+                                font-size: 20px;
+                                color: red;
+                                text-align: center;
+                              "
+                            >
+                              E-mail: {{email}}
+                            </div>
+                            <br />
+                            <div
+                              style="
+                                display: block;
+                                font-size: 20px;
+                                color: blue;
+                              "
+                            >
+                              Для успешной регистрации на сайте
+                              <br />Вам необходимо подтвердить ваш Email
+                              <br />пожалуйста нажмите ссылку.
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                      <table>
+                        <tr>
+                          <td>
+                            <a
+                              href="{{path}}"
+                              style="text-decoration: none; color: darkgreenc"
+                              >Подтвердить Email</a
+                            >
+                          </td>
+                        </tr>
+                        <tr>
+                          <td>Или введите следущий код в форму на странице:</td>
+                        </tr>
+                        <tr>
+                          <td><b>{{code}}</b></td>
+                        </tr>
+                      </table>
+                    </center>
+                  </td>
+                </tr>
+              </tbody>
+            </table>
+          </center>
+        </td>
+      </tr>
+    </table>
+  </body>
+</html>

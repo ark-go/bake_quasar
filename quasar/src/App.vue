@@ -20,7 +20,7 @@ export default defineComponent({
     Cookies.set("browser", browser); // в отправку
     const { notify } = useQuasar();
     const UserStore = useUserStore();
-    dataLoad(UserStore);
+    dataLoad(UserStore); // проверка на логин
 
     const ioSocket = useIoSocket();
     //const socket = io();

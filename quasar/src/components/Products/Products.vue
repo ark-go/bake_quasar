@@ -69,7 +69,7 @@ import { arkVuex } from "src/utils/arkVuex.js";
 import ProductsAction from "./ProductsAction.vue";
 import { emitter } from "../../boot/axios";
 import { getPDF } from "src/utils/getPDF.js";
-import PdfDialog from "./PdfDialog.vue";
+import PdfDialog from "../PDF/PdfDialog.vue";
 import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 //import { arkVuex } from "src/utils/arkVuex"; // const { pdfWindow } = createArkVuex();
 export default defineComponent({
@@ -188,7 +188,7 @@ export default defineComponent({
           typePdf: "base64", // file/base64
           tgFormat: "pdf", // pdf/jpg
           command: "products",
-          fileName: "Смотреть меня",
+          fileName: "Продукты",
           id: selectedRowsVuex?.products[0]?.id,
         };
         nextTick(() => {

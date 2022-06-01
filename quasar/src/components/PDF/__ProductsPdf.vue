@@ -4,14 +4,14 @@
     type="html5"
     :src="pdfData"
     content-class="absolute"
-    title="Тест"
+    title="Тест2"
   />
 </template>
 <script>
 import { ref, onMounted, onUnmounted } from "vue";
 import { dataLoad } from "src/utils/ark.js";
 export default {
-  name: "PriceList", // pdfMainLoad
+  name: "ProductsPdf", // pdfMainLoad
   props: ["cmd"],
   setup(props) {
     const pdfData = ref("");

@@ -10,44 +10,67 @@ const routes = [
     ],
   },
   {
+    path: "/registration/:id?/:code?",
+    props: true,
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      {
+        path: "",
+        name: "registration",
+        props: true,
+        component: () => import("components/Registration/PageRegistration.vue"),
+      },
+    ],
+  },
+  {
     path: "/charts",
     component: () => import("layouts/MainLayout.vue"),
     children: [{ path: "", component: () => import("pages/PageCharts.vue") }],
   },
   {
-    path: "/pdf",
+    path: "/departments",
     component: () => import("layouts/MainLayout.vue"),
     children: [
       {
         path: "",
-        component: () => import("components/PDF/PagePdf.vue"),
-        children: [
-          {
-            path: "pricelist/:cmd",
-            props: true,
-            component: () => import("components/PDF/PriceList.vue"),
-          },
-          {
-            path: "pricelist",
-            name: "pricelist",
-            props: true,
-            component: () => import("components/PDF/PriceListMenu.vue"),
-          },
-          {
-            path: "products/:id",
-            props: true,
-            component: () => import("components/PDF/ProductsPdf.vue"),
-          },
-          {
-            path: "products",
-            name: "products",
-            props: true,
-            component: () => import("components/PDF/ProductsPdf.vue"),
-          },
-        ],
+        component: () => import("components/Departments/PageDepartments.vue"),
       },
     ],
   },
+  // {
+  //   path: "/pdf",
+  //   component: () => import("layouts/MainLayout.vue"),
+  //   children: [
+  //     {
+  //       path: "",
+  //       component: () => import("components/PDF/PagePdf.vue"),
+  //       children: [
+  //         {
+  //           path: "pricelist/:cmd",
+  //           props: true,
+  //           component: () => import("components/PDF/PriceList.vue"),
+  //         },
+  //         {
+  //           path: "pricelist",
+  //           name: "pricelist",
+  //           props: true,
+  //           component: () => import("components/PDF/PriceListMenu.vue"),
+  //         },
+  //         {
+  //           path: "products/:id",
+  //           props: true,
+  //           component: () => import("components/PDF/ProductsPdf.vue"),
+  //         },
+  //         {
+  //           path: "products",
+  //           name: "products",
+  //           props: true,
+  //           component: () => import("components/PDF/ProductsPdf.vue"),
+  //         },
+  //       ],
+  //     },
+  //   ],
+  // },
   // {
   //   path: "/pdf",
   //   name: "pdf",

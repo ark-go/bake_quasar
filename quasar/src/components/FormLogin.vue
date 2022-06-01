@@ -1,5 +1,8 @@
 <template>
-  <div class="column" style="width: 250px; padding: 6px">
+  <div
+    class="column shadow-7 rounded-borders"
+    style="width: 250px; padding: 6px"
+  >
     <q-input
       color="indigo"
       v-model="login"
@@ -38,7 +41,11 @@
       </template>
     </q-input>
     <br />
-    <q-btn outline rounded color="indigo" label="Дальше" @click="loginNext" />
+    <q-btn outline rounded color="indigo" label="Дальше1" @click="loginNext" />
+    <span style="text-align: right; color: #3f3b3b">
+      <span>регистрация </span>
+      <span @click="onReg" class="cursor-pointer">здесь</span>
+    </span>
   </div>
 </template>
 <script>
@@ -48,12 +55,13 @@ import { useQuasar } from "quasar";
 import { useRouter, useRoute } from "vue-router";
 import { useMainStore } from "stores/mainStore.js";
 import { useUserStore } from "stores/userStore.js";
-import { storeToRefs } from "pinia";
+//import { storeToRefs } from "pinia";
 export default {
   name: "FormLogin",
   setup() {
     const user = useUserStore(); //
     const router = useRouter();
+    //   const route = useRoute();
     const mainStore = useMainStore();
     const { notify } = useQuasar();
     const login = ref("");
@@ -94,8 +102,14 @@ export default {
         //router.push({ path: "/" });
       }
     }
-
+    function onReg() {
+      mainStore.modalLoginOpen = false;
+      nextTick(() => {
+        router.push({ name: "registration" });
+      });
+    }
     return {
+      onReg,
       login,
       password,
       loginNext,

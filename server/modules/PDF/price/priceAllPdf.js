@@ -4,6 +4,7 @@ import PdfPrinter from "pdfmake/src/printer.js";
 //import { linesvg } from "./line.js";
 import { printnumber } from "../printnumber.js";
 import { sendDocument } from "../../../tg/startTgBot.js";
+import { Blob } from "buffer";
 pdfMake.vfs = pdfFonts.pdfMake.vfs;
 
 var fonts = {
@@ -26,15 +27,18 @@ export async function priceAllPdf(req, res, result) {
   let dateCurr = date.toLocaleString("ru-RU", { hour12: false });
   //let pageOrient = "landscape"; //"portrait";
   let pageOrient = "portrait"; //"portrait";
-
+  let fileName = "";
+  if (req.body?.fileName) {
+    fileName = req.body?.fileName;
+  }
   var docDefinition = {
     pageSize: "A4",
     pageOrientation: pageOrient,
     pageMargins: [25, 20, 15, 20], // [left, top, right, bottom]
     info: {
       creator: "ХиТ",
-      producer: "ХиТ",
-      title: "Тест",
+      producer: "Х156",
+      title: fileName, // показывается в заголовке
       //  author: 'john doe',
       subject: "Отчет",
       //  keywords: 'keywords for document',
@@ -187,12 +191,7 @@ export async function priceAllPdf(req, res, result) {
   try {
     pdfDoc = printer.createPdfKitDocument(docDefinition);
     // Отправка telegramm
-    let fileName = "";
-    // console.log("bod", JSON.stringify(req.body, 0, 2));
-    // console.log("bod2", JSON.stringify(req.body, 0, 2));
-    if (req.body?.commandExt?.fileName) {
-      fileName = req.body?.commandExt?.fileName;
-    }
+
     //   if (req.body?.command) {
     pdfDoc.end();
     sendDocument(req, {
@@ -203,7 +202,7 @@ export async function priceAllPdf(req, res, result) {
 
     //pdfDoc.pipe(fs.createWriteStream("tables5.pdf"));
     //res.setHeader("Content-Length", stat.size);
-    res.setHeader("Content-Type", "application/pdf"); // открыть или скачать
+    //res.setHeader("Content-Type", "application/pdf"); // открыть или скачать
     //res.setHeader("Content-Disposition", "attachment; filename=Primer.pdf"); // скачать
     // if (!req.body?.command) {
     //   pdfDoc.pipe(res);
@@ -217,35 +216,38 @@ export async function priceAllPdf(req, res, result) {
 
     const pdfDocGenerator = pdfMake.createPdf(docDefinition);
 
-    let g = await toDateUrl(pdfDocGenerator);
+    // let g = await toDateUrl(pdfDocGenerator);
     // blob res.setHeader('Access-Control-Allow-Origin','*');
-    return {
-      result: g,
-    };
-    // });
-    // }
-
-    // "/home/arkadii/Projects/Kanevsky/quasar/tigr.png");
-  } catch (err) {
-    console.log("pdef error", err.toString());
-
-    //return res.status(404).send("2387642) Ошибка запроса!");
-    if (!req.body?.command) {
-      return res.status(404).send("2387642) Ошибка запроса!");
-    } else {
-      return {
-        error: "2387642) Ошибка запроса!",
-      };
-    }
-  }
-
-  function toDateUrl(pdfDocGenerator) {
-    return new Promise(function (resolve, reject) {
-      pdfDocGenerator.getDataUrl((dataUrl) => {
-        resolve(dataUrl);
-      });
+    //console.log("сделали пдф отправляем");
+    pdfDocGenerator.getBase64((data) => {
+      // console.log("getBase64", data);
+      //const data1 = new Blob([data]); // JavaScript Blob
+      // const json = JSON.stringify({ blob: data });
+      // console.log("blob", json);
+      res.type("text");
+      //res.type("text");
+      return res.send(data);
     });
+    // pdfDocGenerator.getBuffer((otvblob) => {
+    //   //console.log("сам блоб", otvblob);
+    //   res.type("buffer");
+    //   // const blob = new Blob([otvblob], { type: "application/pdf" }); // JavaScript Blob
+    //   console.log("blobbbbb", otvblob);
+    //   return res.send(otvblob);
+    // });
+    //return res.status(500).json({ error: "Не понятненько  pdf" });
+  } catch (err) {
+    console.log("Не получился pdf", err.toString());
+    return res.status(500).json({ error: "Не получился pdf" });
   }
+
+  // function toDateUrl(pdfDocGenerator) {
+  //   return new Promise(function (resolve, reject) {
+  //     pdfDocGenerator.getDataUrl((dataUrl) => {
+  //       resolve(dataUrl);
+  //     });
+  //   });
+  // }
 
   // -----------------------------------------         -----------------------------------------------
   function X(resultArr) {

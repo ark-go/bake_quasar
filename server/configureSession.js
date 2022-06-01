@@ -8,16 +8,23 @@ export function configureSession(app) {
    */
   expressSession.Session.prototype.login = function (user) {
     const req = this.req;
+    console.log("regenerate1", req.session.id, user?.email);
     req.session.regenerate(function (err) {
       if (err) {
         console.log("Ошибка регенерации сессии при логине");
         return;
       }
+      console.log("regenerate2", req.session.id);
       // здесь новая сессия
-      console.log("записали сессию");
       req.session.user = user;
       req.session.user.sid = req.sessionID; // ??
       req.session.cookie.maxAge = 8 * 24 * 60 * 60 * 1000; // дней сек мин часы 1000  8дней
+      //req.session.
+      console.log("записали сессию", req.session.user?.email);
+      req.session.save(function (err) {
+        // session saved
+        console.log("и еще раз записали сессию", req.session.user?.email);
+      });
     });
   };
   // ------- expressSession
@@ -66,12 +73,13 @@ export function configureSession(app) {
       // даты у сессии не было , создадим
       req.session.createdAt = Date.now();
     }
-    if (!req?.session?.user?.active) {
+    //console.log(">>status>", req?.session?.user?.status);
+    if (["Active", "Registered"].includes(req?.session?.user?.status)) {
       // пользователя еще нет, сессию уменьшим выставим на 30 мин
-      req.session.cookie.maxAge = 1 * 60 * 1000; // 30 мин
-    } else {
-      // сессия не обновляет данные из установленного куки.
       req.session.cookie.maxAge = 8 * 24 * 60 * 60 * 1000; // дней сек мин часы 1000  7дней
+    } else {
+      // пользователя еще нет, сессию уменьшим выставим на
+      req.session.cookie.maxAge = 1 * 60 * 1000; // 1 мин
     }
     next();
   });

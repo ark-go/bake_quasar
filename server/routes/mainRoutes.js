@@ -1,6 +1,7 @@
 import { rootDir } from "../dirModule.cjs";
 import path from "path";
 import { apiRoutes } from "./apiRoutes.js";
+import { emptyRoutes } from "./emptyRoutes.js";
 let pathmode = process.env.APP_BAKE_MODE;
 let vueDir = path.join(rootDir, "..", "quasar", "dist", pathmode); //"spa");
 let vueIndex = path.join(vueDir, "index.html");
@@ -30,8 +31,9 @@ export async function mainRoutes(app, express) {
   // });
 
   app.use(express.static(vueDir)); // vue static
-
+  //app.use("/", await emptyRoutes()); // будет отвечать
   app.use("/api", await apiRoutes());
+
   //   app.use("/", (req, res) => {
   //     res.sendFile(vueIndex); // vue start
   //   });

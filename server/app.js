@@ -10,77 +10,62 @@ import { pool } from "./postgreSQL/initPostgreSQL.js";
 import connectPg from "connect-pg-simple";
 import { rootDir } from "./dirModule.cjs";
 import { mainRoutes } from "./routes/mainRoutes.js";
-import { bot, botSendMessage } from "./tg/startTgBot.js";
+import { botSendMessage } from "./tg/startTgBot.js";
 import { configureSession } from "./configureSession.js";
 import {
   rateLimiterMiddleware,
   rateLimiterMiddlewareLogin,
 } from "./utils/rateLimiterMiddleware.js";
-// globalThis.tgBot = function (message, id = process.env.TG_adminId) {
-//   try {
-//     bot.telegram.sendMessage(id, message);
-//   } catch (e) {
-//     console.log("Ошибка бота", e);
-//   }
-// };
-// tgBot("Старт сервер.");
 botSendMessage("Старт сервера");
-const pgSession = connectPg(expressSession);
-// --- -- -- - -- - -- -
 
-// --- ----- -- - -- - -- -- -
 let app = express();
 app.set("trust proxy", 1); // ..говорим что доверяем первому прокси и верим что там https
-
+app.use("/api/reguser/", rateLimiterMiddlewareLogin);
 app.use("/api/login/", rateLimiterMiddlewareLogin);
 app.use("/api/", rateLimiterMiddleware);
 app.use(cookieParser());
 // ---------------------- helmet
-app.use(helmet());
+app.use(
+  helmet({
+    contentSecurityPolicy: false,
+  })
+);
 //app.use(helmet.xssFilter()); // ARK: Обязательно проверить в Nginx и там установить !! add_header X-XSS-Protection "1; mode=block";
 app.use(helmet.hidePoweredBy({ setTo: "PHP 7.2.0" }));
 app.disable("x-powered-by");
 app.use(helmet.referrerPolicy({ policy: "same-origin" }));
 app.use(helmet.frameguard({ action: "sameorigin" }));
 app.use(noCache());
+console.log("host: ", process.env.CSP_HOST_NAME);
 app.use(
   helmet.contentSecurityPolicy({
     directives: {
-      "frame-src": ["'self'", "'unsafe-inline'", "data:"],
-      "media-src": ["'self'", "https:", "data:"],
-      "worker-src": ["'self'", "data:"],
+      "frame-src": ["'self'", "'unsafe-inline'", "blob:", "https:", "data:"],
+      "media-src": ["'self'", "blob:", "https:", "data:"],
+      "worker-src": ["'self'", "blob:", "data:"],
       "script-src-elem": ["'self'", "'unsafe-inline'"],
       // "default-src": ["'self'", "'unsafe-inline'", "data:"],
-      "img-src": ["'self'", "data:"],
-      "object-src": ["'self'", "https:", "data:"],
-      // frameAncestors: ["img-src", "'self'", "https:", "data:"],
-      // frameAncestors: ["object-src", "'self'", "data:"],
+      "img-src": ["'self'", "blob:", "data:"],
+      "connect-src": ["'self'", "wss:", "blob:", "data:"],
+      //   process.env.CSP_HOST_NAME,
+      "object-src": ["'self'", "blob:", "https:", "data:"],
+      frameAncestors: ["'self'", "wss:", "blob:", "https:", "data:"],
+      //frameAncestors: ["object-src", "'self'", "blob:", "https:", "data:"],
+      // frameAncestors: ["connect-src", "'self'", "blob:", "https:", "data:"],
       //  "script-src": ["'unsafe-inline'"],
     },
   })
 );
-// app.use(
-//   helmet.contentSecurityPolicy({
-//     directives: {
-//       frameAncestors: ["'self'", "https:", "data:"],
-//       frameAncestors: ["img-src", "'self'", "https:", "data:"],
-//       frameAncestors: ["object-src", "'self'", "https:", "data:"],
-//       frameAncestors: ["frame-src", "'self'"],
-//       // "font-src": ["'self'", "https:", "data:"],
-//       // "style-src": ["'self'", "'unsafe-inline'"],
-//     },
-//   })
-// );
-app.use(function (req, res, next) {
-  // разрешаем грузить изображения с URL-адресами данных и PDF в том числе
-  // res.setHeader("Content-Security-Policy", "img-src 'self' 'data:';");
-  //res.setHeader("Content-Security-Policy", "frame-ancestors data:;");
-  return next();
-  // https://lollyrock.com/posts/content-security-policy/
-  // шрифты Content-Security-Policy "font-src 'self' data:;"
-  // стили CSS Content-Security-Policy "style-src 'self' 'unsafe-inline';"
-  // CORS на другие сайты Content-Security-Policy "connect-src 'self' https://apis.google.com;"
-});
+// app.use(function (req, res, next) {
+//   // разрешаем грузить изображения с URL-адресами данных и PDF в том числе
+//   // res.setHeader("Content-Security-Policy", "img-src 'self' 'data:';");
+//   //res.setHeader("Content-Security-Policy", "frame-ancestors data:;");
+//   return next();
+//   // https://lollyrock.com/posts/content-security-policy/
+//   // шрифты Content-Security-Policy "font-src 'self' data:;"
+//   // стили CSS Content-Security-Policy "style-src 'self' 'unsafe-inline';"
+//   // CORS на другие сайты Content-Security-Policy "connect-src 'self' https://apis.google.com;"
+// });
 
 //----------------------- bodyparser
 app.use(
@@ -100,7 +85,7 @@ const expSession = configureSession(app);
 app.use((req, res, next) => {
   res.append(
     "x-info-site",
-    req.session?.user?.active ? req.session?.user?.active : "NoLogin"
+    req.session?.user?.status ? req.session?.user?.status : "NoLogin"
   ); // NoLogin - служебное слово
   next();
 });
@@ -168,11 +153,11 @@ app._router.stack.forEach(function (middleware) {
     // router middleware
     middleware.handle.stack.forEach(function (handler) {
       route = handler.route;
-      console.log("rout", route);
+      // console.log("rout", route);
       route && routes.push(route);
     });
   }
 });
-console.log("Роуты", routes.length, routes);
+//console.log("Роуты", routes.length, routes);
 //---------------------- конец роутов
 export { app, expSession };

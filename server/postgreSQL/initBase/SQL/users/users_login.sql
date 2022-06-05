@@ -124,23 +124,20 @@ UPDATE
  BEFORE INSERT OR UPDATE OR DELETE ON users_part FOR EACH ROW
  EXECUTE PROCEDURE users_part_protect();
  */
-ALTER TABLE users_login
-ADD COLUMN status CITEXT;
-ALTER TABLE users_login
-ADD COLUMN status_mess CITEXT;
-ALTER TABLE users_login
-ADD COLUMN status_date TIMESTAMPTZ;
+ALTER TABLE users_login ADD COLUMN status CITEXT;
+ALTER TABLE users_login ADD COLUMN status_mess CITEXT;
+ALTER TABLE users_login ADD COLUMN status_date TIMESTAMPTZ;
 ALTER TABLE users_login DROP COLUMN status;
 ALTER TABLE users_login DROP COLUMN status_mess;
 ALTER TABLE users_login DROP COLUMN status_date
+
 ALTER TABLE users_login DROP COLUMN active;
 ALTER TABLE users_login DROP COLUMN blocked_mess;
 ALTER TABLE users_login DROP COLUMN blocked_user_id;
 ALTER TABLE users_login DROP COLUMN activated_user_id;
-ALTER TABLE users_login
-ADD COLUMN status_user_id BIGINT NOT NULL CHECK(status_user_id <> id);
-ALTER TABLE users_login
-ADD CONSTRAINT fg_users_login_status FOREIGN KEY (status_user_id) REFERENCES users_login (id);
+
+ALTER TABLE users_login ADD COLUMN status_user_id BIGINT NOT NULL CHECK(status_user_id <> id);
+ALTER TABLE users_login ADD CONSTRAINT fg_users_login_status FOREIGN KEY (status_user_id) REFERENCES users_login (id);
 -- текущий пользователь
 select 'Database : ' || current_database() || ', ' || 'User : ' || user db_details -- or
 select format(

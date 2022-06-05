@@ -59,6 +59,7 @@ import { bakery } from "../postgreSQL/command/bakery/bakery.js";
 import { products } from "../postgreSQL/command/products/products.js";
 import { docprice } from "../postgreSQL/command/docprice/docprice.js";
 import { departments } from "../postgreSQL/command/departments/departments.js";
+import { userroletree } from "../postgreSQL/command/userroletree/userroletree.js";
 //import { pdfmain } from "../modules/PDF/pdfmain.js";
 //import { pdfMainLoad } from "../modules/PDF/pdfMainLoad.js";
 import { pdf } from "../modules/PDF/pdf.js";
@@ -356,9 +357,14 @@ export async function apiRoutes() {
     console.log("/products", req.body?.cmd);
     res.json(await products(req, res));
   });
+
   router.post("/departments", async (req, res) => {
     console.log("/departments", req.body?.cmd);
     res.json(await departments(req, res));
+  });
+  router.post("/userroletree", async (req, res) => {
+    console.log("/userroletree", req.body?.cmd);
+    res.json(await userroletree(req, res));
   });
   router.get("/start", (req, res) => {
     // res.send("Privet world: " + JSON.stringify(req.session?.user));

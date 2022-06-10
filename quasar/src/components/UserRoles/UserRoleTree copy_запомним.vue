@@ -57,44 +57,22 @@
               <q-menu anchor="top end" self="top start">
                 <q-list>
                   <q-item>
-                    <q-item-section class="no-outline" tabindex="0">
+                    <q-item-section>
                       <q-item-label caption> Новый пункт </q-item-label>
-                      <q-input v-model="newName" label="Название" autofocus />
+                      <q-input v-model="newName" label="Название" />
                       <q-input v-model="newDesc" label="Комментарий" />
                       <q-separator inset></q-separator>
-                      <q-item-label class="items-center">
-                        <span>Вставить: </span>
-                        <q-btn
-                          v-close-popup
-                          style="margin-top: 5px"
-                          icon="arrow_downward"
-                          flat
-                          round
-                          dense
-                          color="primary"
-                          @click="onInsert(prop.node, 'after')"
-                        />
-                        <q-btn
-                          v-close-popup
-                          style="margin-top: 5px"
-                          icon="arrow_upward"
-                          flat
-                          round
-                          dense
-                          color="primary"
-                          @click="onInsert(prop.node, 'before')"
-                        />
-                        <q-btn
-                          v-close-popup
-                          style="margin-top: 5px"
-                          icon="arrow_forward"
-                          flat
-                          round
-                          dense
-                          color="primary"
-                          @click="onInsert(prop.node, 'over')"
-                        />
-                      </q-item-label>
+                      <q-btn
+                        v-close-popup
+                        style="margin-top: 5px"
+                        flat
+                        rounded
+                        dense
+                        color="primary"
+                        label="Добавить"
+                        @click.exact="onAdd(prop.node.id)"
+                        @click.shift.exact="onAdd(prop.node.id, true)"
+                      />
                     </q-item-section>
                   </q-item>
                 </q-list>
@@ -162,7 +140,7 @@
                   <q-item
                     clickable
                     v-close-popup
-                    @click="onInsert(prop.node, 'delete')"
+                    @click="onDelete(prop.node.id)"
                   >
                     <q-item-section>Удалить</q-item-section>
                   </q-item>
@@ -229,14 +207,40 @@ export default defineComponent({
         $router.go(-1);
       }
     }
+    async function onAdd(id, shift) {
+      console.log("add", id);
+      let dat = {
+        parent_id: shift ? null : id,
+        role_id: 1, //newName.value,
+      };
 
+      let res = await depAddDell("add", dat); //здесь id будет parent_id
+      if (res.nodes) {
+        treeNodes.value = treeToJson2(res.nodes);
+
+        nextTick(() => {
+          if (!refTree.value.isExpanded(id)) {
+            refTree.value.setExpanded(id, true);
+          }
+          selectedKey.value = res.currentId;
+        });
+      }
+      newDesc.value = "";
+      newName.value = "";
+      console.log("added", res);
+    }
     async function onDelete(id) {
       memoryCutNode.value = "";
       console.log("delete", id);
       let res = await depAddDell("delete", { id: id });
       if (res.nodes) treeNodes.value = treeToJson2(res.nodes);
     }
-
+    async function onPaste(node, mode) {
+      // задаем пункту из памяти parent_id, id тукущего пункта
+      await moveNode(memoryCutNode.value, node, mode);
+      // await onUpdate(memoryCutNode.value.id, id);
+      memoryCutNode.value = "";
+    }
     function deleteNodeFromTree(node, nodeId) {
       if (node.children != null) {
         for (let i = 0; i < node.children.length; i++) {
@@ -266,7 +270,7 @@ export default defineComponent({
       let res = await dataLoad(
         "/api/userroletree",
         { ...dat, ...{ cmd: cmd } },
-        "Дерево"
+        "Удаление дерева"
       );
       if (res.error) {
         console.log("Ошибка treeCommand", res.error);
@@ -283,31 +287,106 @@ export default defineComponent({
       if (!res) return; // была ошибка ничего не делаем, анализируем ??
       const arr = await loadDepartments();
       treeNodes.value = arr.nodes.sort(compareName);
-    }
-    async function insertNode(to, mode) {
-      let dat = {
-        to: to.id,
-        name: newName.value,
-        descript: newDesc.value, // не используем еще
-        hitmode: mode,
-      };
-      let res = await treeCommand("insert", dat);
-      if (!res) return; // была ошибка ничего не делаем, анализируем ??
-      const arr = await loadDepartments();
-      treeNodes.value = arr.nodes.sort(compareName);
-    }
-    async function onPaste(node, mode) {
-      // задаем пункту из памяти узел node, куда node, и mode
-      await moveNode(memoryCutNode.value, node, mode);
-      memoryCutNode.value = "";
-    }
-    async function onInsert(node, mode) {
-      console.log("onInsert", node);
-      await insertNode(node, mode);
-      newDesc.value = "";
-      newName.value = "";
-    }
+      /*
+     res = res[0];
+      // idout тоже что и
+      const fromRoot = res.fromRoot; // из какого дерева брали
+      const fromPath = res.fromPath; // путь переносимого
+      const toRoot = res.toRoot; // в какое дерево перенесли
+      const toPath = res.toPath; // в конец этого пути чтото вставили
+      const endRoot = res.endRoot; // итоговое дерево
+      const endPath = res.endPath; // полный путь
 
+      //  toRoot и  toPath говорят о месте вставки т.е. это однозначный родитель
+
+      console.log("Пришло это: ", res);
+      // определить если деревья разные
+      // если деревья одинаковые
+      if (fromRoot == toRoot) {
+        const idNode = toPath[toPath.length - 1]; // узел надо удалить и закрыть
+        console.log("Вставляем в конец этого: ", idNode);
+        nextTick(() => {
+          if (refTree.value.isExpanded(idNode)) {
+            refTree.value.setExpanded(idNode, false);
+          }
+        });
+        let oneRes = await loadDepartments({ id: idNode });
+        console.log("скачали узел:", idNode, oneRes.nodes);
+        let toInsert = oneRes.nodes[0].lft - 1; // это у скачанного
+
+        let FF = treeNodes.value[0];
+        // console.log("1", FF);
+        deleteNodeFromTree(FF, from.id);
+        updateNodeInTree(FF, toInsert, oneRes.nodes);
+        console.log("2", FF);
+        // treeNodes.value[0] = FF;
+        console.log(">>", JSON.stringify(treeNodes.value, 0, 2));
+
+        // let nodeCl = refTree.value.getNodeByKey(idNode);
+        // console.log("Нашли узел:", nodeCl);
+        // nodeCl = oneRes.nodes[0];
+        // console.log("Вставили:", nodeCl);
+        // treeNodes.value.find((o, i) => {
+        //   console.log("o.id: ", o.id, idNode, treeNodes.value[i]);
+        //   if (o.id == idNode) {
+        //     console.log("Меняем это:", treeNodes.value[i]);
+        //     treeNodes.value[i] = oneRes.nodes[0];
+        //     return true; // stop searching
+        //   }
+        // });
+      }
+
+      // if (res[0].endPath.length == 1) {
+      //   // вставили а путь без родителя, перечитываем все
+      //   const arr = await loadDepartments();
+      //   treeNodes.value = arr.nodes.sort(compareName);
+      //   return;
+      // }
+      // //! Надо прочитать само дерево с корня
+      // //! у него меняются границы при изменении состава.
+      // //! надо перечитать целиком нулевой уровень корня.
+
+      // if (res[0].endPath.length > 1) {
+      //   // вставили когото к родителю
+      //   // посмотрим кто это
+      //   // console.log("parent:", res[0].endPath.slice(-2)[0]);
+      //   console.log("Родитель:", res[0].endPath[0]); // пока берем корень
+      //   let rootId = res[0].endPath[0];
+      //   let oneRes = await loadDepartments({ id: rootId });
+
+      //   // let nodeCl = refTree.value.getNodeByKey(from.id);
+      //   //! Здесь должны закрыть и перечитать дерево из которого удалили ключ
+      //   let obj1 = treeNodes.value.find((o, i) => {
+      //     if (o.id == rootId) {
+      //       console.log("прочитали", oneRes.nodes[0]);
+      //       console.log("удалить должны", treeNodes.value[i]);
+      //       //treeNodes.value[from.id];
+      //       return true; // stop searching
+      //     }
+      //   });
+      //   // здесь вставляем то что перенесли
+      //   if (oneRes.nodes?.length > 0) {
+      //     console.log("что прочитали", oneRes.nodes);
+      //     //treeNodes.value
+      //     let obj = treeNodes.value.find((o, i) => {
+      //       if (o.id == rootId) {
+      //         console.log("прочитали", oneRes.nodes[0]);
+      //         console.log("вставлять сюда", treeNodes.value[i]);
+      //         treeNodes.value[i] = oneRes.nodes[0];
+      //         return true; // stop searching
+      //       }
+      //     });
+      //     // nodeCl = { ...oneRes.nodes[0] };
+      //   }
+
+      //   nextTick(() => {
+      //     if (refTree.value.isExpanded(rootId)) {
+      //       refTree.value.setExpanded(rootId, false);
+      //     }
+      //   });
+      // }
+      */
+    }
     async function onUpdate(id, parent_id = "", sorted = "") {
       console.log("update", id);
       let dat = {
@@ -481,7 +560,7 @@ export default defineComponent({
       onPaste,
       onUpdate,
       onDelete,
-      onInsert,
+      onAdd,
       refTree,
       selectedKey,
       rightClick,

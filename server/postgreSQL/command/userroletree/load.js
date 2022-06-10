@@ -1,34 +1,103 @@
 import { pool } from "../../initPostgreSQL.js";
+import { nestedSets } from "../../../utils/nestedSets.js";
 // import { botSendMessage } from "../../../tg/startTgBot.js";
 // import escape from "pg-escape";
 
 export async function load(req, res, tabname, timezone, idOne) {
   // let wher = idOne ? "WHERE " + tabname + ".id = $2" : "";
+  console.log("load tree", req.body);
   let sqlP = {
     text: /*sql*/ `
       SELECT 
       ${tabname}.id,
-      ${tabname}.parent_id,
-      users_roles.name AS name,
-      users_roles.description AS description
+      ${tabname}.root,
+      ${tabname}.lft,
+      ${tabname}.rgt,
+      ${tabname}.level,
+      ${tabname}.name
       FROM ${tabname}
-      JOIN users_roles ON users_roles.id = ${tabname}.role_id
       WHERE NOT ${tabname}.meta @> '{"hidden":true}'  -- содержит ли meta такой ключ с таким значением
-      --ORDER BY ${tabname}.name
+      AND level = 0
 `,
     values: [],
   };
-  // if (idOne) sqlP.values = [timezone, idOne];
-  //console.log("wher", sqlP);
+  let sqlPAll = {
+    text: /*sql*/ `
+      SELECT 
+      ${tabname}.id,
+      ${tabname}.root,
+      ${tabname}.lft,
+      ${tabname}.rgt,
+      ${tabname}.level,
+      ${tabname}.name
+      FROM ${tabname}
+      WHERE NOT ${tabname}.meta @> '{"hidden":true}'  -- содержит ли meta такой ключ с таким значением
+      AND level < 20 
+      order by  ${tabname}.root, ${tabname}.lft;
+`,
+    values: [],
+  };
+  let sqlPChild = {
+    text: /*sql*/ `
+      SELECT 
+      ${tabname}.id,
+      ${tabname}.root,
+      ${tabname}.lft,
+      ${tabname}.rgt,
+      ${tabname}.level,
+      ${tabname}.name
+      FROM ${tabname}
+      WHERE NOT ${tabname}.meta @> '{"hidden":true}'  -- содержит ли meta такой ключ с таким значением
+      AND root = $1
+      AND (lft > $2 AND rgt < $3) AND level = $4 
+`,
+    values: [
+      req.body.root,
+      req.body.lft,
+      req.body.rgt,
+      1 + Number(req.body.level),
+    ],
+  };
+  let sqlPId = {
+    text: /*sql*/ `
+      SELECT 
+      ${tabname}.id,
+      ${tabname}.root,
+      ${tabname}.lft,
+      ${tabname}.rgt,
+      ${tabname}.level,
+      ${tabname}.name
+      FROM ${tabname}
+      WHERE NOT ${tabname}.meta @> '{"hidden":true}'  -- содержит ли meta такой ключ с таким значением
+      AND id = $1
+`,
+    values: [req.body.id],
+  };
   try {
-    let result = await pool.query(sqlP);
+    let result = [];
+    if (req.body.id) {
+      result = await pool.query(sqlPId);
+    } else if (req.body.lft && req.body.rgt) {
+      result = await pool.query(sqlPChild);
+    } else {
+      result = await pool.query(sqlPAll);
+      result = result.rowCount > 0 ? result.rows : [];
+      result = nestedSets(result);
+      console.log("tree all", result);
+      return {
+        result: {
+          nodes: result,
+        },
+      };
+    }
     result = result.rowCount > 0 ? result.rows : null;
     //console.log("departments", result);
-    // let mess = `Читаем Пекарни`;
-    // botSendMessage(mess, req);
+    let mess = `Load ${tabname}`;
+    botSendMessage(mess, req);
+    // console.log("tree child:", result);
     return {
       result: {
-        nodes: result,
+        nodes: treeToJson(result),
         currentId: idOne,
       },
     };
@@ -38,4 +107,15 @@ export async function load(req, res, tabname, timezone, idOne) {
       error: err.toString(),
     };
   }
+}
+function treeToJson(Arr) {
+  let A = [];
+  Arr.forEach((element) => {
+    if (element.rgt - element.lft != 1) {
+      // element.children = [];
+      element.lazy = true;
+    }
+    A.push(element);
+  });
+  return A;
 }

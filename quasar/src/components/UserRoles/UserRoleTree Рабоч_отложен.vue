@@ -23,7 +23,6 @@
       v-model:expanded="expanded"
       @update:selected="onSelectNode"
       @click.right.stop.prevent
-      @lazy-load="lazyLoad"
     >
       <template v-slot:default-header="prop">
         <div
@@ -57,44 +56,22 @@
               <q-menu anchor="top end" self="top start">
                 <q-list>
                   <q-item>
-                    <q-item-section class="no-outline" tabindex="0">
+                    <q-item-section>
                       <q-item-label caption> Новый пункт </q-item-label>
-                      <q-input v-model="newName" label="Название" autofocus />
+                      <q-input v-model="newName" label="Название" />
                       <q-input v-model="newDesc" label="Комментарий" />
                       <q-separator inset></q-separator>
-                      <q-item-label class="items-center">
-                        <span>Вставить: </span>
-                        <q-btn
-                          v-close-popup
-                          style="margin-top: 5px"
-                          icon="arrow_downward"
-                          flat
-                          round
-                          dense
-                          color="primary"
-                          @click="onInsert(prop.node, 'after')"
-                        />
-                        <q-btn
-                          v-close-popup
-                          style="margin-top: 5px"
-                          icon="arrow_upward"
-                          flat
-                          round
-                          dense
-                          color="primary"
-                          @click="onInsert(prop.node, 'before')"
-                        />
-                        <q-btn
-                          v-close-popup
-                          style="margin-top: 5px"
-                          icon="arrow_forward"
-                          flat
-                          round
-                          dense
-                          color="primary"
-                          @click="onInsert(prop.node, 'over')"
-                        />
-                      </q-item-label>
+                      <q-btn
+                        v-close-popup
+                        style="margin-top: 5px"
+                        flat
+                        rounded
+                        dense
+                        color="primary"
+                        label="Добавить"
+                        @click.exact="onAdd(prop.node.id)"
+                        @click.shift.exact="onAdd(prop.node.id, true)"
+                      />
                     </q-item-section>
                   </q-item>
                 </q-list>
@@ -145,9 +122,7 @@
                     v-if="memoryCutNode"
                     clickable
                     v-close-popup
-                    @click.exact="onPaste(prop.node, 'over')"
-                    @click.shift.exact="onPaste(prop.node, 'after')"
-                    @click.ctrl.exact="onPaste(prop.node, 'before')"
+                    @click="onPaste(prop.node.id)"
                   >
                     <q-item-section>
                       <q-item-label>Вставить</q-item-label>
@@ -162,7 +137,7 @@
                   <q-item
                     clickable
                     v-close-popup
-                    @click="onInsert(prop.node, 'delete')"
+                    @click="onDelete(prop.node.id)"
                   >
                     <q-item-section>Удалить</q-item-section>
                   </q-item>
@@ -201,21 +176,11 @@ export default defineComponent({
     const memoryCutNode = ref("");
     onMounted(async () => {
       const arr = await loadDepartments();
-      treeNodes.value = arr.nodes.sort(compareName);
-      console.log("Load", arr);
+      if (arr?.nodes) {
+        treeNodes.value = treeToJson2(arr.nodes);
+      }
+      console.log("tree", treeNodes.value);
     });
-    async function lazyLoad(details) {
-      const arr = await loadDepartments({
-        root: details.node.root,
-        lft: details.node.lft,
-        rgt: details.node.rgt,
-        level: details.node.level,
-      });
-
-      console.log("lazy", details.node, details.node.lft);
-      console.log("res lazy", arr.nodes);
-      details.done(arr.nodes.sort(compareSortLft));
-    }
     function onSelectNode(node) {
       console.log("Selectnode", node);
     }
@@ -229,85 +194,39 @@ export default defineComponent({
         $router.go(-1);
       }
     }
+    async function onAdd(id, shift) {
+      console.log("add", id);
+      let dat = {
+        parent_id: shift ? null : id,
+        role_id: 1, //newName.value,
+      };
 
+      let res = await depAddDell("add", dat); //здесь id будет parent_id
+      if (res.nodes) {
+        treeNodes.value = treeToJson2(res.nodes);
+
+        nextTick(() => {
+          if (!refTree.value.isExpanded(id)) {
+            refTree.value.setExpanded(id, true);
+          }
+          selectedKey.value = res.currentId;
+        });
+      }
+      newDesc.value = "";
+      newName.value = "";
+      console.log("added", res);
+    }
     async function onDelete(id) {
       memoryCutNode.value = "";
       console.log("delete", id);
       let res = await depAddDell("delete", { id: id });
       if (res.nodes) treeNodes.value = treeToJson2(res.nodes);
     }
-
-    function deleteNodeFromTree(node, nodeId) {
-      if (node.children != null) {
-        for (let i = 0; i < node.children.length; i++) {
-          let filtered = node.children.filter((f) => f.nodeId == nodeId);
-          if (filtered && filtered.length > 0) {
-            node.children = node.children.filter((f) => f.nodeId != nodeId);
-            return;
-          }
-          deleteNodeFromTree(node.children[i], nodeId);
-        }
-      }
-    }
-    function updateNodeInTree(node, nodeId, newNode) {
-      if (node.id == nodeId) {
-        console.log("нашли ", node, "заменяем на", newNode);
-        node.children = newNode;
-        node.name = "kkkkkk";
-        console.log("итого ", node);
-        return node;
-      } else if (node.children != null) {
-        for (let i = 0; i < node.children.length; i++) {
-          updateNodeInTree(node.children[i], nodeId, newNode);
-        }
-      }
-    }
-    async function treeCommand(cmd, dat) {
-      let res = await dataLoad(
-        "/api/userroletree",
-        { ...dat, ...{ cmd: cmd } },
-        "Дерево"
-      );
-      if (res.error) {
-        console.log("Ошибка treeCommand", res.error);
-      }
-      return res?.result || null;
-    }
-    async function moveNode(from, to, mode) {
-      let dat = {
-        from: from.id,
-        to: to.id,
-        hitmode: mode,
-      };
-      let res = await treeCommand("move", dat);
-      if (!res) return; // была ошибка ничего не делаем, анализируем ??
-      const arr = await loadDepartments();
-      treeNodes.value = arr.nodes.sort(compareName);
-    }
-    async function insertNode(to, mode) {
-      let dat = {
-        to: to.id,
-        name: newName.value,
-        descript: newDesc.value, // не используем еще
-        hitmode: mode,
-      };
-      let res = await treeCommand("insert", dat);
-      if (!res) return; // была ошибка ничего не делаем, анализируем ??
-      const arr = await loadDepartments();
-      treeNodes.value = arr.nodes.sort(compareName);
-    }
-    async function onPaste(node, mode) {
-      // задаем пункту из памяти узел node, куда node, и mode
-      await moveNode(memoryCutNode.value, node, mode);
+    async function onPaste(id) {
+      // задаем пункту из памяти parent_id, id тукущего пункта
+      await onUpdate(memoryCutNode.value.id, id);
       memoryCutNode.value = "";
     }
-    async function onInsert(node, mode) {
-      console.log("onInsert", node);
-      await insertNode(node, mode);
-      newDesc.value = "";
-      newName.value = "";
-    }
-
     async function onUpdate(id, parent_id = "", sorted = "") {
       console.log("update", id);
       let dat = {
@@ -331,10 +250,10 @@ export default defineComponent({
       newName.value = "";
       console.log("added", res);
     }
-    async function loadDepartments(dat) {
+    async function loadDepartments() {
       let res = await dataLoad(
         "/api/userroletree",
-        { ...{ cmd: "load" }, ...dat },
+        { cmd: "load" },
         "Чтение дерева"
       );
       return res?.result;
@@ -368,19 +287,6 @@ export default defineComponent({
       // Используем toUpperCase() для преобразования регистра
       const genreA = a.name.toUpperCase();
       const genreB = b.name.toUpperCase();
-
-      let comparison = 0;
-      if (genreA > genreB) {
-        comparison = 1;
-      } else if (genreA < genreB) {
-        comparison = -1;
-      }
-      return comparison;
-    }
-    function compareSortLft(a, b) {
-      // Используем toUpperCase() для преобразования регистра
-      const genreA = parseInt(a.lft);
-      const genreB = parseInt(b.lft);
 
       let comparison = 0;
       if (genreA > genreB) {
@@ -466,7 +372,6 @@ export default defineComponent({
       memoryCutNode,
       newDesc,
       newName,
-      lazyLoad,
       hideUpdate() {
         newName.value = "";
         newDesc.value = "";
@@ -481,7 +386,7 @@ export default defineComponent({
       onPaste,
       onUpdate,
       onDelete,
-      onInsert,
+      onAdd,
       refTree,
       selectedKey,
       rightClick,

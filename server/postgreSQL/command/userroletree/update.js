@@ -15,30 +15,12 @@ export async function update(req, res, tabname, timezone) {
     sqlP = {
       text: /*sql*/ `
       UPDATE ${tabname} SET
-      name = $2, 
-      description = $3, 
-      sorted = $4
+      name = $2,
+      command = 'Update' 
       WHERE "id" = $1
-      RETURNING id, name;
-
+      RETURNING * ;
       `,
-      values: [
-        req.body?.id,
-        req.body?.name,
-        req.body?.description,
-        req.body?.sorted,
-      ],
-    };
-  } else {
-    sqlP = {
-      text: /*sql*/ `
-      UPDATE ${tabname} SET
-      parent_id = $2
-      WHERE "id" = $1
-      RETURNING id, name;
-
-      `,
-      values: [req.body?.id, req.body?.parent_id],
+      values: [req.body?.id, req.body?.name],
     };
   }
 

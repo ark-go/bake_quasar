@@ -55,10 +55,10 @@ export function nestedSets(data) {
 
   let arrAll = [];
   grouped.forEach((val) => {
-    console.log("На дерево", "val");
+    // console.log("На дерево", "val");
     arrAll.push(makeTree(val)[0]);
   });
-  console.log("arrAll", arrAll);
+  // console.log("arrAll", arrAll);
   return arrAll;
 }
 

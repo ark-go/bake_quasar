@@ -55,6 +55,10 @@ function compareHashPassword(userpassword, hash, id) {
   } catch (e) {
     return false;
   }
+  if (!hash?.p1 || !hash?.p2) {
+    return false;
+  }
+
   var passwordData = sha512(userpassword + id, hash.p1);
   return passwordData.p2 === hash.p2;
 }

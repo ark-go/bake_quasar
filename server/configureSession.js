@@ -75,12 +75,17 @@ export function configureSession(app) {
     }
     //console.log(">>status>", req?.session?.user?.status);
     if (["Active", "Registered"].includes(req?.session?.user?.status)) {
-      // пользователя еще нет, сессию уменьшим выставим на 30 мин
+      // пользователя еще нет,
       req.session.cookie.maxAge = 8 * 24 * 60 * 60 * 1000; // дней сек мин часы 1000  7дней
     } else {
       // пользователя еще нет, сессию уменьшим выставим на
       req.session.cookie.maxAge = 1 * 60 * 1000; // 1 мин
     }
+    if (req.session?.userTmp) {
+      req.session.cookie.maxAge = 10 * 60 * 1000; // 10 мин
+    }
+
+    //if([])
     next();
   });
   return expSession;

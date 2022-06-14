@@ -15,13 +15,15 @@ import { configureSession } from "./configureSession.js";
 import {
   rateLimiterMiddleware,
   rateLimiterMiddlewareLogin,
+  rateLimiterMiddlewareRegUser,
 } from "./utils/rateLimiterMiddleware.js";
 botSendMessage("Старт сервера");
 
 let app = express();
 app.set("trust proxy", 1); // ..говорим что доверяем первому прокси и верим что там https
-app.use("/api/reguser/", rateLimiterMiddlewareLogin);
+app.use("/api/reguser/", rateLimiterMiddlewareRegUser);
 app.use("/api/login/", rateLimiterMiddlewareLogin);
+
 app.use("/api/", rateLimiterMiddleware);
 app.use(cookieParser());
 // ---------------------- helmet

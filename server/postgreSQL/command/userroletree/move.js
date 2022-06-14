@@ -5,7 +5,7 @@ import escape from "pg-escape";
 
 export async function move(req, res, tabname, timezone) {
   let id = req.body.id;
-  console.log("move: ", req.body);
+  console.log("move: ", id);
   //let tabname = "trademark"; //escape(req.body?.tableName);
 
   let sqlP = {
@@ -32,7 +32,7 @@ export async function move(req, res, tabname, timezone) {
       result: result,
     };
   } catch (err) {
-    console.log("Ошибка Удаления ", tabname, err.toString());
+    console.log("Ошибка Move ", tabname, err.toString());
     return {
       error: err.toString(),
     };

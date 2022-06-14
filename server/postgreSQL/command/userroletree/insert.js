@@ -32,6 +32,12 @@ export async function insert(req, res, tabname, timezone) {
       `,
     values: [req.body.to],
   };
+  let sqlNewRoot = {
+    text: /*sql*/ `
+    select * from tree_insert_root($1,$2)
+      `,
+    values: [req.body.name || "Корневой узел", req?.session?.user?.id],
+  };
   //  console.log(">>>", sqlP);
 
   try {
@@ -47,6 +53,9 @@ export async function insert(req, res, tabname, timezone) {
     }
     if (req.body.hitmode == "delete") {
       result = await pool.query(sqlDelete);
+    }
+    if (req.body.hitmode == "newRoot") {
+      result = await pool.query(sqlNewRoot);
     }
     //result = result.rowCount > 0 ? result.rows : null;
     console.log("insert", result);

@@ -15,10 +15,15 @@
 
             <q-toolbar-title>
               <router-link to="/" style="color: white; text-decoration: none">
-                <q-avatar>
-                  <img src="/public/icons/favicon-96x96.png" />
-                </q-avatar>
-                {{ titleBrand }}
+                <q-img
+                  v-if="!platform.is.mobile"
+                  src="/public/images/logo.png"
+                  spinner-color="silver"
+                  height="40px"
+                  width="210px"
+                  fit="fill"
+                />
+                <div v-else>ХиТ</div>
               </router-link>
             </q-toolbar-title>
           </div>
@@ -265,6 +270,7 @@ export default defineComponent({
       onContainer() {
         leftDrawerOpen.value = false;
       },
+      platform,
       rightDrawerOpen,
       leftDrawerOpen,
       ioSocket,

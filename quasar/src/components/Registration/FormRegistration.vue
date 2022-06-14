@@ -302,6 +302,9 @@ export default defineComponent({
       return customPassword();
     }
     async function onRegister() {
+      // пока не знаю, но мне нужно обновить сессию,
+      // let r = await sendCommand("/api/reguser", dataUser.value);
+      // nextTick(async () => {
       const r = await sendCommand("/api/reguser", dataUser.value);
       if (r) {
         console.log(r);
@@ -309,6 +312,7 @@ export default defineComponent({
         timerDelay.value = r.timerDelay;
         qrCodeDialog.value = true;
       }
+      //  });
     }
     async function onRegisterQRCode() {
       // при успехе пошлется письмо
@@ -316,6 +320,17 @@ export default defineComponent({
         qrCode: QRCode.value,
         rePassword: rePassword.value,
       });
+      if (r.error) {
+        Notify.create({
+          classes: "notify-error-top",
+          color: "red",
+          position: "top",
+          message: "Попробуйте позже.  Ошибка: " + r.error,
+          icon: "report_problem",
+        });
+        console.log(r);
+        return;
+      }
       if (r) {
         console.log(r);
         savedId.value = r;

@@ -5,21 +5,29 @@ import { emailConfirmSend } from "./emailConfirmSend.js";
 import { emailConfirmSave } from "./emailConfirmSave.js";
 import { getHashPassword } from "./passwordHash.js";
 import { findCodeConfirm } from "./findCodeConfirm.js";
+import { emailConfirmDelete } from "./emailConfirmDelete.js";
+import { emailConfirmFindUser } from "./emailConfirmFindUser.js";
 //import { update2FA } from "../../postgreSQL/command/update2FA.js";
 async function reguser(req, res) {
   if (req.body.qrCode) {
     //? Пришел код QRCode
-    if (req.body.rePassword != req.session.userTmp.password) {
-      return {
-        error: "Пароль не совпадает",
-      };
-    }
+
     console.log("передали код", req.body);
-    if (!req.session?.userTmp?.fa2code) {
-      console.log("предали код а время кончилось", req.body);
+    if (!req.session?.userTmp?.fa2code || !req.session?.userTmp?.password) {
+      console.log(
+        "передали код а время кончилось",
+        req.body,
+        "Сессия:",
+        req.session
+      );
       return {
         error:
           "Ошибочный запрос, или закончилась сессия для подтверждения кода",
+      };
+    }
+    if (req.body.rePassword != req.session.userTmp.password) {
+      return {
+        error: "Пароль не совпадает",
       };
     }
     //? прислан код регистрации qrCode
@@ -33,6 +41,15 @@ async function reguser(req, res) {
         error: "Не верный QR код",
       };
     }
+    let resfind = await emailConfirmFindUser(req.session.userTmp);
+    if (resfind.result) {
+      // уже есть пользователь
+      return {
+        error:
+          "Такой email уже зарегистрирован, обратитесь к администратору, что бы сбросить регистрацию ",
+      };
+    }
+
     //? Код запишем в базу, пока без пароля
     let res = await saveUserRegister(
       req.session.userTmp,
@@ -40,8 +57,10 @@ async function reguser(req, res) {
     );
     if (res.error) {
       // Юзера не записали
+      //! или была поdсторная регистрация , что с этм делать.
       return res;
     }
+
     // res.result.id - должен быть вставленный user ID
     //? Отправим письмо проверки E-mail
     let resEmail = await emailConfirmSend(
@@ -51,9 +70,16 @@ async function reguser(req, res) {
       // req.session?.userTmp?.password
     );
     if (resEmail.error) {
-      //! пользователю не отправили письмо - его надо удалить
+      // пользователю не отправили письмо - его надо удалить!!!
+      let resdel = await emailConfirmDelete(res.result?.id);
+      if (resdel.error) {
+        return {
+          error: "Произошла ошибка при регистрации 135",
+        };
+      }
       return resEmail;
     }
+
     let codeConfirm = resEmail?.result;
     console.log("email reg", resEmail);
     //let dateStart = Date.now();
@@ -112,7 +138,14 @@ async function reguser(req, res) {
   //console.log("kod:", req.session.userTmp);
   // Увеличим время жизни сессии для того чтоб успели завести код в приложение
   let timerDelay = 10 * 60 * 1000; // 10 мин;
-  req.session.cookie.maxAge = timerDelay;
+  // req.session.cookie.maxAge = timerDelay;
+  // req.session.save(function (err) {
+  //   // session saved
+  //   console.log(
+  //     "записываем сессию для регистрации телефона: ",
+  //     req.session.cookie.maxAge
+  //   );
+  // });
   return {
     result: {
       QRCodeUrl: code.QRCodeUrl,

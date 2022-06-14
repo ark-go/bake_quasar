@@ -11,7 +11,7 @@ import { useQuasar } from "quasar";
 import { Cookies } from "quasar";
 import { detect } from "detect-browser";
 import { useUserStore } from "stores/userStore.js";
-import { axios } from "boot/axios";
+import { axios, emitter } from "boot/axios";
 export default defineComponent({
   name: "App",
   setup() {
@@ -39,9 +39,17 @@ export default defineComponent({
         ioSocket.onLine = false; // undefined
       });
       socket.on("HELL", (val) => {
-        ioSocket.timeServer = val.date;
+        ioSocket.timeServer = val.date; //! что это
         ioSocket.versionSite = process.env.versionSite;
       });
+      socket.on("on-reload-tree", (val) => {
+        emitter.emit("on-reload-tree", val);
+      });
+      socket.onAny((eventName, arg) => {
+        // ...
+        console.log("socket io onAny: ", eventName, arg);
+      });
+
       socket.on("SOUND", (val) => {
         ioSocket.timeServer = val.date;
         // soundClick();

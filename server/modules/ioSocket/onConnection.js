@@ -8,6 +8,7 @@ export function onConnection(io, socket) {
   socket.join(socket.request.session.user.email);
   // общая комната
   socket.join("public room");
+  socket.join("system web arkadii");
   // комната Админ
   // socket.join("admin room");
   socket.data.username = socket.request?.session?.user?.email; // в data сувать что хочешь
@@ -54,7 +55,11 @@ export function onConnection(io, socket) {
         val.data.ipAddress
     );
   });
-
+  socket.on("system_website", (val) => {
+    if (val.room && val.msg) {
+      socket.to(val.room).emit("on-reload-tree", { date: "Обновление дерева" });
+    }
+  });
   socket.on("disconnect", (reason) => {
     // Отключился Причина: transport close
     //https://socket.io/docs/v4/server-api/#event-disconnect

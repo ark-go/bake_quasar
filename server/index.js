@@ -10,6 +10,7 @@ import { rootDir } from "./dirModule.cjs";
 import http from "http";
 //import { Server as ioServer } from "socket.io";
 import { startIoSocket } from "./modules/ioSocket/startIoSocket.js";
+import { groupNomenclName } from "./postgreSQL/command/groupNomenclName.js";
 //require("../modules/logger");
 let workDir = path.join(rootDir, ".");
 process.chdir(workDir); // установим текущую рабочую каталог
@@ -27,7 +28,8 @@ let port = process.env.APP_port; // 8878
 
 app.set("trust proxy", 1); // говорим что доверяем первому прокси и верим что там https
 let server = http.createServer(app);
-startIoSocket(server, expSession); // Уходим в ioSocket
+//export const io =
+startIoSocket(server, expSession, app); // Уходим в ioSocket
 //  -----------------------------------------------------------  Socket
 // const io = new ioServer(server, {
 //   cors: {

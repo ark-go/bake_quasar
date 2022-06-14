@@ -52,7 +52,7 @@ async function sendMail(toEmail, text = "", html, subject) {
   } catch (e) {
     console.log("Ошибка отправки почты ", e);
     return {
-      error: e.messagee,
+      error: e.message,
     };
   }
 }

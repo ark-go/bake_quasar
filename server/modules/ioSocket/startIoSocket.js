@@ -5,12 +5,12 @@ import { onConnection } from "./onConnection.js";
 import { redisClientIoSocket } from "../../utils/ioredisStoreMSK.js";
 //import { redisClient } from "../../utils/ioredisStore.js";
 //const { createAdapter } = require("@socket.io/redis-adapter");
-
-export function startIoSocket(serverHTTP, expressSession) {
+export let io = null;
+export function startIoSocket(serverHTTP, expressSession, app) {
   // console.log("redis to", process.env.Redis_ioSocket);
   // const pubClient = new Redis({ host: process.env.Redis_ioSocket, port: 6379 });
 
-  const io = new ioServer(serverHTTP, {
+  io = new ioServer(serverHTTP, {
     // maxHttpBufferSize: 1e8, // читать.. по умолчанию 1мб полезная нагрузка итаймаут
     // pingTimeout: 60000, // если большой размер, ошибки пинга вызывают отключение.. время можно увеличить
     cors: {
@@ -19,6 +19,7 @@ export function startIoSocket(serverHTTP, expressSession) {
       credentials: true,
     },
   });
+  app.socketIo = io; //! Не знаю...
   //console.log("старт ioSocket");
   if (redisClientIoSocket) {
     console.log(

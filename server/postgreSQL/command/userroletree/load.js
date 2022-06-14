@@ -1,9 +1,12 @@
 import { pool } from "../../initPostgreSQL.js";
 import { nestedSets } from "../../../utils/nestedSets.js";
-// import { botSendMessage } from "../../../tg/startTgBot.js";
+import { botSendMessage } from "../../../tg/startTgBot.js";
+//import { io } from "../../../modules/ioSocket/startIoSocket.js";
 // import escape from "pg-escape";
 
 export async function load(req, res, tabname, timezone, idOne) {
+  // работает io.sockets.in("system web arkadii").emit("on-reload-tree", "mainTree");
+  // io.sockets.in("room").emit("event_name", data);
   // let wher = idOne ? "WHERE " + tabname + ".id = $2" : "";
   console.log("load tree", req.body);
   let sqlP = {
@@ -83,7 +86,7 @@ export async function load(req, res, tabname, timezone, idOne) {
       result = await pool.query(sqlPAll);
       result = result.rowCount > 0 ? result.rows : [];
       result = nestedSets(result);
-      console.log("tree all", result);
+      //console.log("tree all", result);
       return {
         result: {
           nodes: result,

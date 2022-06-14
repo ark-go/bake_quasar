@@ -287,6 +287,7 @@ export default defineComponent({
       if (!res) return; // была ошибка ничего не делаем, анализируем ??
       const arr = await loadDepartments();
       treeNodes.value = arr.nodes.sort(compareName);
+
       /*
      res = res[0];
       // idout тоже что и

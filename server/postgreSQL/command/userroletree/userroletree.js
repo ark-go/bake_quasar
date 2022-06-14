@@ -29,8 +29,8 @@ export async function userroletree(req, res) {
       return await load(req, res, tabname, timezone);
     // case "add":
     //   return await add(req, res, tabname, timezone);
-    // case "update":
-    //   return await update(req, res, tabname, timezone);
+    case "update":
+      return await update(req, res, tabname, timezone);
     case "delete":
       return await del(req, res, tabname, timezone);
     case "move":

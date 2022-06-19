@@ -10,6 +10,12 @@ export async function accessCheck(req, res, next) {
       error: "NoAccess",
     });
   }
+  if (req?.session?.user?.status) {
+    return res.json({
+      error: "WaitManualConfirm",
+    });
+  }
+
   // хотя бы один совпадет то труе
 
   let itog = true;

@@ -34,7 +34,11 @@ export async function dataLoad(url, data, logInfo = "") {
       throw " Не полученно данных.";
     }
     if (respData.error) {
-      if (respData.error == "NoAccess") {
+      if (
+        ["NoAccess", "noautorizate", "WaitManualConfirm"].includes(
+          respData.error
+        )
+      ) {
         logInfo = "Нет доступа!";
       }
       throw respData.error;
@@ -53,9 +57,15 @@ export async function dataLoad(url, data, logInfo = "") {
   } catch (err) {
     Loading.hide();
     console.log("XXXXXXXXX", err.toString());
-    let caption = ["NoAccess", "noautorizate"].includes(err.toString())
+    let caption = ["NoAccess", "noautorizate", "WaitManualConfirm"].includes(
+      err.toString()
+    )
       ? "У вас нет доступа!"
       : logInfo + " : " + err.toString();
+    if (["WaitManualConfirm"].includes(err.toString())) {
+      caption = caption + " Ожидайте подтверждения регистрации";
+    }
+
     notif(); // для закрытия того что не загрузилось.
     Notify.create({
       classes: "notify-error-top",

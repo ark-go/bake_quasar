@@ -94,7 +94,6 @@ export default {
     //   //  refBottom.value;
     // });
     const maxBodyHeight = ref("");
-
     onUpdated(() => {
       try {
         let topBottom = height(refTop.value) + height(refBottom.value);

@@ -14,7 +14,7 @@ async function emailConfirmSend(idUser, host, email) {
     //   autoescape: true,
     // });
     let htm = await readFileSync(
-      path.join(rootDir, "modules", "reguser", "mailConfirm.html"),
+      path.join(rootDir, "modules", "reguser", "mailconf.html"),
       "utf8"
     );
     // let nunj = new nunjucks.renderString(htm);

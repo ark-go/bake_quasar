@@ -1,5 +1,10 @@
 <template>
-  <q-tr :props="propsV">
+  <q-tr
+    :props="propsV"
+    class="color-table cursor-pointer"
+    :class="selectedRow?.id == propsV.row?.id ? 'select-row' : ''"
+    @click.exact="$emit('onRowClick', propsV.row)"
+  >
     <q-td
       v-for="col in propsV.cols"
       :key="col.id"
@@ -24,14 +29,14 @@
         <q-btn
           round
           color="blue-3"
-          size="sm"
+          size="1ex"
           icon="mode_edit"
           @click="rowEdit(propsV)"
         />
         <q-btn
           round
           color="red-3"
-          size="sm"
+          size="1ex"
           icon="delete_forever"
           @click="rowDelete(propsV)"
         />
@@ -52,6 +57,7 @@ export default {
   name: "TableCell",
   props: {
     propsV: Object,
+    selectedRow: Object,
   },
   components: {
     SpravDialog,
@@ -87,3 +93,18 @@ export default {
   },
 };
 </script>
+<style lang="scss" scoped>
+.color-table {
+  // tr:nth-child(1) {
+  //   background: #666; /* Цвет фона */
+  //   color: #fff; /* Цвет текста */
+  // }
+  &:nth-child(2n) {
+    // background: #f0f0f0; /* Цвет фона */
+    background: #fffdfd;
+  }
+}
+.select-row {
+  color: red;
+}
+</style>

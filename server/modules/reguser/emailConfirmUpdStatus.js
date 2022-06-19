@@ -8,8 +8,9 @@ async function emailConfirmUpdStatus(id) {
             status = $2
             where ${tabname}.id = $1
       `,
-    values: [id, "Registered"],
+    values: [id, "WaitManualConfirm"],
   };
+  // Registered
   try {
     let result = await pool.query(sqlP);
     result = result?.rowCount > 0 ? result.rows : null;

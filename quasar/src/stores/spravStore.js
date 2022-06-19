@@ -1,13 +1,11 @@
 import { defineStore } from "pinia";
 //import { useQuasar } from "quasar";
-
-export const useMainStore = defineStore("MainStore", {
+// Спрвочники
+export const useSpravStore = defineStore("SpravStore", {
   state: () => {
     return {
       //все эти свойства будут иметь свой тип автоматически
-      rightDrawerOpen: false,
-      leftDrawerOpen: false,
-      modalLoginOpen: false,
+      selectedNode: {},
     };
   },
   // getters: {

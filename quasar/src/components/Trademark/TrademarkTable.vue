@@ -1,29 +1,7 @@
 <template>
-  <div class="column no-wrap" style="display: grid">
-    <div class="row" style="justify-content: space-between">
-      <q-input ref="filterRef" dense v-model="filter" label="Поиск">
-        <template v-slot:append>
-          <q-icon
-            v-if="filter !== ''"
-            name="clear"
-            class="cursor-pointer"
-            @click.stop="filter = ''"
-          />
-          <q-icon v-else name="search" />
-        </template>
-      </q-input>
-      <q-btn
-        v-if="tableInfo.tableName"
-        dense
-        flat
-        color="primary"
-        :disable="addNewEnabled"
-        @click="addNew"
-        >ДОБАВИТЬ</q-btn
-      >
-    </div>
+  <div class="column no-wrap" style="display: grid; max-height: inherit">
     <q-table
-      style="min-width: 100px"
+      style="min-width: 100px; max-height: inherit; overflow: auto"
       dense
       :filter="filter"
       no-data-label="Нет данных."
@@ -40,6 +18,20 @@
       :visible-columns="visibleColumns"
       @row-dblclick="dblClickRow"
     >
+      <template v-slot:top-left>
+        <div class="row">
+          <q-btn
+            flat
+            round
+            color="green"
+            icon="add"
+            @click="addNew"
+            :disable="addNewEnabled"
+          />
+          <div style="min-width: 25px"></div>
+          <find-table v-model:filter="filter"></find-table>
+        </div>
+      </template>
       <template v-slot:body="props">
         <ark-table-body
           :propsV="props"
@@ -96,6 +88,7 @@ import NoDataFooter from "components/NoDataFooter.vue";
 //import ArkTableCell from "components/Sprav/ArkTableCell.vue";
 import ArkTableBody from "components/Trademark/ArkTableBody.vue";
 import TrademarkDialog from "components/Trademark/TrademarkDialog.vue";
+import FindTable from "../Sprav/FindTable.vue";
 export default defineComponent({
   name: "TrademarkTable",
   components: {
@@ -103,6 +96,7 @@ export default defineComponent({
     // ArkTableCell,
     ArkTableBody,
     TrademarkDialog,
+    FindTable,
   },
   props: {
     //tableName: String,
@@ -133,13 +127,6 @@ export default defineComponent({
     const paginationСatalog = ref({
       rowsPerPage: 10,
     });
-    // function prepareDate(val) {
-    //   return {
-    //     id: val.value.id,
-    //     name: val.value.name,
-    //   };
-    // }
-
     async function restartComponent() {
       // необходимо при создании, или вставке :is компонета срабатывает
       sprav.value.brand = await getSprav("brand", "Бренды"); // если нужны справочники

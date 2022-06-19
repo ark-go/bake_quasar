@@ -1,6 +1,6 @@
 <template>
   <div class="column no-wrap" style="display: grid">
-    <div class="row" style="justify-content: space-between">
+    <!-- <div class="row" style="justify-content: space-between">
       <q-input ref="filterRef" dense v-model="filter" label="Поиск">
         <template v-slot:append>
           <q-icon
@@ -21,7 +21,7 @@
         @click="addNew"
         >ДОБАВИТЬ</q-btn
       >
-    </div>
+    </div> -->
     <q-table
       style="min-width: 100px"
       dense
@@ -40,6 +40,20 @@
       :visible-columns="visibleColumns"
       @row-dblclick="dblClickRow"
     >
+      <template v-slot:top-left>
+        <div class="row">
+          <q-btn
+            flat
+            round
+            color="green"
+            icon="add"
+            @click="addNew"
+            :disable="addNewEnabled"
+          />
+          <div style="min-width: 25px"></div>
+          <find-table v-model:filter="filter"></find-table>
+        </div>
+      </template>
       <template v-slot:body="props">
         <ark-table-body
           :propsV="props"
@@ -93,6 +107,7 @@ import NoDataFooter from "components/NoDataFooter.vue";
 import ArkTableCell from "components/Sprav/ArkTableCell.vue";
 import ArkTableBody from "components/Sprav/ArkTableBody.vue";
 import SpravDialog from "components/Sprav/SpravDialog.vue";
+import FindTable from "./FindTable.vue";
 //dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "SpravTable",
@@ -101,6 +116,7 @@ export default defineComponent({
     // ArkTableCell,
     ArkTableBody,
     SpravDialog,
+    FindTable,
   },
   props: {
     //tableName: String,

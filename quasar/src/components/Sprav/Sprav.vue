@@ -1,67 +1,85 @@
 <template>
   <ark-card
     title="Cправочники"
+    :pageMaxHeight="pageMaxHeight"
     subTitle=""
     style="width: 700px"
     :buttonArr="buttonArr"
     @buttonClick="buttonClick"
+    :selectedNode="selectedNode"
   >
-    <div class="ark-grid">
-      <div class="ark-grid-left">
-        <sprav-tree
-          style="min-width: 100px"
-          v-model:selectedNode="selectedNode"
-        ></sprav-tree>
-      </div>
-      <div class="ark-grid-right">
-        <component
-          :is="currentTable"
-          v-bind="{ tableInfo: selectedNode2 }"
-        ></component>
-        <!-- <sprav-table
-          v-if="!selectedNode.tableCompon"
-          :tableInfo="selectedNode"
-        ></sprav-table> -->
-      </div>
-    </div>
+    <template v-slot:before>
+      <sprav-tree
+        style="min-width: 100px"
+        v-model:selectedNode="selectedNode"
+      ></sprav-tree>
+    </template>
+    <template v-slot:after>
+      <component
+        :is="currentTable"
+        v-bind="{ tableInfo: selectedNode }"
+      ></component>
+    </template>
   </ark-card>
 </template>
 
 <script>
-import { defineComponent, ref, watch, watchEffect } from "vue";
+import { defineComponent, ref, watch, watchEffect, computed } from "vue";
 import SpravTree from "components/Sprav/SpravTree.vue";
 import SpravTable from "components/Sprav/SpravTable.vue";
 import TradeMarkTable from "components/Trademark/TrademarkTable.vue";
 import CityTable from "components/City/Table.vue";
-import ArkCard from "components/Card/ArkCard.vue";
+import ArkCard from "./ArkCard.vue";
 import NoTable from "components/Sprav/NoTable.vue";
-//import { useQuasar } from "quasar";
+
+import { useSpravStore } from "stores/spravStore";
 import { useRouter } from "vue-router";
+import { useQuasar } from "quasar";
 
 export default defineComponent({
   name: "PageSprav",
+  props: {
+    pageMaxHeight: Object,
+  },
   components: {
     ArkCard,
     SpravTree,
   },
   setup() {
     //  const $q = useQuasar();
+    const spravStore = useSpravStore();
     const selectedNode = ref({});
     const selectedNode2 = ref({});
     const $router = useRouter();
     const currentTableName = ref(null);
     const currentTable = ref(SpravTable);
-
+    const $q = useQuasar();
+    const splitHorizont = ref(false);
+    const splitStyleH = {
+      background: "rgb(214 214 214)",
+      minWidth: "6px",
+      minHeight: "50px",
+      borderRadius: "3px",
+    };
+    const splitStyleW = {
+      background: "rgb(214 214 214)",
+      minWidth: "50px",
+      minHeight: "6px",
+      borderRadius: "3px",
+    };
+    watchEffect(() => {
+      splitHorizont.value = $q.screen.width < $q.screen.height;
+    });
     watchEffect(() => {
       console.log(">", selectedNode.value?.tableType);
+      spravStore.selectedNode = selectedNode.value;
       if (!selectedNode.value?.tableType) {
         selectedNode2.value = selectedNode.value;
-        selectedNode2.value.prefixDateBase = "sprav";
+        //  selectedNode2.value.prefixDateBase = "sprav";
         currentTable.value = SpravTable;
       } else {
         if (["trademark"].includes(selectedNode.value?.tableType)) {
           selectedNode2.value = selectedNode.value;
-          // selectedNode2.value.prefixDateBase = "trademark";
           currentTable.value = TradeMarkTable;
         } else if (["city"].includes(selectedNode.value?.tableType)) {
           selectedNode2.value = selectedNode.value;
@@ -78,12 +96,6 @@ export default defineComponent({
         selectedNode.value?.tableType
       );
     });
-
-    // function onSelected(node) {
-    //   // if (node?.tableName) {
-    //   //   console.log("Выбран node", node);
-    //   // }
-    // }
     const buttonArr = ref([
       { key: "backRoute", name: "Назад" },
       //  { key: "Добавить", name: "Второй" },
@@ -99,7 +111,10 @@ export default defineComponent({
       selectedNode,
       selectedNode2,
       currentTableName,
-
+      splitterModel: ref(30),
+      splitHorizont,
+      splitStyleH,
+      splitStyleW,
       buttonArr,
       buttonClick,
     };

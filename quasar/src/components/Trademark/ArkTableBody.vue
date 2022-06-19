@@ -12,14 +12,14 @@
         <q-btn
           round
           color="blue-3"
-          size="sm"
+          size="1ex"
           icon="mode_edit"
           @click="rowEdit(propsV.row)"
         />
         <q-btn
           round
           color="red-3"
-          size="sm"
+          size="1ex"
           icon="delete_forever"
           @click="rowDelete(propsV.row)"
         />

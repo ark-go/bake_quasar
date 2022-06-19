@@ -94,6 +94,10 @@ export async function apiRoutes() {
       res.status(200).json({
         error: "noautorizate", //! поменять на нет доступа
       });
+    } else if (req?.session?.user?.status == "WaitManualConfirm") {
+      res.status(200).json({
+        error: "WaitManualConfirm", //! поменять на нет доступа
+      });
     } else {
       next();
     }

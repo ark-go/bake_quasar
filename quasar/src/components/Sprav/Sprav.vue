@@ -2,7 +2,7 @@
   <ark-card
     title="Cправочники"
     :pageMaxHeight="pageMaxHeight"
-    subTitle=""
+    :subTitle="spravStore.selectedNode.label"
     style="width: 700px"
     :buttonArr="buttonArr"
     @buttonClick="buttonClick"
@@ -16,9 +16,11 @@
     </template>
     <template v-slot:after>
       <component
+        v-if="selectedNode.tableName"
         :is="currentTable"
         v-bind="{ tableInfo: selectedNode }"
       ></component>
+      <div v-else class="text-none-table">Выберите что-нибудь.</div>
     </template>
   </ark-card>
 </template>
@@ -49,7 +51,7 @@ export default defineComponent({
     //  const $q = useQuasar();
     const spravStore = useSpravStore();
     const selectedNode = ref({});
-    const selectedNode2 = ref({});
+    //  const selectedNode2 = ref({});
     const $router = useRouter();
     const currentTableName = ref(null);
     const currentTable = ref(SpravTable);
@@ -73,22 +75,19 @@ export default defineComponent({
     watchEffect(() => {
       console.log(">", selectedNode.value?.tableType);
       spravStore.selectedNode = selectedNode.value;
-      if (!selectedNode.value?.tableType) {
-        selectedNode2.value = selectedNode.value;
-        //  selectedNode2.value.prefixDateBase = "sprav";
-        currentTable.value = SpravTable;
-      } else {
-        if (["trademark"].includes(selectedNode.value?.tableType)) {
-          selectedNode2.value = selectedNode.value;
+      switch (selectedNode.value.tableType) {
+        case undefined:
+          currentTable.value = SpravTable;
+          break;
+        case "trademark":
           currentTable.value = TradeMarkTable;
-        } else if (["city"].includes(selectedNode.value?.tableType)) {
-          selectedNode2.value = selectedNode.value;
+          break;
+        case "city":
           currentTable.value = CityTable;
-        } else {
-          selectedNode2.value = selectedNode.value;
-          selectedNode.value = {};
-          currentTable.value = NoTable;
-        }
+          break;
+        default:
+          currentTable.value = undefined;
+          break;
       }
       console.log(
         "Произошел выбор справочника таблиц:",
@@ -107,9 +106,10 @@ export default defineComponent({
       }
     }
     return {
+      spravStore,
       currentTable,
       selectedNode,
-      selectedNode2,
+      // selectedNode2,
       currentTableName,
       splitterModel: ref(30),
       splitHorizont,
@@ -131,5 +131,11 @@ export default defineComponent({
     grid-template-columns: 100%;
     min-width: 94vw;
   }
+}
+.text-none-table {
+  text-align: center;
+  font-weight: bold;
+  color: #8b8787;
+  font-size: 20px;
 }
 </style>

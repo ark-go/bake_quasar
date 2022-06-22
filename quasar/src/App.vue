@@ -46,8 +46,8 @@ export default defineComponent({
         emitter.emit("on-reload-tree", val);
       });
       socket.onAny((eventName, arg) => {
-        // ...
-        console.log("socket io onAny: ", eventName, arg);
+        // Все сообщения вообще
+        //  console.log("socket io onAny: ", eventName, arg);
       });
 
       socket.on("SOUND", (val) => {

@@ -23,7 +23,7 @@
                       :key="nameKey"
                       v-for="(value, nameKey) in menuObj"
                     >
-                      <q-item-section @click="emit('menuClick', nameKey)">{{
+                      <q-item-section @click="onClickMenu(nameKey)">{{
                         value
                       }}</q-item-section>
                     </q-item>
@@ -35,53 +35,57 @@
         </q-card-section>
       </div>
       <div :ref="(el) => (refInfoSection = el)">
-        <q-card-section> Ку ка ре ку </q-card-section>
+        <q-card-section
+          v-if="spravStore.selectedRow.name"
+          style="padding-top: 0"
+        >
+          <Tab-Button
+            v-model:tabModel="tabModel"
+            :selectedNode="selectedNode"
+          ></Tab-Button>
+        </q-card-section>
       </div>
       <div :ref="(el) => (refBodySection = el)">
-        <q-card-section style="padding: 0 16px 16px 16px">
-          <tab-sprav
-            v-if="splitHorizont"
+        <q-card-section
+          style="padding: 0 16px 16px 16px"
+          :style="{ maxHeight: maxBodyHeight }"
+        >
+          <q-tab-panels v-model="tabModel" animated keep-alive>
+            <q-tab-panel name="main" style="padding: 0">
+              <tab-sprav
+                v-if="splitHorizont"
+                :maxBodyHeight="maxBodyHeight"
+                :selectedNode="selectedNode"
+              >
+                <template v-slot:before>
+                  <slot name="before"></slot>
+                </template>
+                <template v-slot:after>
+                  <slot name="after"></slot>
+                </template>
+              </tab-sprav>
+              <Splitter-Sprav v-else :maxBodyHeight="maxBodyHeight">
+                <template v-slot:before>
+                  <slot name="before"></slot>
+                </template>
+                <template v-slot:after>
+                  <slot name="after"></slot>
+                </template>
+              </Splitter-Sprav>
+            </q-tab-panel>
+          </q-tab-panels>
+          <component
+            v-if="currentTabComponent"
+            :is="currentTabComponent"
+            v-bind="{
+              maxBodyHeight: maxBodyHeight,
+              tabModel: tabModel,
+            }"
+          ></component>
+          <!-- <Tab-Territory
             :maxBodyHeight="maxBodyHeight"
-            :selectedNode="selectedNode"
-          >
-            <template v-slot:before>
-              <slot name="before"></slot>
-            </template>
-            <template v-slot:after>
-              <slot name="after"></slot>
-            </template>
-          </tab-sprav>
-          <Splitter-Sprav v-else :maxBodyHeight="maxBodyHeight">
-            <template v-slot:before>
-              <slot name="before"></slot>
-            </template>
-            <template v-slot:after>
-              <slot name="after"></slot>
-            </template>
-          </Splitter-Sprav>
-          <!-- <q-splitter
-            v-model="splitterModel"
-            :horizontal="splitHorizont"
-            :limits="[20, 70]"
-            :style="{ maxHeight: maxBodyHeight }"
-          >
-            <template v-slot:separator>
-              <div :style="splitHorizont ? splitStyleW : splitStyleH"></div>
-            </template>
-            <template v-slot:before>
-              <div :style="{ maxHeight: maxBodyHeight, overflow: 'auto' }">
-                <slot name="before"></slot>
-              </div>
-            </template>
-            <template v-slot:after>
-              <div :style="{ maxHeight: maxBodyHeight, overflow: 'auto' }">
-                <slot
-                  name="after"
-                  :style="{ maxHeight: maxBodyHeight, overflow: 'auto' }"
-                ></slot>
-              </div>
-            </template>
-          </q-splitter> -->
+            :tabModel="tabModel"
+          ></Tab-Territory> -->
         </q-card-section>
       </div>
       <div
@@ -93,6 +97,7 @@
         <q-card-actions>
           <slot v-if="buttonArrProp" name="buttons">
             <q-btn
+              disable
               flat
               :key="item.key"
               v-for="item in buttonArrProp"
@@ -106,14 +111,23 @@
         </q-card-actions>
       </div>
     </q-card>
+    <Page-Setup-Dialog
+      v-model:menuDialogShow="menuDialogShow"
+    ></Page-Setup-Dialog>
   </div>
 </template>
 
 <script>
-import { ref, watch, onMounted, watchEffect, onUpdated, computed } from "vue";
+// prettier-ignore
+import {ref,watch, onMounted, watchEffect, onUpdated, computed, nextTick, defineAsyncComponent, } from "vue";
+import PageSetupDialog from "./PageSetupDialog.vue";
 import SplitterSprav from "./SplitterSprav.vue";
 import TabSprav from "./TabSprav.vue";
+import TabButton from "./TabButton.vue";
+import { useSpravStore } from "stores/spravStore";
 import { useQuasar, dom } from "quasar";
+import { getComponent } from "./selectComponent.js";
+//import TabTerritory from "./TabTerritory.vue";
 // menuObj объект для меню ключ/знчение  значение - показано в меню
 // menuClick вернет событие с именем ключа из объекта menuObj
 export default {
@@ -130,9 +144,12 @@ export default {
   components: {
     SplitterSprav,
     TabSprav,
+    TabButton,
+    PageSetupDialog,
   },
   setup(props, { emit }) {
     const $q = useQuasar();
+    const spravStore = useSpravStore();
     const { style, height } = dom;
     const refTopSection = ref();
     const refBodySection = ref();
@@ -140,14 +157,34 @@ export default {
     const refBottomSection = ref();
     const cardHeight = ref(400);
     const buttonArrProp = ref();
+    const tabModel = ref("main"); // чтото должно быть на экране
     const splitterModel = ref(30);
     const splitHorizont = ref(false);
+    const menuDialogShow = ref(false);
+    const currentTabComponent = ref();
+    watch(
+      // ловим изменение т.е. выбор дерева
+      () => props.selectedNode.key,
+      () => {
+        currentTabComponent.value = getComponent();
+      }
+    );
     const splitStyleH = {
       background: "rgb(214 214 214)",
       minWidth: "6px",
       minHeight: "50px",
       borderRadius: "3px",
     };
+    function onClickMenu(nameKey) {
+      emit("menuClick", nameKey);
+      if (nameKey == "sizeForm") {
+        console.log("menu");
+        menuDialogShow.value = true;
+        nextTick(() => {
+          console.log("menu", menuDialogShow.value);
+        });
+      }
+    }
     const splitStyleW = {
       background: "rgb(214 214 214)",
       minWidth: "50px",
@@ -160,20 +197,25 @@ export default {
     watchEffect(() => {
       splitHorizont.value = $q.screen.width < $q.screen.height;
     });
-
+    watch(
+      () => spravStore.selectedRow.name,
+      () => {
+        reSizeCard();
+      }
+    );
     const maxHeigh = computed(() => {
       return props.pageMaxHeight;
     });
     const maxBodyHeight = ref("");
     function reSizeCard() {
-      console.log("maxHeighmaxHeighmaxHeigh", maxHeigh.value);
+      // console.log("maxHeighmaxHeighmaxHeigh", maxHeigh.value);
       try {
         let topBottom =
           height(refTopSection.value) +
           height(refInfoSection.value) +
           height(refBottomSection.value);
         let N = `calc(${maxHeigh.value.maxHeight} - ${topBottom}px)`;
-        console.log("Новый Body", N, maxHeigh.value);
+        //    console.log("Новый Body", N, maxHeigh.value);
         maxBodyHeight.value = N;
       } catch (e) {
         console.log("нет элемента. пропуск", e);
@@ -199,7 +241,37 @@ export default {
       buttonArrProp.value = props.buttonArr;
       console.log("Кнопки:", buttonArrProp.value);
     });
+    function clickSelectButton() {
+      $q.dialog({
+        title: "Нихренаси, вы жмете!!",
+        message: spravStore.selectedRow.name,
+        cancel: true,
+        persistent: true,
+        ok: { label: "куй", color: "orange-3" }, // q-btn
+        cancel: { label: "Отменить", color: "blue-5" },
+        focus: "cancel",
+      })
+        .onOk(() => {
+          // console.log('>>>> OK')
+          //
+        })
+        .onOk(() => {
+          console.log(">>>> second OK catcher");
+        })
+        .onCancel(() => {
+          // console.log('>>>> Cancel')
+        })
+        .onDismiss(() => {
+          // console.log('I am triggered on both OK and Cancel')
+        });
+    }
     return {
+      currentTabComponent,
+      onClickMenu,
+      menuDialogShow,
+      tabModel,
+      spravStore,
+      clickSelectButton,
       refTopSection,
       refBodySection,
       refInfoSection,
@@ -224,6 +296,18 @@ export default {
 <style lang="scss" scoped>
 .maxAutoHeight {
   max-height: v-bind("maxBodyHeight");
+  overflow: auto;
+}
+</style>
+<style lang="scss" scoped>
+// :deep(.maxBodyHeightAndHeight) {
+//   height: v-bind(maxBodyHeight);
+//   max-height: v-bind(maxBodyHeight);
+//   overflow: auto;
+// }
+:deep(.maxBodyHeight) {
+  height: v-bind(maxBodyHeight);
+  max-height: v-bind(maxBodyHeight);
   overflow: auto;
 }
 </style>

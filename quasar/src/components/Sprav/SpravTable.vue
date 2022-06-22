@@ -2,6 +2,7 @@
   <div class="column no-wrap" style="display: grid; max-height: inherit">
     <q-table
       style="min-width: 100px; max-height: inherit; overflow: auto"
+      :card-container-style="{ fontSize: 'inherit' }"
       dense
       :filter="filter"
       no-data-label="Нет данных."
@@ -30,6 +31,8 @@
           :propsV="props"
           @on-save-data="onSaveData"
           @on-delete-data="onDeleteData"
+          @on-row-click="onRowClick"
+          :selectedRow="spravStore.selectedRow"
         ></ark-table-body>
       </template>
 
@@ -78,6 +81,7 @@ import NoDataFooter from "components/NoDataFooter.vue";
 import ArkTableCell from "components/Sprav/ArkTableCell.vue";
 import ArkTableBody from "components/Sprav/ArkTableBody.vue";
 import SpravDialog from "components/Sprav/SpravDialog.vue";
+import { useSpravStore } from "stores/spravStore";
 import FindTable from "./FindTable.vue";
 //dataLoad(url, data, logInfo = "")
 export default defineComponent({
@@ -99,6 +103,7 @@ export default defineComponent({
   },
   setup(props) {
     const $q = useQuasar();
+    const spravStore = useSpravStore();
     const tableNameSting = ref("");
     const rows = ref([]);
     const columnsVisible = ref([]);
@@ -120,6 +125,9 @@ export default defineComponent({
       } else {
         rows.value = [];
       }
+    }
+    function onRowClick(row) {
+      spravStore.selectedRow = row;
     }
     onMounted(async () => {
       columnFilter();
@@ -282,6 +290,8 @@ export default defineComponent({
     ]);
     return {
       tableNameSting,
+      spravStore,
+      onRowClick,
       rows,
       filter,
       columnsVisible,

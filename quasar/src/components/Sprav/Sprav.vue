@@ -1,24 +1,26 @@
 <template>
   <ark-card
-    title="Cправочники"
+    :title="spravStore.selectedNode.pathStr ? 'Cправочник' : 'Cправочники'"
     :pageMaxHeight="pageMaxHeight"
-    :subTitle="spravStore.selectedNode.label"
-    style="width: 700px"
+    :subTitle="subTitle"
+    :style="{ width: cardMain.width.curr + 'px', maxWidth: '98vw' }"
     :buttonArr="buttonArr"
     @buttonClick="buttonClick"
-    :selectedNode="selectedNode"
+    :selectedNode="spravStore.selectedNode"
+    :menuObj="menuObj"
+    @menuClick="menuClick"
   >
     <template v-slot:before>
       <sprav-tree
         style="min-width: 100px"
-        v-model:selectedNode="selectedNode"
+        v-model:selectedNode="spravStore.selectedNode"
       ></sprav-tree>
     </template>
     <template v-slot:after>
       <component
-        v-if="selectedNode.tableName"
+        v-if="spravStore.selectedNode.tableName"
         :is="currentTable"
-        v-bind="{ tableInfo: selectedNode }"
+        v-bind="{ tableInfo: spravStore.selectedNode, class: 'maxBodyHeight' }"
       ></component>
       <div v-else class="text-none-table">Выберите что-нибудь.</div>
     </template>
@@ -30,11 +32,13 @@ import { defineComponent, ref, watch, watchEffect, computed } from "vue";
 import SpravTree from "components/Sprav/SpravTree.vue";
 import SpravTable from "components/Sprav/SpravTable.vue";
 import TradeMarkTable from "components/Trademark/TrademarkTable.vue";
+import BakeryTable from "components/Bakery/BakeryTable.vue";
 import CityTable from "components/City/Table.vue";
 import ArkCard from "./ArkCard.vue";
 import NoTable from "components/Sprav/NoTable.vue";
 
 import { useSpravStore } from "stores/spravStore";
+import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 import { useRouter } from "vue-router";
 import { useQuasar } from "quasar";
 
@@ -50,13 +54,21 @@ export default defineComponent({
   setup() {
     //  const $q = useQuasar();
     const spravStore = useSpravStore();
-    const selectedNode = ref({});
+    const { cardMain } = storeToRefs(usePagesSetupStore());
     //  const selectedNode2 = ref({});
     const $router = useRouter();
+    const subTitle = ref("");
     const currentTableName = ref(null);
     const currentTable = ref(SpravTable);
     const $q = useQuasar();
     const splitHorizont = ref(false);
+    watchEffect(() => {
+      subTitle.value = "";
+      if (spravStore.selectedNode.pathStr)
+        subTitle.value = spravStore.selectedNode.pathStr;
+      if (spravStore.selectedRow.name)
+        subTitle.value += " | " + spravStore.selectedRow.name;
+    });
     const splitStyleH = {
       background: "rgb(214 214 214)",
       minWidth: "6px",
@@ -72,43 +84,65 @@ export default defineComponent({
     watchEffect(() => {
       splitHorizont.value = $q.screen.width < $q.screen.height;
     });
-    watchEffect(() => {
-      console.log(">", selectedNode.value?.tableType);
-      spravStore.selectedNode = selectedNode.value;
-      switch (selectedNode.value.tableType) {
-        case undefined:
-          currentTable.value = SpravTable;
-          break;
-        case "trademark":
-          currentTable.value = TradeMarkTable;
-          break;
-        case "city":
-          currentTable.value = CityTable;
-          break;
-        default:
-          currentTable.value = undefined;
-          break;
+    watch(
+      () => spravStore.selectedNode.tableName,
+      () => {
+        spravStore.selectedRow = {};
+        console.log("Выбрал дерево >", spravStore.selectedNode);
+        // spravStore.selectedNode = selectedNode.value;
+        switch (spravStore.selectedNode.tableType) {
+          case undefined:
+            currentTable.value = SpravTable;
+            break;
+          case "trademark":
+            currentTable.value = TradeMarkTable;
+            break;
+          case "city":
+            currentTable.value = CityTable;
+            break;
+          case "bakery":
+            currentTable.value = BakeryTable;
+            break;
+          default:
+            currentTable.value = undefined;
+            break;
+        }
+        console.log(
+          "Произошел выбор справочника таблиц:",
+          currentTable.value?.name,
+          spravStore.selectedNode?.tableType
+        );
       }
-      console.log(
-        "Произошел выбор справочника таблиц:",
-        currentTable.value?.name,
-        selectedNode.value?.tableType
-      );
-    });
-    const buttonArr = ref([
-      { key: "backRoute", name: "Назад" },
-      //  { key: "Добавить", name: "Второй" },
-    ]);
+    );
+    const buttonArr = ref([]);
+    // const buttonArr = ref([
+    //   { key: "backRoute", name: "Назад" },
+    //   //  { key: "Добавить", name: "Второй" },
+    // ]);
     function buttonClick(val) {
       if (val == "backRoute") {
         console.log(val);
         $router.go(-1);
       }
     }
+    //-------------------------------------------
+    const menuObj = ref({ sizeForm: "Размер" });
+    function menuClick(val) {
+      switch (val) {
+        case "sizeForm":
+          break;
+
+        default:
+          break;
+      }
+    }
+    //--------------------------------------------
     return {
+      cardMain,
+      menuObj,
       spravStore,
       currentTable,
-      selectedNode,
+      // selectedNode,
       // selectedNode2,
       currentTableName,
       splitterModel: ref(30),
@@ -116,7 +150,9 @@ export default defineComponent({
       splitStyleH,
       splitStyleW,
       buttonArr,
+      subTitle,
       buttonClick,
+      menuClick,
     };
   },
 });

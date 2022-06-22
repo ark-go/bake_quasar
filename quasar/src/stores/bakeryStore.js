@@ -1,7 +1,7 @@
 import { defineStore } from "pinia";
 //import { useQuasar } from "quasar";
 // Спрвочники
-export const useSpravStore = defineStore("SpravStore", {
+export const useBakeryStore = defineStore("BakeryStore", {
   state: () => {
     return {
       //все эти свойства будут иметь свой тип автоматически

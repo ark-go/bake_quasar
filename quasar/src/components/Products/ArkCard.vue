@@ -98,7 +98,7 @@ export default {
       try {
         let topBottom = height(refTop.value) + height(refBottom.value);
         let N = `calc(${maxHeigh.value.maxHeight} - ${topBottom}px)`;
-        console.log("Новый Body", N);
+        //    console.log("Новый Body", N);
         maxBodyHeight.value = N;
       } catch (e) {
         console.log("нет элемента. пропуск");

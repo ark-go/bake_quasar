@@ -20,7 +20,7 @@
                   src="/public/images/logo.png"
                   spinner-color="silver"
                   height="40px"
-                  width="210px"
+                  width="156px"
                   fit="fill"
                 />
                 <div v-else>ХиТ</div>
@@ -101,6 +101,7 @@
         </div>
       </q-toolbar>
     </q-footer>
+    <Test-Move></Test-Move>
   </q-layout>
   <!-- @click.self="modalLoginOpen = modalLoginOpen" -->
   <teleport to="body">
@@ -195,6 +196,7 @@ import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 //import { storeToRefs } from "pinia";
 import { useIoSocket } from "stores/ioSocket.js";
 import { useQuasar } from "quasar";
+import TestMove from "./TestMove.vue";
 export default defineComponent({
   name: "MainLayout",
 
@@ -203,6 +205,7 @@ export default defineComponent({
     FormLogin,
     pdfDialog,
     RightItems,
+    TestMove,
   },
 
   setup() {

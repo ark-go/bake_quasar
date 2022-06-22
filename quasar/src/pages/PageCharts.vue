@@ -17,22 +17,32 @@
 
 <script>
 //https://apexcharts.com/docs/vue-charts/
-import { defineComponent, ref } from "vue";
-import ChartsDemo2 from "components/ChartsDemo2.vue";
-import ChartsDemo3 from "components/ChartsDemo3.vue";
-import ChartsDemo4 from "components/ChartsDemo4.vue";
-import ChartsDemo5 from "components/ChartsDemo5.vue";
-import ChartsDemo6 from "components/ChartsDemo6.vue";
-import ChartsDemo from "components/ChartsDemo.vue";
+import { defineComponent, ref, defineAsyncComponent } from "vue";
+// import ChartsDemo2 from "components/ChartsDemo2.vue";
+// import ChartsDemo3 from "components/ChartsDemo3.vue";
+// import ChartsDemo4 from "components/ChartsDemo4.vue";
+// import ChartsDemo5 from "components/ChartsDemo5.vue";
+// import ChartsDemo6 from "components/ChartsDemo6.vue";
+// import ChartsDemo from "components/ChartsDemo.vue";
 export default defineComponent({
   name: "vue3Charts",
   components: {
-    ChartsDemo2,
-    ChartsDemo,
-    ChartsDemo3,
-    ChartsDemo4,
-    ChartsDemo5,
-    ChartsDemo6,
+    ChartsDemo2: defineAsyncComponent(() =>
+      import("components/ChartsDemo2.vue")
+    ),
+    ChartsDemo: defineAsyncComponent(() => import("components/ChartsDemo.vue")),
+    ChartsDemo3: defineAsyncComponent(() =>
+      import("components/ChartsDemo3.vue")
+    ),
+    ChartsDemo4: defineAsyncComponent(() =>
+      import("components/ChartsDemo4.vue")
+    ),
+    ChartsDemo5: defineAsyncComponent(() =>
+      import("components/ChartsDemo5.vue")
+    ),
+    ChartsDemo6: defineAsyncComponent(() =>
+      import("components/ChartsDemo6.vue")
+    ),
   },
 
   setup() {

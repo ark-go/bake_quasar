@@ -9,15 +9,19 @@
 </template>
 
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, toRefs } from "vue";
 import Sprav from "components/Sprav/Sprav.vue";
-
+import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 export default defineComponent({
   name: "PageSprav",
   components: {
     Sprav,
   },
   setup() {
+    const pageSetup = usePagesSetupStore();
+    pageSetup.currentPage = "sprav";
+    const { cardMain } = storeToRefs(usePagesSetupStore());
+    // const {fontSize} = toRefs(state)
     const pageMaxHeight = ref();
     function panelFnHeight(offset, height2) {
       let height = `calc(100vh - ${offset}px)`;
@@ -29,7 +33,16 @@ export default defineComponent({
     return {
       panelFnHeight,
       pageMaxHeight,
+      cardMain,
     };
   },
 });
 </script>
+<style lang="scss" scoped>
+:deep(.q-table tbody td) {
+  font-size: v-bind("cardMain.fontSize.curr + 'px'");
+}
+:deep(.q-tree) {
+  font-size: v-bind("cardMain.fontSize.curr + 'px'");
+}
+</style>

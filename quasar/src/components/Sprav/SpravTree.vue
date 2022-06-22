@@ -37,6 +37,7 @@
 
 <script>
 import { defineComponent, ref, watch } from "vue";
+import TreeModel from "tree-model";
 
 export default defineComponent({
   name: "SpravTree",
@@ -51,33 +52,55 @@ export default defineComponent({
     const refTree = ref(null);
     const filter = ref("");
     const filterRef = ref(null);
-    // watch(selected, (val, m, k) => {
-    //   console.log("SelecteNode", val, m, k);
-    // });
+    function onSelected(key /* node-key */) {
+      let node = refTree.value.getNodeByKey(key);
+      let isExp = refTree.value.isExpanded(key);
+      console.log("раскрыт", key, isExp);
+      refTree.value.setExpanded(key, !isExp);
+      //node = refTree.value.getNodeByKey(key); // после снятия
+      if (node) {
+        let parentNode = getParentTree(node.key);
+        if (parentNode && parentNode.length > 1)
+          node.parent = parentNode[parentNode.length - 2];
+        if (parentNode) {
+          let pathStr = [];
+          parentNode.forEach((node) => {
+            pathStr.push(node.label);
+          });
+          node.allParents = parentNode;
+          node.pathStr = pathStr.join(" | ");
+        }
+        emit("update:selectedNode", node);
+      }
+      console.log("on selected tree", key, node);
+    }
+    function getParentTree(key) {
+      let parents = [];
+      let tree = new TreeModel();
+      dataTree.forEach((element) => {
+        let rootMain = tree.parse(element);
+        rootMain.walk(function (node) {
+          if (node.model.key === key) {
+            let x = node.getPath();
+            x.forEach((element) => {
+              parents.push(element.model);
+            });
+          }
+        });
+      });
+      console.log("______________>", parents);
+      return parents;
+    }
 
     return {
       refTree,
       filter,
       filterRef,
-
+      onSelected,
       dataTree,
       expanded,
       selected,
-      onSelected(key /* node-key */) {
-        let node = refTree.value.getNodeByKey(key);
-        let isExp = refTree.value.isExpanded(key);
-        console.log("раскрыт", key, isExp);
-        refTree.value.setExpanded(key, !isExp);
-        //node = refTree.value.getNodeByKey(key); // после снятия
-        if (node) emit("update:selectedNode", node);
-        console.log("on selected tree", key, node);
-        //  emit("onSelected", node);
-        // if (key) {
-        //   // null - если был выбран тотже
-        //   let isExpand = refTree.value.isExpanded(key);
-        //   refTree.value.setExpanded(key, !isExpand);
-        // }
-      },
+
       resetFilter() {
         filter.value = "";
         filterRef.value.focus();
@@ -134,19 +157,30 @@ const dataTree = [
         label: "Сети",
         tableName: "trademark",
         tableType: "trademark",
+        children: [{ key: 28, label: "Бреxxxнды", tableName: "brand" }],
       }, //tableName: "brand"
     ],
   },
   {
     key: 3,
-    label: "Пекарни",
+    label: "Пекарни структура",
     // icon: "room_service",
     disabled: false,
     children: [
-      { key: 31, label: "Регионы", tableName: "region" },
-      { key: 32, label: "Офисы", tableName: "branch" },
-      { key: 33, label: "Территории", tableName: "territory" },
-      { key: 34, label: "Города", tableName: "city", tableType: "city" },
+      { key: 31, label: "Пекарни", tableName: "bakery", tableType: "bakery" },
+      { key: 32, label: "Регионы", tableName: "region" },
+      { key: 33, label: "Офисы", tableName: "branch", component: "Tabxxx" },
+      {
+        key: 34,
+        label: "Территории",
+        tableName: "territory",
+        component: "TabTerritory", // расширение по умолчанию vue
+        buttonPanel: [
+          { name: "manager", label: "Менеджер", icon: "person" },
+          { name: "bakeryTerritory", label: "Пекарни", icon: "home" },
+        ],
+      },
+      { key: 35, label: "Города", tableName: "city", tableType: "city" },
     ],
   },
   // {

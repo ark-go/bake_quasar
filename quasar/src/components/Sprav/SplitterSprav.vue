@@ -2,7 +2,7 @@
   <q-splitter
     v-model="splitterModel"
     :limits="[20, 70]"
-    :style="{ maxHeight: maxBodyHeight }"
+    :style="{ maxHeight: maxBodyHeight, height: maxBodyHeight }"
   >
     <template v-slot:separator>
       <div :style="splitStyleH"></div>
@@ -13,7 +13,13 @@
       </div>
     </template>
     <template v-slot:after>
-      <div :style="{ maxHeight: maxBodyHeight, overflow: 'auto' }">
+      <div
+        :style="{
+          maxHeight: maxBodyHeight,
+          overflow: 'auto',
+          margin: '0 6px 0 6px',
+        }"
+      >
         <slot
           name="after"
           :style="{ maxHeight: maxBodyHeight, overflow: 'auto' }"

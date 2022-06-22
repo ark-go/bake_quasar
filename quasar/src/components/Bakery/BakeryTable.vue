@@ -1,12 +1,12 @@
 <template>
   <div class="column no-wrap">
     <q-table
-      style="min-width: 100px; display: grid"
+      style="min-width: 100px"
       dense
       :filter="filter"
       no-data-label="Нет данных."
       no-results-label="Ничего не найдено."
-      class="my-sticky-virtscroll-table table-kagent-column-table"
+      class="my-sticky-virtscroll-table table-kagent-column-table maxBodyHeight"
       virtual-scroll
       v-model:pagination="paginationСatalog"
       :rows-per-page-options="[0]"
@@ -23,22 +23,26 @@
           :propsV="props"
           @on-btn-edit="onEdit"
           @on-btn-delete="onDelete"
+          :noEditTable="noEditTable"
+          @on-Info-Row="onInfoRow"
         ></table-body>
       </template>
       <template v-slot:top-left>
         <div class="row">
           <q-btn
-            dense
+            v-if="!noEditTable"
             flat
-            color="primary"
+            dense
+            round
+            color="green"
+            icon="add"
             @click="onAdd()"
-            label="Новая"
-          ></q-btn>
-          <div style="min-width: 25px"></div>
+          />
+          <div v-if="!noEditTable" style="min-width: 25px"></div>
           <find-table v-model:filter="filter"></find-table>
         </div>
       </template>
-      <template v-slot:top-right>
+      <template v-slot:top-right v-if="!noEditTable">
         <q-space />
 
         <q-select
@@ -53,10 +57,35 @@
           option-value="name"
           options-cover
           style="min-width: 30px"
+          borderless
         />
       </template>
       <template v-slot:no-data="dataslot">
         <no-data-footer :dataslot="dataslot"></no-data-footer>
+      </template>
+      <template v-slot:bottom v-if="noEditTable">
+        <q-select
+          v-model="visibleColumns"
+          multiple
+          dense
+          options-dense
+          display-value="Вид"
+          emit-value
+          map-options
+          :options="columns"
+          option-value="name"
+          options-cover
+          style="min-width: 30px"
+          borderless
+        />
+        <q-space />
+        <q-pagination
+          dense
+          v-model="paginationСatalog.page"
+          :max="Math.ceil(rows.length / paginationСatalog.rowsPerPage)"
+          input
+          input-class="text-orange-10"
+        />
       </template>
     </q-table>
   </div>
@@ -67,11 +96,18 @@
     v-model:edit-mode="editMode"
     :kagentDel="kagentDel"
   ></bakery-dialog>
+  <Info-Panel
+    v-model:infoShow="infoShow"
+    :infoData="infoData"
+    :infoDataIdx="infoDataIdx"
+    :infoTitle="infoTitle"
+  ></Info-Panel>
 </template>
 
 <script>
 import {
   defineComponent,
+  defineAsyncComponent,
   ref,
   onMounted,
   computed,
@@ -84,17 +120,25 @@ import NoDataFooter from "components/NoDataFooter.vue";
 import BakeryDialog from "./BakeryDialog.vue";
 import TableBody from "./TableBody.vue";
 import FindTable from "./FindTable.vue";
+//import InfoPanel from "./InfoPanel.vue";
 import { useQuasar } from "quasar";
 //import { Meta } from "quasar";
 
 //dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "SpravTable",
+  props: {
+    noEditTable: {
+      type: Boolean,
+      default: false,
+    },
+  },
   components: {
     NoDataFooter,
     TableBody,
     BakeryDialog,
     FindTable,
+    InfoPanel: defineAsyncComponent(() => import("./InfoPanel.vue")),
   },
   setup(props) {
     const $q = useQuasar();
@@ -221,8 +265,33 @@ export default defineComponent({
 
       //--------------------
     }
-
+    // Инфо блок
+    const infoShow = ref(false);
+    const infoData = ref();
+    const infoDataIdx = ref([]);
+    const infoTitle = ref("Пекарня");
+    function onInfoRow(row) {
+      infoData.value = row;
+      infoDataIdx.value = [
+        { name: "Пекарня" },
+        { own_kagent_name: "Собственный" },
+        { territory_name: "Территория" },
+        { branch_name: "Филиал" },
+        { city_name: "Город" },
+        { kolbakers: "Кол-во пекарей" },
+        { address: "Адрес" },
+        { description: "Доп. информация" },
+      ];
+      infoShow.value = true;
+      console.log("show idx:", infoDataIdx.value);
+    }
+    // ----------
     return {
+      onInfoRow,
+      infoDataIdx,
+      infoData,
+      infoTitle,
+      infoShow,
       showDialog,
       onDelete,
       onSave,

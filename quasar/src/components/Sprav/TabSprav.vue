@@ -10,7 +10,7 @@
       narrow-indicator
     >
       <q-tab name="treeTab" label="Выбор" />
-      <q-tab name="treeTable" label="Таблица" />
+      <q-tab name="treeTable" label="Список" />
     </q-tabs>
 
     <q-separator />

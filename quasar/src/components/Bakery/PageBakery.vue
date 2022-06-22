@@ -6,7 +6,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import Bakery from "components/Bakery/Bakery.vue";
+import Bakery from "./Bakery.vue";
 
 export default defineComponent({
   name: "PageSprav",

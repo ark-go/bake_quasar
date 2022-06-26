@@ -3,7 +3,15 @@ import { botSendMessage } from "../../../tg/startTgBot.js";
 import escape from "pg-escape";
 
 export async function load(req, res, tabname, timezone, idOne) {
-  let wher = idOne ? "WHERE " + tabname + ".id = $2" : "";
+  //  let wher = req.body?.territory_id ? "WHERE " +  tabname + ".territory_id = $2" : "";
+  let wher = "";
+  // для загрузки только группы печек
+  if (req.body?.territory_id) {
+    wher = /*sql*/ `WHERE ${tabname}.id in ( select bakery_id from bakery_territory where territory_id = ${escape(
+      req.body.territory_id
+    )} AND is_last = true )`;
+  }
+  if (idOne) wher = "WHERE " + tabname + ".id = $2";
   let sqlP = {
     text: /*sql*/ `
       SELECT

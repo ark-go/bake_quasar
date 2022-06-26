@@ -30,7 +30,13 @@
       @update:selected="onSelected"
       :no-selection-unset="true"
       :filter="filter"
-    />
+    >
+      <template v-slot:body-description="prop">
+        <span class="text-weight-thin" style="font-size: 0.8em">{{
+          prop.node.description
+        }}</span>
+      </template>
+    </q-tree>
     <!-- </q-scroll-area> -->
   </div>
 </template>
@@ -168,18 +174,20 @@ const dataTree = [
     disabled: false,
     children: [
       { key: 31, label: "Пекарни", tableName: "bakery", tableType: "bakery" },
-      { key: 32, label: "Регионы", tableName: "region" },
-      { key: 33, label: "Офисы", tableName: "branch", component: "Tabxxx" },
       {
-        key: 34,
-        label: "Территории",
+        key: 32,
+        label: "Группы - территории",
+        description: "по территориям",
         tableName: "territory",
         component: "TabTerritory", // расширение по умолчанию vue
         buttonPanel: [
-          { name: "manager", label: "Менеджер", icon: "person" },
           { name: "bakeryTerritory", label: "Пекарни", icon: "home" },
+          { name: "manager", label: "Менеджер", icon: "person" },
         ],
       },
+      { key: 33, label: "Регионы", tableName: "region" },
+      { key: 34, label: "Офисы", tableName: "branch", component: "Tabxxx" },
+
       { key: 35, label: "Города", tableName: "city", tableType: "city" },
     ],
   },

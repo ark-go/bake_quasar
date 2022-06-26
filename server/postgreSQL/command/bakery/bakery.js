@@ -5,6 +5,7 @@ import { del } from "./delete.js";
 import { allSprav } from "./allSprav.js";
 import { loadKagentTM } from "./loadKagentTM.js";
 import { botSendMessage } from "../../../tg/startTgBot.js";
+import { deleteFromGroup } from "./deleteFromGroup.js";
 /**
 
 /**
@@ -36,6 +37,8 @@ export async function bakery(req, res) {
       return await allSprav(req, res, timezone);
     case "loadKagentTM":
       return await loadKagentTM(req, res, timezone);
+    case "deleteFromGroup":
+      return await deleteFromGroup(req, res, "bakery_territory", timezone);
 
     default:
       return {

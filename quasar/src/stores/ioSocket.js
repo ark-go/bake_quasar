@@ -1,6 +1,5 @@
 import { defineStore } from "pinia";
 import { io } from "socket.io-client";
-
 export const useIoSocket = defineStore("IoSocket", {
   state: () => {
     return {
@@ -9,8 +8,13 @@ export const useIoSocket = defineStore("IoSocket", {
       timeServer: "",
       onLine: false,
       versionSite: "",
-      socket: null,
-      socketMain: io(),
+      socket: null, // socket
     };
+  },
+  actions: {
+    start() {
+      this.socket = io();
+      return this.socket; // socket
+    },
   },
 });

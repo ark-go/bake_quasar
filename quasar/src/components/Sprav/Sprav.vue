@@ -20,7 +20,11 @@
       <component
         v-if="spravStore.selectedNode.tableName"
         :is="currentTable"
-        v-bind="{ tableInfo: spravStore.selectedNode, class: 'maxBodyHeight' }"
+        v-bind="{
+          tableInfo: spravStore.selectedNode,
+          class: 'maxBodyHeight',
+          commandLoad: { cmd: 'load' },
+        }"
       ></component>
       <div v-else class="text-none-table">Выберите что-нибудь.</div>
     </template>

@@ -7,6 +7,7 @@ export function onConnection(io, socket) {
   // в комнату самого себя
   socket.join(socket.request.session.user.email);
   // общая комната
+  socket.join("siteCommandShare"); //!TODO сделать!! комната для всех общих сообщений сайта,
   socket.join("public room");
   socket.join("system web arkadii");
   // комната Админ
@@ -60,6 +61,10 @@ export function onConnection(io, socket) {
       socket.to(val.room).emit("on-reload-tree", { date: "Обновление дерева" });
     }
   });
+  socket.on("gameCursor", (val) => {
+    socket.to("system web arkadii").emit("gameCursor", val);
+  });
+
   socket.on("disconnect", (reason) => {
     // Отключился Причина: transport close
     //https://socket.io/docs/v4/server-api/#event-disconnect

@@ -3,7 +3,7 @@
     <q-card
       bordered
       class="my-card bg-grey-1 shadow-10"
-      style="overflow: auto; min-height: 200px"
+      style="overflow: auto; min-height: 200px; user-select: none"
       :style="maxHeigh"
     >
       <div :ref="(el) => (refTopSection = el)">

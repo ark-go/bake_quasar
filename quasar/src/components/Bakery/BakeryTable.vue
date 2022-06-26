@@ -24,7 +24,9 @@
           @on-btn-edit="onEdit"
           @on-btn-delete="onDelete"
           :noEditTable="noEditTable"
-          @on-Info-Row="onInfoRow"
+          @on-Info-Row="$emit('onInfoRow', $event)"
+          :funcTable="loadTable"
+          :componentBodyMenu="componentBodyMenu"
         ></table-body>
       </template>
       <template v-slot:top-left>
@@ -96,31 +98,15 @@
     v-model:edit-mode="editMode"
     :kagentDel="kagentDel"
   ></bakery-dialog>
-  <Info-Panel
-    v-model:infoShow="infoShow"
-    :infoData="infoData"
-    :infoDataIdx="infoDataIdx"
-    :infoTitle="infoTitle"
-  ></Info-Panel>
 </template>
 
 <script>
-import {
-  defineComponent,
-  defineAsyncComponent,
-  ref,
-  onMounted,
-  computed,
-  watch,
-  watchEffect,
-  unref,
-} from "vue";
+import { defineComponent, ref, onMounted } from "vue";
 import { dataLoad } from "src/utils/ark.js";
 import NoDataFooter from "components/NoDataFooter.vue";
 import BakeryDialog from "./BakeryDialog.vue";
 import TableBody from "./TableBody.vue";
 import FindTable from "./FindTable.vue";
-//import InfoPanel from "./InfoPanel.vue";
 import { useQuasar } from "quasar";
 //import { Meta } from "quasar";
 
@@ -128,19 +114,22 @@ import { useQuasar } from "quasar";
 export default defineComponent({
   name: "SpravTable",
   props: {
+    componentBodyMenu: Object,
     noEditTable: {
       type: Boolean,
       default: false,
     },
+    // команда для чтения  таблицы, задается при вставке в слот из других компонент
+    commandLoad: Object,
   },
+  emits: [],
   components: {
     NoDataFooter,
     TableBody,
     BakeryDialog,
     FindTable,
-    InfoPanel: defineAsyncComponent(() => import("./InfoPanel.vue")),
   },
-  setup(props) {
+  setup(props, { emit }) {
     const $q = useQuasar();
     const rows = ref([]);
     const visibleColumns = ref([]);
@@ -164,10 +153,12 @@ export default defineComponent({
         visibleColumns.value.push(item.name);
       });
     }
-
+    // Вставить проверку отрытого окна
     async function loadTable() {
       let mess = "Загрузка пекарен";
-      let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
+      // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
+      // команда cmd может задаваться из родительских компонентов
+      let res = await dataLoad("/api/bakery", props.commandLoad, mess);
       if (res.result) {
         rows.value = res.result;
       } else {
@@ -265,33 +256,10 @@ export default defineComponent({
 
       //--------------------
     }
-    // Инфо блок
-    const infoShow = ref(false);
-    const infoData = ref();
-    const infoDataIdx = ref([]);
-    const infoTitle = ref("Пекарня");
-    function onInfoRow(row) {
-      infoData.value = row;
-      infoDataIdx.value = [
-        { name: "Пекарня" },
-        { own_kagent_name: "Собственный" },
-        { territory_name: "Территория" },
-        { branch_name: "Филиал" },
-        { city_name: "Город" },
-        { kolbakers: "Кол-во пекарей" },
-        { address: "Адрес" },
-        { description: "Доп. информация" },
-      ];
-      infoShow.value = true;
-      console.log("show idx:", infoDataIdx.value);
-    }
+
     // ----------
     return {
-      onInfoRow,
-      infoDataIdx,
-      infoData,
-      infoTitle,
-      infoShow,
+      loadTable,
       showDialog,
       onDelete,
       onSave,

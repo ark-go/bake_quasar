@@ -2,10 +2,16 @@
   <q-tr
     :props="propsV"
     class="color-table cursor-pointer non-selectable"
-    :class="{ 'text-red': bakeryStore.selectedRow?.id == propsV.row?.id }"
-    @click.exact="onRowClick(propsV.row)"
-    @click.right.exact="onRowClick(propsV.row)"
+    :class="{ 'text-red': currentRow?.id == propsV.row?.id }"
+    @click.exact="$emit('onRowClick', propsV.row)"
+    @click.right.exact="$emit('onRowClick', propsV.row)"
   >
+    <component
+      :is="tableBodyMenu"
+      :row="propsV.row"
+      :funcTable="funcTable"
+      :tableName="tableName"
+    ></component>
     <template v-if="!isLeft">
       <q-td
         v-for="(col, index) in propsV.cols"
@@ -16,12 +22,8 @@
         }"
         style="max-width: 200px; overflow-x: hidden"
       >
-        <component
-          :is="componentBodyMenu"
-          :data-body="{ row: propsV?.row, funcTable: funcTable }"
-        ></component>
         <q-icon
-          v-if="index == 0 && bakeryStore.selectedRow?.id == propsV.row?.id"
+          v-if="index == 0 && infoBtn && currentRow?.id == propsV.row?.id"
           size="3ex"
           name="help"
           color="teal"
@@ -43,93 +45,72 @@
       </q-td>
     </template>
     <q-td
-      v-if="!noEditTable"
+      v-if="!noEditTable && (yesBtnDelete || yesBtnEdit)"
       :style="{
         textAlign: isLeft ? 'left' : 'right',
         justifyContent: isLeft ? 'flex-start' : 'flex-end',
       }"
       style="align-items: center"
     >
-      <!-- <div class="row no-wrap vertical-middle" style="justify-content: right"> -->
       <q-btn
-        v-if="buttons.includes('blue')"
+        v-if="yesBtnEdit"
         round
         color="blue-3"
         size="1ex"
-        :icon="blueIcon"
+        :icon="iconBtnEdit"
         @click="$emit('onBtnEdit', propsV?.row)"
       >
-        <q-tooltip
-          v-if="blueTooltipMess"
-          class="bg-blue"
-          :offset="[10, 10]"
-          transition-show="rotate"
-          transition-hide="rotate"
-        >
-          <span style="font-size: 10px">{{ blueTooltipMess }}</span>
-        </q-tooltip>
       </q-btn>
       <q-btn
-        v-if="buttons.includes('red')"
+        v-if="yesBtnDelete"
         round
         color="red-3"
         size="1ex"
-        :icon="redIcon"
+        :icon="iconBtnDelete"
         @click="$emit('onBtnDelete', propsV?.row)"
       >
-        <q-tooltip
-          v-if="redTooltipMess"
-          class="bg-red"
-          :offset="[10, 10]"
-          transition-show="rotate"
-          transition-hide="rotate"
-        >
-          <span style="font-size: 10px">{{ redTooltipMess }}</span>
-        </q-tooltip>
       </q-btn>
-      <!-- </div> -->
     </q-td>
     <template v-if="isLeft">
       <q-td v-for="col in propsV.cols" :key="col.id" :props="propsA">
         {{ col.value }}
       </q-td>
     </template>
+    <!-- <q-td v-for="col in propsV.cols" :key="col.id" :props="propsA">
+      {{ col.value }}
+    </q-td> -->
   </q-tr>
 </template>
 
 <script>
-import { ref, watch, onUnmounted } from "vue";
-import { useBakeryStore } from "stores/bakeryStore.js";
+import { ref } from "vue";
 export default {
   name: "TableCell",
   props: {
+    currentRow: Object,
+    tableName: String,
     funcTable: Function,
-    componentBodyMenu: Object,
+    tableBodyMenu: Object,
     propsV: Object,
-    isLeft: Boolean, // кнопки слева ?
-    buttons: {
-      type: Array,
-      default: () => {
-        return ["blue", "red"];
-      },
+    isLeft: {
+      type: Boolean, // кнопки слева ?
+      default: false,
     },
-    blueIcon: {
+    yesBtnEdit: Boolean,
+    yesBtnDelete: Boolean,
+    iconBtnEdit: {
       type: String,
       default: "mode_edit",
     },
-    redIcon: {
+    iconBtnDelete: {
       type: String,
       default: "delete_forever",
     },
-    blueTooltipMess: {
-      type: String,
-      default: "",
-    },
-    redTooltipMess: {
-      type: String,
-      default: "",
-    },
     noEditTable: {
+      type: Boolean,
+      default: false,
+    },
+    noInfoBtn: {
       type: Boolean,
       default: false,
     },
@@ -137,19 +118,10 @@ export default {
 
   emit: ["onBtnEdit", "onBtnDelete"],
   setup(props, { emit }) {
-    const bakeryStore = useBakeryStore();
-    onUnmounted(() => {
-      bakeryStore.selectedRow = {};
-    });
-    // bakeryStore.$subscribe((mutation, state) => {
-    //   console.log("bakery::::", mutation, state);
-    // });
+    const infoBtn = ref(!props.noInfoBtn);
+
     return {
-      bakeryStore,
-      onRowClick(row) {
-        console.log("НАЖАААААЛ");
-        bakeryStore.selectedRow = row;
-      },
+      infoBtn,
     };
   },
 };

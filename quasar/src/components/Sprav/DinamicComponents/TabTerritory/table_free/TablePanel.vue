@@ -14,6 +14,11 @@
     yesBtnEdit - показывать кнопку редактирования
     yesBtnDelete - показывать кнопку удаления
     noEditTable - удаляет кнопки Edit и Delete и кнопку плюс в Top
+    @onInfoRow - по кнопке Инфо
+    @onBtnDelete - кнопка удалить в строке
+    @onBtnEdit - кнопка едит в строке
+    @onRowClick - по строке
+    @onAdd - кнопка плюс в заголовке
     :iconBtnEdit="" - иконка для редактирования
     :iconBtnDelete="" - иконка для удаления
     :rowsPerPage  - кол-во строк таблице - странице
@@ -21,7 +26,7 @@
 <template>
   <Table-Template
     v-if="tableName"
-    title="Табличка"
+    :title="title"
     :tableName="tableName"
     :rows="rows"
     :columns="columns"
@@ -32,14 +37,21 @@
     @onBtnDelete="onInfoRow"
     @onBtnEdit="onInfoRow"
     @onRowClick="onRowClick"
+    @onAdd="onRowClick"
     :currentRow="currentRow"
     noExpandPanel
-    yesBtnEdit
+    noEditTable
     :store="store"
   >
   </Table-Template>
   <div v-else>не указана таблица</div>
+  <Form-Add-To-Group
+    :show="showDialog"
+    :dataDialog="dataDialog"
+    @beforeShow="beforeShowDialog"
+  ></Form-Add-To-Group>
 </template>
+
 <script>
 import {
   defineComponent,
@@ -55,7 +67,10 @@ export default defineComponent({
   name: "TablePanel",
   components: {
     TableTemplate: defineAsyncComponent(() => {
-      return import("./TableTemplate.vue");
+      return import("src/components/template/table/TableTemplate.vue");
+    }),
+    FormAddToGroup: defineAsyncComponent(() => {
+      return import("./FormAddToGroup.vue");
     }),
   },
   props: {
@@ -64,6 +79,8 @@ export default defineComponent({
       default: "view",
     },
     tableName: String,
+    commandLoad: Object,
+    title: String,
   },
   emits: [""],
   setup(props) {
@@ -77,11 +94,20 @@ export default defineComponent({
     const pagination = ref({
       rowsPerPage: 10,
     });
+    const showDialog = ref(false);
+    const dataDialog = ref({});
+    function beforeShowDialog() {
+      dataDialog.value = {};
+    }
     onMounted(async () => {
-      rows.value = await tableFunc.loadTable();
+      console.log("Запрос:", props.commandLoad);
+      rows.value = await tableFunc.loadTable(props.commandLoad);
     });
     return {
       currentRow,
+      showDialog,
+      dataDialog,
+      beforeShowDialog,
       store,
       pagination,
       rows,

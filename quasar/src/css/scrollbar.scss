@@ -1,5 +1,10 @@
 ::-webkit-scrollbar {
-  width: 10px;
+  /* 1 - скроллбар */
+  width: 10px; /* ширина вертикального*/
+  height: 10px; /* высота горизонтального */
+  &:hover {
+    height: 15px;
+  }
 }
 body.body--light {
   scrollbar-width: thin;

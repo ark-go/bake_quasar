@@ -6,7 +6,7 @@
 
 <script>
 import { defineComponent } from "vue";
-import TablePanel from "src/components/Sprav/DinamicComponents/TabTerritory/TablePanel.vue";
+import TablePanel from "src/components/Sprav/DinamicComponents/TabTerritory/table_all/TablePanel.vue";
 
 export default defineComponent({
   name: "PageIndex",

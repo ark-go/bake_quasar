@@ -7,25 +7,55 @@
       ></Buttons-Panel>
     </template>
     <template v-slot:after>
-      <Bakery-Table
+      <q-tab-panels v-model="activeTab" animated swipeable>
+        <q-tab-panel name="groupBakery"
+          ><table-panel-group
+            tableName="bakery"
+            title="Пекарни в текщей группе"
+            :commandLoad="commandLoad"
+            onRowClick
+          ></table-panel-group
+        ></q-tab-panel>
+        <q-tab-panel name="freeBakery">
+          <table-panel-free
+            tableName="bakery"
+            title="Пекарни без группы"
+            :commandLoad="{ ...commandLoadNoId, ...{ free: true } }"
+          ></table-panel-free
+        ></q-tab-panel>
+        <q-tab-panel name="busyBakery">
+          <table-panel-busy
+            tableName="bakery"
+            panelName="busyBakery"
+            title="Пекарни в других группах"
+            :commandLoad="{ ...commandLoad, ...{ nogroup: true } }"
+          ></table-panel-busy>
+        </q-tab-panel>
+        <q-tab-panel name="allBakery">
+          <table-panel-all
+            title="Все пекарни"
+            tableName="bakery"
+          ></table-panel-all>
+        </q-tab-panel>
+      </q-tab-panels>
+
+      <!-- <Bakery-Table
         :ref="(val) => (refTable = val)"
         :noEditTable="true"
         :commandLoad="commandLoad"
         :componentBodyMenu="componentBodyMenu"
-      ></Bakery-Table>
+      ></Bakery-Table> -->
     </template>
   </Splitter-Body>
-  <!-- <div class="grid-main maxBodyHeight">
-    <div class="item-1"><Buttons-Panel></Buttons-Panel></div>
-    <div class="item-2">
-      <Bakery-Table :noEditTable="true"></Bakery-Table>
-    </div>
-  </div> -->
 </template>
-
+<style lang="scss">
+.q-tab-panel {
+  padding: 0;
+}
+</style>
 <script>
 import { defineComponent, ref, defineAsyncComponent, onMounted } from "vue";
-import BakeryTable from "components/Bakery/BakeryTable.vue";
+//import BakeryTable from "components/Bakery/BakeryTable.vue";
 import SplitterBody from "./SplitterBody.vue";
 import { useSpravStore } from "stores/spravStore";
 
@@ -33,7 +63,18 @@ import { useSpravStore } from "stores/spravStore";
 export default defineComponent({
   name: "FindTable",
   components: {
-    BakeryTable,
+    TablePanelAll: defineAsyncComponent(() =>
+      import("./table_all/TablePanel.vue")
+    ),
+    TablePanelBusy: defineAsyncComponent(() =>
+      import("./table_busy/TablePanel.vue")
+    ),
+    TablePanelFree: defineAsyncComponent(() =>
+      import("./table_free/TablePanel.vue")
+    ),
+    TablePanelGroup: defineAsyncComponent(() =>
+      import("./table_group/TablePanel.vue")
+    ),
     SplitterBody,
     ButtonsPanel: defineAsyncComponent(() => import("./ButtonsPanel.vue")),
   },
@@ -44,23 +85,26 @@ export default defineComponent({
   setup(props) {
     const spravStore = useSpravStore();
     const refTable = ref();
-    const activeTab = ref();
-    const componentBodyMenu = defineAsyncComponent(() =>
-      import("./TableBodyMenu.vue")
-    );
+    const activeTab = ref("groupBakery");
+    // const componentBodyMenu = defineAsyncComponent(() =>
+    //   import("./TableBodyMenu.vue")
+    // );
     const commandLoad = ref({
       cmd: "load",
       // -100 нужно чтоб понять что мы передали чтото , если id нет например
       territory_id: spravStore.selectedRow.id || "-100",
     });
-    onMounted(() => {
-      commandLoad.value = {
-        cmd: "load",
-        terrytory: "yes", // нужно чтоб понять что мы передали чтото , если id нет напрмер
-        territory_id: spravStore.selectedRow.id,
-      };
+    const commandLoadNoId = ref({
+      cmd: "load",
     });
-    return { commandLoad, spravStore, componentBodyMenu, refTable, activeTab };
+    onMounted(() => {
+      // commandLoad.value = {
+      //   cmd: "load",
+      //   terrytory: "yes", // нужно чтоб понять что мы передали чтото , если id нет напрмер
+      //   territory_id: spravStore.selectedRow.id,
+      // };
+    });
+    return { commandLoad, commandLoadNoId, spravStore, refTable, activeTab };
   },
 });
 </script>

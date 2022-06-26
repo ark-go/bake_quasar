@@ -11,9 +11,7 @@
       воть туть Манагер
     </q-tab-panel>
     <q-tab-panel name="bakeryTerritory" style="padding: 0">
-      <Bakery-Table-Territory
-        :maxBodyHeight="maxBodyHeight"
-      ></Bakery-Table-Territory>
+      <Bakery-Table-Territory></Bakery-Table-Territory>
     </q-tab-panel>
   </q-tab-panels>
 </template>

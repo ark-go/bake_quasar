@@ -23,7 +23,10 @@
             </table-top-title>
           </template>
           <div v-if="extendPanel" class="flex row">
-            <table-top-btn v-if="!noTopBtn && !noEditTable" @onAdd="onAdd"></table-top-btn>
+            <table-top-btn
+              v-if="!noTopBtn && !noEditTable"
+              @onAdd="$emit('onAdd')"
+            ></table-top-btn>
             <table-top-find
               v-if="!noTopFind"
               v-model:filter="filter"
@@ -56,6 +59,9 @@
           :currentRow="currentRow"
         ></table-body>
       </template>
+      <template v-slot:no-data="dataslot">
+        <Table-No-Data-Footer :dataslot="dataslot"></Table-No-Data-Footer>
+      </template>
     </q-table>
   </div>
 </template>
@@ -65,6 +71,9 @@ import { defineComponent, ref, defineAsyncComponent } from "vue";
 export default defineComponent({
   name: "TableTemplate",
   components: {
+    TableNoDataFooter: defineAsyncComponent(() => {
+      return import("./TableNoDataFooter.vue");
+    }),
     TableTop: defineAsyncComponent(() => {
       return import("./TableTop.vue");
     }),
@@ -161,19 +170,9 @@ export default defineComponent({
       if (props.columnsVisibleTemplate.includes(item.name)) return;
       visibleColumns.value.push(item.name);
     });
-    function onAdd() {
-      console.log("кнопка адд");
-    }
-    console.log(
-      "visible col",
-      props.columns,
-      props.columnsVisibleTemplate,
-      visibleColumns.value
-    );
     return {
       pagination,
       visibleColumns,
-      onAdd,
       filter,
       extendPanel,
       titlePanel,

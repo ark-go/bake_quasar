@@ -6,6 +6,8 @@ import { allSprav } from "./allSprav.js";
 import { loadKagentTM } from "./loadKagentTM.js";
 import { botSendMessage } from "../../../tg/startTgBot.js";
 import { deleteFromGroup } from "./deleteFromGroup.js";
+import { terr_add } from "./terrytory/terr_add";
+import { terr_delete } from "./terrytory/terr_delete";
 /**
 
 /**
@@ -39,7 +41,12 @@ export async function bakery(req, res) {
       return await loadKagentTM(req, res, timezone);
     case "deleteFromGroup":
       return await deleteFromGroup(req, res, "bakery_territory", timezone);
-
+    case "terr_add":
+      // Добавить территорию к печке
+      return await terr_add(req, res, "bakery_territory", timezone);
+    case "terr_delete":
+      // удалим территорию из печки
+      return await terr_delete(req, res, "bakery_territory", timezone);
     default:
       return {
         error:

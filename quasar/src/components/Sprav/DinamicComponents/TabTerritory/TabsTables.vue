@@ -7,25 +7,31 @@
     inline-label
     outside-arrows
     mobile-arrows
-    active-bg-color="info"
+    active-bg-color="blue-3"
     class="text-primary"
   >
     <q-tab
       name="groupBakery"
-      icon="mail"
-      label="раз"
+      icon="event"
+      label="В группе"
       style="justify-content: left"
     />
     <q-tab
       name="freeBakery"
-      icon="alarm"
-      label="два"
+      icon="event_available"
+      label="Свободные"
       style="justify-content: left"
     />
     <q-tab
-      name="allOtherBakery"
-      icon="movie"
-      label="три"
+      name="busyBakery"
+      icon="event_busy"
+      label="Занятые"
+      style="justify-content: left"
+    />
+    <q-tab
+      name="allBakery"
+      icon="event_note"
+      label="Все пекарни"
       style="justify-content: left"
     />
   </q-tabs>

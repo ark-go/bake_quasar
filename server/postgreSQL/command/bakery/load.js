@@ -7,10 +7,19 @@ export async function load(req, res, tabname, timezone, idOne) {
   let wher = "";
   // для загрузки только группы печек
   if (req.body?.territory_id) {
-    wher = /*sql*/ `WHERE ${tabname}.id in ( select bakery_id from bakery_territory where territory_id = ${escape(
-      req.body.territory_id
-    )} AND is_last = true )`;
+    if (req.body.nogroup) {
+      // не в группе
+      wher = /*sql*/ `WHERE territory_g.id <> ${req.body.territory_id}`;
+    } else {
+      // в других группах
+      wher = /*sql*/ `WHERE territory_g.id = ${req.body.territory_id}`;
+    }
   }
+  if (req.body.free) {
+    // свободные, нет в списке разделенных
+    wher = /*sql*/ `WHERE territory_g.id IS NULL`;
+  }
+
   if (idOne) wher = "WHERE " + tabname + ".id = $2";
   let sqlP = {
     text: /*sql*/ `
@@ -22,6 +31,7 @@ export async function load(req, res, tabname, timezone, idOne) {
       trademark.name AS trdemark_name,
       ${tabname}.territory_id,
       territory.name AS territory_name,
+      territory_g.name AS territory_g_name,
       ${tabname}.branch_id,
       branch.name AS branch_name,
       ${tabname}.city_id,
@@ -53,7 +63,10 @@ export async function load(req, res, tabname, timezone, idOne) {
       FROM ${tabname}
       LEFT JOIN  users ON users.id = ${tabname}.user_id
       LEFT JOIN  trademark ON trademark.id = ${tabname}.trademark_id
-       LEFT JOIN  kagent_tm ON kagent_tm.id = ${tabname}.kagent_tm_id  -- здесь только id kagenta
+      LEFT JOIN  kagent_tm ON kagent_tm.id = ${tabname}.kagent_tm_id  -- здесь только id kagenta
+          LEFT JOIN  ( select * from bakery_territory 
+                    where  is_last = true ) as bt  ON bt.bakery_id = ${tabname}.id
+          LEFT JOIN  territory as territory_g ON territory_g.id = bt.territory_id
       LEFT JOIN  territory ON territory.id = ${tabname}.territory_id
       LEFT JOIN  branch ON branch.id = ${tabname}.branch_id
       LEFT JOIN  city ON city.id = ${tabname}.city_id

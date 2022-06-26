@@ -37,7 +37,6 @@ export default defineComponent({
   },
   emits: ["update:dva"],
   setup(props) {
-    console.log("menu props:", props);
     const rows = ref([]);
     async function onDeleteFromGroup() {
       //! лишнее заглущка ?

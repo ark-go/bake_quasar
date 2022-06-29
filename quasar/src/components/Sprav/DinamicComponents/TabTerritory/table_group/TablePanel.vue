@@ -31,8 +31,6 @@
     :rows="rows"
     :columns="columns"
     :columnsVisibleTemplate="columnsVisibleTemplate"
-    :tableBodyMenu="tableBodyMenu"
-    :tableFunc="tableFunc"
     @onInfoRow="onInfoRow"
     @onBtnDelete="onInfoRow"
     @onBtnEdit="onInfoRow"
@@ -43,8 +41,22 @@
     noEditTable
     :store="store"
   >
+    <template #contextMenu="dd">
+      <table-Body-Menu
+        :dataSlot="dd"
+        :currentGroupName="territoryRow.name"
+        @menuMoveToGroup="menuMoveToGroup"
+      ></table-Body-Menu>
+    </template>
   </Table-Template>
   <div v-else>не указана таблица</div>
+  <Form-Move-To-Group
+    v-model:show="showDialog"
+    :bakeryRow="bakeryRow"
+    @beforeShow="beforeShowDialog"
+    :territoryRow="territoryRow"
+    @formOnClick="formOnClick"
+  ></Form-Move-To-Group>
 </template>
 <script>
 import {
@@ -63,12 +75,24 @@ export default defineComponent({
     TableTemplate: defineAsyncComponent(() => {
       return import("src/components/template/table/TableTemplate.vue");
     }),
+    FormMoveToGroup: defineAsyncComponent(() => {
+      return import("./FormMoveToGroup.vue");
+    }),
+    tableBodyMenu: defineAsyncComponent(() => {
+      return import("./TableBodyMenu.vue");
+    }),
   },
   props: {
     modeBody: {
       type: String,
       default: "view",
     },
+    territoryRow: {
+      // это строка из сравочника
+      type: Object,
+      default: () => {},
+    },
+
     tableName: String,
     commandLoad: Object,
     objectRow: Object,
@@ -76,29 +100,42 @@ export default defineComponent({
   },
   emits: [""],
   setup(props) {
-    const tableFunc = useTableFunc(props.tableName);
-    const tableBodyMenu = defineAsyncComponent(() => {
-      return import("./TableBodyMenu.vue");
-    });
-    const store = useBakeryStore();
     const rows = ref([]);
+    const tableFunc = useTableFunc(props.tableName, rows, props.territoryRow);
+    const store = useBakeryStore();
     const currentRow = ref({});
+    const showDialog = ref(false);
+    const bakeryRow = ref({});
     const pagination = ref({
       rowsPerPage: 10,
     });
 
     onMounted(async () => {
-      //territory_id
-      rows.value = await tableFunc.loadTable(props.commandLoad);
+      return await tableFunc.loadTable();
     });
+    function menuMoveToGroup(val) {
+      console.log("menuMoveToGroup", val);
+      bakeryRow.value = val;
+      showDialog.value = true;
+    }
+    async function formOnClick(val) {
+      console.log("remove form", val);
+      await tableFunc.removeFromGroup(val);
+    }
+    function beforeShowDialog() {}
+
     return {
+      beforeShowDialog,
+      formOnClick,
+      menuMoveToGroup,
+      showDialog,
+      bakeryRow,
       currentRow,
       store,
       pagination,
       rows,
       columns,
       columnsVisibleTemplate,
-      tableBodyMenu,
       tableFunc,
       onInfoRow(row) {
         console.log("info butt", row);

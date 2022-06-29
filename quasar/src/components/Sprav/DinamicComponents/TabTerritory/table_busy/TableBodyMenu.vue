@@ -1,14 +1,11 @@
 <template>
   <q-menu auto-close touch-position context-menu>
     <q-list>
-      <q-item clickable @click="onDeleteFromGroup">
-        <q-item-section>Удалить из группы</q-item-section>
-      </q-item>
-      <q-item clickable>
-        <q-item-section>Не работает</q-item-section>
-      </q-item>
-      <q-item clickable @click="onNiht">
-        <q-item-section>Нихт кликен</q-item-section>
+      <q-item clickable @click="menuMoveToGroup">
+        <q-item-section no-wrap>
+          <q-item-label lines="1">Перевести в текущую группу</q-item-label>
+          <q-item-label caption lines="2">{{ currentGroupName }}</q-item-label>
+        </q-item-section>
       </q-item>
     </q-list>
   </q-menu>
@@ -16,54 +13,25 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import { dataLoad } from "src/utils/ark.js";
-// для  свойства componentBodyMenu у Table
+
 export default defineComponent({
   name: "TableBodyMenu",
   components: {},
   props: {
-    row: {
-      type: Object,
-      default: () => {},
-    },
-    funcTable: {
-      type: Function,
-      default: () => null,
-    },
-    tableName: {
+    dataSlot: Object, //row
+    currentGroupName: {
       type: String,
       default: "",
     },
   },
-  emits: ["update:dva"],
-  setup(props) {
+  emits: ["menuMoveToGroup"],
+  setup(props, { emit }) {
     const rows = ref([]);
-    async function onDeleteFromGroup() {
-      //! лишнее заглущка ?
-      await commandTable();
-    }
-    async function commandTable() {
-      console.log("хотим удалить", props.row?.id);
-      // let res = await dataLoad(
-      //   "/api/bakery",
-      //   { cmd: "deleteFromGroup", id: props.row?.id },
-      //   "Удаляем из группы пекарен"
-      // );
-      console.log("refTable", props.funcTable);
-      if (props.funcTable) {
-        let r = await props.funcTable();
-      }
-      // if (res.result) {
-      //   rows.value = res.result;
-      // } else {
-      //   rows.value = [];
-      // }
+    function menuMoveToGroup() {
+      emit("menuMoveToGroup", props.dataSlot?.row);
     }
     return {
-      onDeleteFromGroup,
-      onNiht() {
-        console.log("menu nixt", props.row, props.tableName);
-      },
+      menuMoveToGroup,
     };
   },
 });

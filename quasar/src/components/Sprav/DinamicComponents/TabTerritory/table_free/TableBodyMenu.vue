@@ -1,8 +1,11 @@
 <template>
   <q-menu auto-close touch-position context-menu>
     <q-list>
-      <q-item clickable @click="AddToGroup">
-        <q-item-section>Добавить в группу</q-item-section>
+      <q-item clickable @click="menuAddToGroup">
+        <q-item-section no-wrap>
+          <q-item-label lines="1">Добавить в группу</q-item-label>
+          <q-item-label caption lines="2">{{ currentGroupName }}</q-item-label>
+        </q-item-section>
       </q-item>
     </q-list>
   </q-menu>
@@ -10,55 +13,24 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import { dataLoad } from "src/utils/ark.js";
-// для  свойства componentBodyMenu у Table
 export default defineComponent({
   name: "TableBodyMenu",
   components: {},
   props: {
-    row: {
-      type: Object,
-      default: () => {},
-    },
-    funcTable: {
-      type: Function,
-      default: () => null,
-    },
-    tableName: {
+    dataSlot: Object, //row
+    currentGroupName: {
       type: String,
       default: "",
     },
   },
-  emits: ["update:dva"],
-  setup(props) {
+  emits: ["menuAddToGroup"],
+  setup(props, { emit }) {
     const rows = ref([]);
-    function AddToGroup() {}
-    async function onDeleteFromGroup() {
-      //! лишнее заглущка ?
-      await commandTable();
-    }
-    async function commandTable() {
-      console.log("хотим удалить", props.row?.id);
-      // let res = await dataLoad(
-      //   "/api/bakery",
-      //   { cmd: "deleteFromGroup", id: props.row?.id },
-      //   "Удаляем из группы пекарен"
-      // );
-      console.log("refTable", props.funcTable);
-      if (props.funcTable) {
-        let r = await props.funcTable();
-      }
-      // if (res.result) {
-      //   rows.value = res.result;
-      // } else {
-      //   rows.value = [];
-      // }
+    function menuAddToGroup() {
+      emit("menuAddToGroup", props.dataSlot?.row);
     }
     return {
-      AddToGroup,
-      onNiht() {
-        console.log("menu nixt", props.row, props.tableName);
-      },
+      menuAddToGroup,
     };
   },
 });

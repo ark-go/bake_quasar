@@ -5,6 +5,9 @@ import escape from "pg-escape";
 export async function load(req, res, tabname, timezone, idOne) {
   //  let wher = req.body?.territory_id ? "WHERE " +  tabname + ".territory_id = $2" : "";
   let wher = "";
+  let dateend =
+    "to_char(bt.date_start,  'DD.MM.YYYY') as date_start, to_char(bt.date_end,  'DD.MM.YYYY') as date_end,";
+
   // для загрузки только группы печек
   if (req.body?.territory_id) {
     if (req.body.nogroup) {
@@ -27,6 +30,7 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.id,
       ${tabname}.name,
       ${tabname}.franch,
+      ${dateend}
       ${tabname}.trademark_id,
       trademark.name AS trdemark_name,
       ${tabname}.territory_id,

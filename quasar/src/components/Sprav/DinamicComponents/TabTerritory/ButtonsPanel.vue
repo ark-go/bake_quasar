@@ -25,11 +25,6 @@
         </q-card-section>
       </q-card>
     </q-expansion-item>
-    <q-item clickable v-ripple @click="formAddShow = true">
-      <q-item-section>
-        <q-item-label lines="1"> Добавить в группу </q-item-label>
-      </q-item-section>
-    </q-item>
     <q-item>
       <q-item-section>
         <Tabs-Tables
@@ -39,33 +34,23 @@
       </q-item-section>
     </q-item>
   </q-list>
-  <Form-Add
-    v-model:formAddShow="formAddShow"
-    :nameTerr="spravStore.selectedRow.name"
-  ></Form-Add>
 </template>
 <script>
 import { defineComponent, ref } from "vue";
 import { useSpravStore } from "stores/spravStore";
 import TabsTables from "./TabsTables.vue";
-import FormAdd from "./FormAdd.vue";
 //dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "ButtonsPanel",
-  components: { FormAdd, TabsTables },
+  components: { TabsTables },
   props: ["refTable", "activeTab"],
   emits: ["update:filter"],
   setup(props) {
     const spravStore = useSpravStore();
-    const formAddShow = ref(false);
-    console.log("vvvvvvv99", spravStore.selectedRow);
+    console.log("Выбрана строка", spravStore.selectedRow);
     return {
       spravStore,
       territoryExpand: ref(false),
-      formAddShow,
-      formAddShow2: () => {
-        props.refTable.loadTable();
-      },
     };
   },
 });

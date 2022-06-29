@@ -1,7 +1,7 @@
 <template>
   <q-input
     :model-value="valueDate"
-    @update:model-value="$emit('update:value-date', $event)"
+    @update:model-value="$emit('update:valueDate', $event)"
     :dense="!nodense"
     :readonly="true"
     :label="label"
@@ -11,7 +11,6 @@
         <q-popup-proxy
           ref="qDateProxy"
           cover
-          v-model="isProxyShow"
           transition-show="scale"
           transition-hide="scale"
           @before-show="beforeShow"
@@ -26,10 +25,11 @@
             :options="options"
             today-btn
             :subtitle="label"
+            :title="subtitle"
             :minimal="false"
             dense
           >
-            <!-- <div class="row items-center justify-end">
+            <div class="row items-center justify-end">
               <q-btn
                 v-show="!!valueDate"
                 v-close-popup
@@ -57,7 +57,7 @@
                   Выбрать
                 </q-tooltip>
               </q-btn>
-            </div> -->
+            </div>
           </q-date>
         </q-popup-proxy>
       </q-icon>
@@ -69,7 +69,7 @@
 import { ref, onMounted, watchEffect, watch, computed } from "vue";
 import { date } from "quasar";
 export default {
-  name: "SelectDateExt",
+  name: "DateSelectExt",
   props: {
     valueDate: String,
     label: String,
@@ -81,7 +81,6 @@ export default {
   setup(props, { emit }) {
     //  const dateValue = ref("2019/02/01"); // чтобы тут написать?
     const dateFormat = ref("DD.MM.YYYY");
-    const isProxyShow = ref(false);
     function options(checkdate) {
       if (props.minDate) {
         let calDate = date.extractDate(checkdate, "YYYY/MM/DD");
@@ -159,23 +158,18 @@ export default {
       if (props.valueDate) {
         // пришло НЕ пусто
         qdateValue.value = props.valueDate;
-        //  console.log("000-2", qdateValue.value);
+        console.log("000-2", qdateValue.value);
       } else {
         const timeStamp = Date.now();
         qdateValue.value = date.formatDate(timeStamp, dateFormat.value);
-        //  console.log("111", qdateValue.value);
+        console.log("111", qdateValue.value);
       }
     }
 
     onMounted(() => {
       console.log("Mounted calendar", props.valueDate);
     });
-    watch(qdateValue, () => {
-      isProxyShow.value = false;
-      emit("update:valueDate", qdateValue.value);
-    });
     return {
-      isProxyShow,
       options,
       dateValue,
       locale,

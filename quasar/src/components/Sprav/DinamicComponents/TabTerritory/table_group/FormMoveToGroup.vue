@@ -10,7 +10,7 @@
       </q-card-section>
       <q-separator />
       <q-card-section class="q-pt-sm">
-        Добавить пекарню <b>{{ bakeryRow.name }}</b> в группу
+        Удалить пекарню <b>{{ bakeryRow.name }}</b> из группы
         <b>{{ territoryRow.name }}</b>
       </q-card-section>
       <q-card-section style="max-height: 20vh" class="scroll">
@@ -23,7 +23,7 @@
         <q-checkbox
           left-label
           v-model="checkData"
-          label="Установить дату назначения группы"
+          label="Установить дату удаления из группы"
           checked-icon="task_alt"
           unchecked-icon="highlight_off"
         />
@@ -39,7 +39,7 @@
           v-close-popup
           flat
           color="primary"
-          label="Добавить"
+          label="Удалить"
           @click="onClick()"
         />
         <q-btn v-close-popup flat color="primary" label="Отмена" />
@@ -68,7 +68,7 @@ export default defineComponent({
   emits: ["beforeShow", "update:show"],
   setup(props, { emit }) {
     const $q = useQuasar();
-    const title = ref("Добавить пекарню в группу");
+    const title = ref("Удалить пекарню из группы");
     const valueDate = ref("");
     const checkData = ref(false);
     function onClick() {
@@ -76,7 +76,7 @@ export default defineComponent({
       if (!valueDate.value && checkData.value) {
         return noData();
       }
-      emit("formOnAddToGroup", {
+      emit("formOnClick", {
         dateStart: checkData.value ? valueDate.value : null,
         bakeryRow: props.bakeryRow.id,
         territoryRow: props.territoryRow.id,

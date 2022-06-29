@@ -35,6 +35,20 @@ export const columns = [
     required: true,
   },
   {
+    name: "date_start",
+    label: "старт",
+    align: "left",
+    field: "date_start",
+    required: true,
+  },
+  {
+    name: "date_end",
+    label: "end",
+    align: "left",
+    field: "date_end",
+    required: true,
+  },
+  {
     name: "trdemark_name",
     label: "Торг.сеть",
     align: "left",

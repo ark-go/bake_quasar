@@ -6,7 +6,7 @@
     class="text-grey"
     active-color="primary"
     indicator-color="primary"
-    align="justify"
+    align="left"
     narrow-indicator
     mobile-arrows
     inline-label

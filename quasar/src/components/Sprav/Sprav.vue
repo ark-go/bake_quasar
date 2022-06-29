@@ -24,6 +24,7 @@
           tableInfo: spravStore.selectedNode,
           class: 'maxBodyHeight',
           commandLoad: { cmd: 'load' },
+          spravRow: spravStore.selectedRow,
         }"
       ></component>
       <div v-else class="text-none-table">Выберите что-нибудь.</div>

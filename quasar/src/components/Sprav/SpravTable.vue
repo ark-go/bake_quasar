@@ -78,7 +78,6 @@ import {
 import { dataLoad } from "src/utils/ark.js";
 import { useQuasar } from "quasar";
 import NoDataFooter from "components/NoDataFooter.vue";
-import ArkTableCell from "components/Sprav/ArkTableCell.vue";
 import ArkTableBody from "components/Sprav/ArkTableBody.vue";
 import SpravDialog from "components/Sprav/SpravDialog.vue";
 import { useSpravStore } from "stores/spravStore";
@@ -88,7 +87,6 @@ export default defineComponent({
   name: "SpravTable",
   components: {
     NoDataFooter,
-    // ArkTableCell,
     ArkTableBody,
     SpravDialog,
     FindTable,

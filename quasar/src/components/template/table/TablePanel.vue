@@ -43,6 +43,8 @@
     yesBtnEdit
     :store="store"
   >
+    <!-- <template #contextMenu="dataSlot">
+    </template> -->
   </Table-Template>
   <div v-else>не указана таблица</div>
 </template>

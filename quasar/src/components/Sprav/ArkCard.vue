@@ -5,6 +5,7 @@
       class="my-card bg-grey-1 shadow-10"
       style="overflow: auto; min-height: 200px; user-select: none"
       :style="maxHeigh"
+      @click.right.prevent="$emit('stop')"
     >
       <div :ref="(el) => (refTopSection = el)">
         <q-card-section>
@@ -127,7 +128,7 @@ import TabButton from "./TabButton.vue";
 import { useSpravStore } from "stores/spravStore";
 import { useQuasar, dom } from "quasar";
 import { getComponent } from "./selectComponent.js";
-//import TabTerritory from "./TabTerritory.vue";
+
 // menuObj объект для меню ключ/знчение  значение - показано в меню
 // menuClick вернет событие с именем ключа из объекта menuObj
 export default {

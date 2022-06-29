@@ -6,12 +6,7 @@
     @click.exact="$emit('onRowClick', propsV.row)"
     @click.right.exact="$emit('onRowClick', propsV.row)"
   >
-    <component
-      :is="tableBodyMenu"
-      :row="propsV.row"
-      :funcTable="funcTable"
-      :tableName="tableName"
-    ></component>
+    <slot name="contextMenu" :row="propsV.row"></slot>
     <template v-if="!isLeft">
       <q-td
         v-for="(col, index) in propsV.cols"
@@ -88,9 +83,6 @@ export default {
   name: "TableCell",
   props: {
     currentRow: Object,
-    tableName: String,
-    funcTable: Function,
-    tableBodyMenu: Object,
     propsV: Object,
     isLeft: {
       type: Boolean, // кнопки слева ?

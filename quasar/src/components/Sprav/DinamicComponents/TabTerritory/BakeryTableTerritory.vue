@@ -13,14 +13,14 @@
             tableName="bakery"
             title="Пекарни в текщей группе"
             :commandLoad="commandLoad"
-            onRowClick
+            :territoryRow="spravStore.selectedRow"
           ></table-panel-group
         ></q-tab-panel>
         <q-tab-panel name="freeBakery">
           <table-panel-free
             tableName="bakery"
             title="Пекарни без группы"
-            :commandLoad="{ ...commandLoadNoId, ...{ free: true } }"
+            :territoryRow="spravStore.selectedRow"
           ></table-panel-free
         ></q-tab-panel>
         <q-tab-panel name="busyBakery">
@@ -28,13 +28,14 @@
             tableName="bakery"
             panelName="busyBakery"
             title="Пекарни в других группах"
-            :commandLoad="{ ...commandLoad, ...{ nogroup: true } }"
+            :territoryRow="spravStore.selectedRow"
           ></table-panel-busy>
         </q-tab-panel>
         <q-tab-panel name="allBakery">
           <table-panel-all
             title="Все пекарни"
             tableName="bakery"
+            :territoryRow="spravStore.selectedRow"
           ></table-panel-all>
         </q-tab-panel>
       </q-tab-panels>
@@ -94,9 +95,7 @@ export default defineComponent({
       // -100 нужно чтоб понять что мы передали чтото , если id нет например
       territory_id: spravStore.selectedRow.id || "-100",
     });
-    const commandLoadNoId = ref({
-      cmd: "load",
-    });
+
     onMounted(() => {
       // commandLoad.value = {
       //   cmd: "load",
@@ -104,7 +103,7 @@ export default defineComponent({
       //   territory_id: spravStore.selectedRow.id,
       // };
     });
-    return { commandLoad, commandLoadNoId, spravStore, refTable, activeTab };
+    return { commandLoad, spravStore, refTable, activeTab };
   },
 });
 </script>

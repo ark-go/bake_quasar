@@ -23,7 +23,10 @@ import BakeryTableTerritory from "./TabTerritory/BakeryTableTerritory.vue";
 export default defineComponent({
   name: "TabTerritory",
   components: { BakeryTableTerritory },
-  props: { maxBodyHeight: String, tabModel: String },
+  props: {
+    maxBodyHeight: String,
+    tabModel: String,
+  },
   //emits: ["update:filter"],
   setup(props) {
     return {};

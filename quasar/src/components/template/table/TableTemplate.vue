@@ -44,20 +44,22 @@
         <table-body
           :propsV="props"
           :noInfoBtn="noInfoBtn"
-          :tableName="tableName"
           :modeBody="modeBody"
           @onInfoRow="$emit('onInfoRow', $event)"
           @onBtnDelete="$emit('onBtnDelete', $event)"
           @onBtnEdit="$emit('onBtnEdit', $event)"
           @onRowClick="$emit('onRowClick', $event)"
-          :tableBodyMenu="tableBodyMenu"
           :yesBtnEdit="yesBtnEdit"
           :yesBtnDelete="yesBtnDelete"
           :iconBtnEdit="iconBtnEdit"
           :iconBtnDelete="iconBtnEdit"
           :noEditTable="noEditTable"
           :currentRow="currentRow"
-        ></table-body>
+        >
+          <template #contextMenu="dataSlot">
+            <slot name="contextMenu" v-bind="dataSlot"></slot>
+          </template>
+        </table-body>
       </template>
       <template v-slot:no-data="dataslot">
         <Table-No-Data-Footer :dataslot="dataslot"></Table-No-Data-Footer>
@@ -94,7 +96,6 @@ export default defineComponent({
     }),
   },
   props: {
-    tableName: String,
     yesBtnEdit: Boolean,
     yesBtnDelete: Boolean,
     iconBtnEdit: String,
@@ -106,10 +107,6 @@ export default defineComponent({
     },
     tableFunc: {
       type: Function,
-      default: () => null,
-    },
-    tableBodyMenu: {
-      type: Object,
       default: () => null,
     },
     rows: {

@@ -20,6 +20,28 @@ export const columns = [
     sortable: true,
   },
   {
+    name: "territory_g_name",
+    label: "Территория2",
+    align: "left",
+    field: "territory_g_name",
+    required: true,
+    sortable: true,
+  },
+  {
+    name: "date_start",
+    label: "старт",
+    align: "left",
+    field: "date_start",
+    required: true,
+  },
+  {
+    name: "date_end",
+    label: "end",
+    align: "left",
+    field: "date_end",
+    required: true,
+  },
+  {
     name: "franch",
     label: "Фрч",
     align: "left",

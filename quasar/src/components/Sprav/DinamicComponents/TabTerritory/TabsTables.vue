@@ -25,7 +25,7 @@
     <q-tab
       name="busyBakery"
       icon="event_busy"
-      label="Занятые"
+      label="В других группах"
       style="justify-content: left"
     />
     <q-tab

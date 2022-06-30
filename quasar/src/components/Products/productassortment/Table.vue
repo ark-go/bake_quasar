@@ -267,7 +267,7 @@ let visibleOffDefault = [
   "user_email",
   "user_date",
   "territory_name",
-  "branch_name",
+  "region_name",
   "address",
   "dateopen",
   "dateclose",

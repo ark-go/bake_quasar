@@ -2,7 +2,7 @@ export const columnsVisibleTemplate = [
   "user_email",
   "user_date",
   "territory_name",
-  "branch_name",
+  "region_name",
   "address",
   "dateopen",
   "dateclose",
@@ -38,10 +38,10 @@ export const columns = [
     field: "territory_name",
   },
   {
-    name: "branch_name",
-    label: "Офис",
+    name: "region_name",
+    label: "Регион",
     align: "left",
-    field: "branch_name",
+    field: "region_name",
   },
   {
     name: "city_name",

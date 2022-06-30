@@ -99,7 +99,7 @@ export default {
     //     {
     //       cmd: "load",
     //       tabname: "bakery",
-    //       
+    //
     //     },
     //     mess
     //   );
@@ -152,10 +152,10 @@ let columns = [
     required: true,
   },
   {
-    name: "branch_name",
-    label: "Офис",
+    name: "region_name",
+    label: "Регион",
     align: "center",
-    field: "branch_name",
+    field: "region_name",
     required: true,
   },
 ];

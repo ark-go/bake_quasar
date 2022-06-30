@@ -66,7 +66,7 @@ export default defineComponent({
         { name: "Пекарня" },
         { own_kagent_name: "Собственный" },
         { territory_name: "Территория" },
-        { branch_name: "Филиал" },
+        { region_name: "Регион" },
         { city_name: "Город" },
         { kolbakers: "Кол-во пекарей" },
         { address: "Адрес" },

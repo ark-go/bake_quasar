@@ -88,9 +88,9 @@
             v-model:selectId="currentRow.city_id"
           />
           <bakery-select
-            label="Офис"
-            :sprav="allSprav.branch"
-            v-model:selectId="currentRow.branch_id"
+            label="Регион"
+            :sprav="allSprav.region"
+            v-model:selectId="currentRow.region_id"
           ></bakery-select>
 
           <bakery-select
@@ -166,7 +166,7 @@
 name            территория  описание
 франчайзи       город       адрес
 Торговая сеть   долгота
-Офис          широта
+Регион          широта
 наша контра     Открыто
 контра          Закрыто
 фран контра     Площадь

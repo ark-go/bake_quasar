@@ -195,7 +195,7 @@ const dataTree = [
           { name: "manager", label: "Менеджер", icon: "person" },
         ],
       },
-      // { key: 34, label: "Офисы", tableName: "branch", component: "Tabxxx" },
+      // { key: 34, label: "Регионы", tableName: "region", component: "Tabxxx" },
 
       { key: 35, label: "Города", tableName: "city", tableType: "city" },
     ],

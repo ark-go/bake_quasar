@@ -20,7 +20,7 @@ export async function loadSprav(pool, req, tabname, idOne) {
       kagent.name AS kagent_tm_name,
       trademark.name AS trademark_name,
       territory.name AS territory_name,
-      branch.name AS branch_name,
+      region.name AS region_name,
       city.name AS city_name,
       ${tabname}.description,
       -- -- -- -- 
@@ -34,7 +34,7 @@ export async function loadSprav(pool, req, tabname, idOne) {
       LEFT JOIN  trademark ON trademark.id = ${tabname}.trademark_id
       LEFT JOIN  city ON city.id = ${tabname}.city_id
       LEFT JOIN  territory ON territory.id =  ${tabname}.territory_id
-      LEFT JOIN  branch ON branch.id = ${tabname}.branch_id
+      LEFT JOIN  region ON region.id = ${tabname}.region_id
       WHERE ${tabname}.kagent_tm_id = $2
       AND  NOT (bakery.id = ANY ( select bakery_id from docbakery where docbakery.docprice_id = $3))
       --LEFT JOIN  docpricevid ON docpricevid.id = ${tabname}.docpricevid_id

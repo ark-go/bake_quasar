@@ -21,12 +21,12 @@ export async function allSprav(req, res, timezone) {
       ORDER BY name
 `,
   };
-  let branch = {
+  let region = {
     text: /*sql*/ `
       SELECT
       id,
       name
-      FROM branch
+      FROM region
       ORDER BY name
 `,
   };
@@ -34,9 +34,9 @@ export async function allSprav(req, res, timezone) {
     text: /*sql*/ `
       SELECT
       city.id,
-      city.name || ' (' || region.name || ')' AS name
+      city.name || ' (' || region_kl.name || ')' AS name
       FROM city
-      LEFT JOIN  region AS region ON region.id = city.region_id
+      LEFT JOIN  region_kl ON region_kl.id = city.region_id
       ORDER BY city.name
 `,
   };
@@ -82,9 +82,9 @@ export async function allSprav(req, res, timezone) {
     result = result.rowCount > 0 ? result.rows : null;
     allSprav.territory = result;
 
-    result = await pool.query(branch);
+    result = await pool.query(region);
     result = result.rowCount > 0 ? result.rows : null;
-    allSprav.branch = result;
+    allSprav.region = result;
 
     result = await pool.query(city);
     result = result.rowCount > 0 ? result.rows : null;

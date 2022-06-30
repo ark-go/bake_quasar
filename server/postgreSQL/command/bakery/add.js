@@ -20,7 +20,7 @@ export async function add(req, res, tabname, timezone) {
     text: /*sql*/ `
       INSERT INTO ${tabname} (
         name, franch, trademark_id, territory_id,
-        branch_id, city_id, address, dateopen,
+        region_id, city_id, address, dateopen,
         dateclose, area, kolbakers, ispack, 
         own_kagent_id, kagent_tm_id, fr_kagent_id, description,
         user_id, user_date, meta
@@ -39,7 +39,7 @@ export async function add(req, res, tabname, timezone) {
       req.body?.franch,
       req.body?.trademark_id,
       req.body?.territory_id,
-      req.body?.branch_id,
+      req.body?.region_id,
       req.body?.city_id,
       req.body?.address,
       req.body?.dateopen,

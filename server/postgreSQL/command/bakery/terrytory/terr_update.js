@@ -15,7 +15,7 @@ export async function update(req, res, tabname, timezone) {
     text: /*sql*/ `
       UPDATE ${tabname} SET
       name = $2, franch = $3, trademark_id = $4, territory_id = $5,
-      branch_id = $6, city_id = $7, address = $8, dateopen = $9,
+      region_id = $6, city_id = $7, address = $8, dateopen = $9,
       dateclose = $10, area = $11, kolbakers = $12, ispack = $13, 
       own_kagent_id = $14, kagent_tm_id = $15, fr_kagent_id = $16, description = $17,
       user_id = $18, user_date = CURRENT_TIMESTAMP, meta = $19
@@ -29,7 +29,7 @@ export async function update(req, res, tabname, timezone) {
       req.body?.franch,
       req.body?.trademark_id,
       req.body?.territory_id,
-      req.body?.branch_id,
+      req.body?.region_id,
       req.body?.city_id,
       req.body?.address,
       req.body?.dateopen,

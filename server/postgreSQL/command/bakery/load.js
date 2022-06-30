@@ -36,8 +36,8 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.territory_id,
       territory.name AS territory_name,
       territory_g.name AS territory_g_name,
-      ${tabname}.branch_id,
-      branch.name AS branch_name,
+      ${tabname}.region_id,
+      region.name AS region_name,
       ${tabname}.city_id,
       city.name AS city_name,
       ${tabname}.address,
@@ -72,7 +72,7 @@ export async function load(req, res, tabname, timezone, idOne) {
                     where  is_last = true ) as bt  ON bt.bakery_id = ${tabname}.id
           LEFT JOIN  territory as territory_g ON territory_g.id = bt.territory_id
       LEFT JOIN  territory ON territory.id = ${tabname}.territory_id
-      LEFT JOIN  branch ON branch.id = ${tabname}.branch_id
+      LEFT JOIN  region ON region.id = ${tabname}.region_id
       LEFT JOIN  city ON city.id = ${tabname}.city_id
         LEFT JOIN kagent AS tmkagent ON tmkagent.id = kagent_tm.kagent_id 
       LEFT JOIN  kagent AS ownkagent ON ownkagent.id = ${tabname}.own_kagent_id

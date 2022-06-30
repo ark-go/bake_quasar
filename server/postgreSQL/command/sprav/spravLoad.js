@@ -33,7 +33,7 @@ export async function spravLoad(req, res) {
     text: /*sql*/ `
       SELECT
       ${tabname}.id,
-      ${tabname}.regnum || ' ' ||  ${tabname}.name AS name,
+      ${tabname}.name AS name,
       users.email AS "user_email",
       to_char(${tabname}.user_date at time zone $1,  'DD.MM.YYYY HH12:MI:SS') as "user_date",
       ${tabname}.meta,

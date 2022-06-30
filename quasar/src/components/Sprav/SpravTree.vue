@@ -185,8 +185,17 @@ const dataTree = [
           { name: "manager", label: "Менеджер", icon: "person" },
         ],
       },
-      { key: 33, label: "Регионы", tableName: "region" },
-      { key: 34, label: "Офисы", tableName: "branch", component: "Tabxxx" },
+      {
+        key: 33,
+        label: "Регионы",
+        tableName: "region",
+        component: "TabRegion", // расширение по умолчанию vue
+        buttonPanel: [
+          { name: "TabRegion", label: "Пекарни", icon: "home" },
+          { name: "manager", label: "Менеджер", icon: "person" },
+        ],
+      },
+      // { key: 34, label: "Офисы", tableName: "branch", component: "Tabxxx" },
 
       { key: 35, label: "Города", tableName: "city", tableType: "city" },
     ],

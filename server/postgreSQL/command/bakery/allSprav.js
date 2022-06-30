@@ -34,7 +34,7 @@ export async function allSprav(req, res, timezone) {
     text: /*sql*/ `
       SELECT
       city.id,
-      city.name || ' (' || region.regnum || ' ' || region.name || ')' AS name
+      city.name || ' (' || region.name || ')' AS name
       FROM city
       LEFT JOIN  region AS region ON region.id = city.region_id
       ORDER BY city.name

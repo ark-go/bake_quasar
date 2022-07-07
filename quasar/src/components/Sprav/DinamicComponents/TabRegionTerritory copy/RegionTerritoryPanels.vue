@@ -12,14 +12,15 @@
           ><table-panel-group
             tableName="regionTerritory"
             title="Территории в текщей группе"
-            :parentRow="spravStore.selectedRow"
+            :commandLoad="commandLoad"
+            :territoryRow="spravStore.selectedRow"
           ></table-panel-group
         ></q-tab-panel>
         <q-tab-panel name="freeBakery">
           <table-panel-free
             tableName="regionTerritory"
             title="Территории без группы"
-            :parentRow="spravStore.selectedRow"
+            :territoryRow="spravStore.selectedRow"
           ></table-panel-free
         ></q-tab-panel>
         <q-tab-panel name="busyBakery">
@@ -27,14 +28,14 @@
             tableName="regionTerritory"
             panelName="busyBakery"
             title="Территории в других группах"
-            :parentRow="spravStore.selectedRow"
+            :territoryRow="spravStore.selectedRow"
           ></table-panel-busy>
         </q-tab-panel>
         <q-tab-panel name="allBakery">
           <table-panel-all
             title="Все Территории"
             tableName="regionTerritory"
-            :parentRow="spravStore.selectedRow"
+            :territoryRow="spravStore.selectedRow"
           ></table-panel-all>
         </q-tab-panel>
       </q-tab-panels>
@@ -78,7 +79,23 @@ export default defineComponent({
     const spravStore = useSpravStore();
     const refTable = ref();
     const activeTab = ref("groupBakery");
-    return { spravStore, refTable, activeTab };
+    // const componentBodyMenu = defineAsyncComponent(() =>
+    //   import("./TableBodyMenu.vue")
+    // );
+    const commandLoad = ref({
+      cmd: "load",
+      // -100 нужно чтоб понять что мы передали чтото , если id нет например
+      region_id: spravStore.selectedRow.id || "-100",
+    });
+
+    onMounted(() => {
+      // commandLoad.value = {
+      //   cmd: "load",
+      //   terrytory: "yes", // нужно чтоб понять что мы передали чтото , если id нет напрмер
+      //   region_id: spravStore.selectedRow.id,
+      // };
+    });
+    return { commandLoad, spravStore, refTable, activeTab };
   },
 });
 </script>

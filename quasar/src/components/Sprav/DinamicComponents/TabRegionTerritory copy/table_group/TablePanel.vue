@@ -1,4 +1,5 @@
 <!--
+    :tableName="tableName" - имя таблицы для обслуживания
     :rows="rows" - [] строки таблицы
     :columns="columns" [] - колонки 
     :columnsVisibleTemplate="columnsVisibleTemplate" [] - какие показываь колонки, а какие в выбор оставить
@@ -26,10 +27,10 @@
   <Table-Template
     v-if="tableName"
     :title="title"
+    :tableName="tableName"
     :rows="rows"
     :columns="columns"
     :columnsVisibleTemplate="columnsVisibleTemplate"
-    :tableFunc="tableFunc"
     @onInfoRow="onInfoRow"
     @onBtnDelete="onInfoRow"
     @onBtnEdit="onInfoRow"
@@ -43,25 +44,24 @@
     <template #contextMenu="dd">
       <table-Body-Menu
         :dataSlot="dd"
-        :currentGroupName="parentRow.name"
-        @menuAddToGroup="menuAddToGroup"
+        :currentGroupName="territoryRow.name"
+        @menuMoveToGroup="menuMoveToGroup"
       ></table-Body-Menu>
     </template>
   </Table-Template>
   <div v-else>не указана таблица</div>
-  <Form-Add-To-Group
+  <Form-Move-To-Group
     v-model:show="showDialog"
     :childRow="childRow"
     @beforeShow="beforeShowDialog"
-    :parentRow="parentRow"
-    @formOnAddToGroup="formOnAddToGroup"
+    :territoryRow="territoryRow"
+    @formOnClick="formOnClick"
     :infoBakery="infoBakery"
     :minDate="minDate"
     :maxDate="maxDate"
     :currentDate="currentDate"
-  ></Form-Add-To-Group>
+  ></Form-Move-To-Group>
 </template>
-
 <script>
 import {
   defineComponent,
@@ -79,8 +79,8 @@ export default defineComponent({
     TableTemplate: defineAsyncComponent(() => {
       return import("src/components/template/table/TableTemplate.vue");
     }),
-    FormAddToGroup: defineAsyncComponent(() => {
-      return import("./FormAddToGroup.vue");
+    FormMoveToGroup: defineAsyncComponent(() => {
+      return import("./FormMoveToGroup.vue");
     }),
     tableBodyMenu: defineAsyncComponent(() => {
       return import("./TableBodyMenu.vue");
@@ -91,12 +91,15 @@ export default defineComponent({
       type: String,
       default: "view",
     },
-    parentRow: {
+    territoryRow: {
       // это строка из сравочника
       type: Object,
       default: () => {},
     },
+
     tableName: String,
+    commandLoad: Object,
+    objectRow: Object,
     title: String,
   },
   emits: [""],
@@ -106,54 +109,52 @@ export default defineComponent({
     const minDate = ref("");
     const maxDate = ref("");
     const currentDate = ref("");
-    const tableFunc = useTableFunc(props.tableName, rows);
-    // const tableBodyMenu = defineAsyncComponent(() => {
-    //   return import("./TableBodyMenu.vue");
-    // });
+    const tableFunc = useTableFunc(props.tableName, rows, props.territoryRow);
     const store = useBakeryStore();
-
     const currentRow = ref({});
-    async function menuAddToGroup(val) {
-      console.log("menuAddToGroup", val);
+    const showDialog = ref(false);
+    const childRow = ref({});
+    const pagination = ref({
+      rowsPerPage: 10,
+    });
+
+    onMounted(async () => {
+      return await tableFunc.loadTable();
+    });
+    async function menuMoveToGroup(val) {
+      console.log("menuMoveToGroup", val);
       childRow.value = val;
       currentDate.value = tableFunc.dateFormatDate(new Date());
       let info = await tableFunc.info({ childId: val.id });
       if (info) {
-        minDate.value = tableFunc.dateFormatDate(info?.history?.date_end);
+        minDate.value = tableFunc.dateFormatDate(info?.history?.date_start);
         maxDate.value = tableFunc.dateFormatDate(new Date());
-        console.log("info", minDate.value, maxDate.value, info);
+        console.log("info", minDate.value, info);
         showDialog.value = true;
       }
     }
-    async function formOnAddToGroup(val) {
-      await tableFunc.addToGroup(val);
+    async function formOnClick(val) {
+      console.log("remove form", val);
+      await tableFunc.removeFromGroup(val);
     }
-    const pagination = ref({
-      rowsPerPage: 10,
-    });
-    const showDialog = ref(false);
-    const childRow = ref({});
     function beforeShowDialog() {}
-    onMounted(async () => {
-      await tableFunc.loadTable();
-    });
+
     return {
       minDate,
       maxDate,
       currentDate,
       infoBakery,
-      formOnAddToGroup,
-      menuAddToGroup,
-      currentRow,
+      beforeShowDialog,
+      formOnClick,
+      menuMoveToGroup,
       showDialog,
       childRow,
-      beforeShowDialog,
+      currentRow,
       store,
       pagination,
       rows,
       columns,
       columnsVisibleTemplate,
-      // tableBodyMenu,
       tableFunc,
       onInfoRow(row) {
         console.log("info butt", row);

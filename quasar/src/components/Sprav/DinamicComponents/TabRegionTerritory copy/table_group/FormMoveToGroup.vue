@@ -10,8 +10,8 @@
       </q-card-section>
       <q-separator />
       <q-card-section class="q-pt-sm">
-        Перевести территорию <b>{{ childRow.name }}</b> в группу
-        <b>{{ parentRow.name }}</b>
+        Удалить территорию <b>{{ childRow.name }}</b> из группы
+        <b>{{ territoryRow.name }}</b>
       </q-card-section>
       <q-card-section style="max-height: 20vh" class="scroll">
         <code>{{ infoBakery }}</code> Lorem ipsum dolor sit amet consectetur
@@ -23,7 +23,7 @@
         <q-checkbox
           left-label
           v-model="checkData"
-          label="Установить дату перевода в группу"
+          label="Установить дату удаления из группы"
           checked-icon="task_alt"
           unchecked-icon="highlight_off"
         />
@@ -41,7 +41,7 @@
           v-close-popup
           flat
           color="primary"
-          label="Переместить"
+          label="Удалить"
           @click="onClick()"
         />
         <q-btn v-close-popup flat color="primary" label="Отмена" />
@@ -70,7 +70,7 @@ export default defineComponent({
   props: {
     show: Boolean,
     childRow: Object,
-    parentRow: Object,
+    territoryRow: Object,
     tableFunc: Function,
     infoBakery: String,
     minDate: String,
@@ -80,7 +80,7 @@ export default defineComponent({
   emits: ["beforeShow", "update:show"],
   setup(props, { emit }) {
     const $q = useQuasar();
-    const title = ref("Перевести территорию в группу");
+    const title = ref("Удалить территорию из группы");
     const checkData = ref(false);
     const valueDate = ref("");
     watch(
@@ -93,7 +93,6 @@ export default defineComponent({
         // }
       }
     );
-
     function onClick() {
       console.log(valueDate.value);
       if (!valueDate.value && checkData.value) {
@@ -102,7 +101,7 @@ export default defineComponent({
       emit("formOnClick", {
         dateStart: checkData.value ? valueDate.value : null,
         childId: props.childRow.id,
-        parentId: props.parentRow.id,
+        territoryRow: props.territoryRow.id,
       });
     }
     function noData() {

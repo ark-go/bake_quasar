@@ -2,12 +2,12 @@ import { ref } from "vue";
 import { dataLoad } from "src/utils/ark.js";
 import { date } from "quasar";
 
-export function useTableFunc(nameTable, rows, territoryRow) {
+export function useTableFunc(nameTable, rows, parentRow) {
   const url = ref("/api/" + nameTable);
   const dateFormat = ref("DD.MM.YYYY");
 
   async function loadTable(
-    command = { cmd: "load", nogroup: true, region_id: territoryRow?.id }
+    command = { cmd: "load", nogroup: true, parentId: parentRow?.id }
   ) {
     let mess = "Загрузка пекарен";
     // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);

@@ -8,10 +8,10 @@ export async function removeFromGroup(req, res, tabname, timezone) {
     
           `,
     values: [
-      req.body?.bakeryRow,
+      req.body?.childId,
       req.body?.dateStart,
       timezone,
-      null
+      null,
       //req.session?.user?.id,
     ],
   };

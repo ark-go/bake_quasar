@@ -7,7 +7,7 @@ export async function info(req, res, tabname, timezone) {
     SELECT * from region_x_territory_get_last_info($1); 
     
           `,
-    values: [req.body?.bakeryRow],
+    values: [req.body?.childId],
   };
   try {
     // console.log("info ", sqlP);

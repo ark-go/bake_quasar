@@ -8,8 +8,8 @@ export async function addToGroup(req, res, tabname, timezone) {
     
           `,
     values: [
-      req.body?.bakeryRow,
-      req.body?.territoryRow,
+      req.body?.childId,
+      req.body?.parentId,
       req.body?.dateStart,
       timezone,
       req.body?.transfer,

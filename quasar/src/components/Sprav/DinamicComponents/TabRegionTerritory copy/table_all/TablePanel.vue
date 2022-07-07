@@ -1,4 +1,5 @@
 <!--
+    :tableName="tableName" - имя таблицы для обслуживания
     :rows="rows" - [] строки таблицы
     :columns="columns" [] - колонки 
     :columnsVisibleTemplate="columnsVisibleTemplate" [] - какие показываь колонки, а какие в выбор оставить
@@ -26,9 +27,11 @@
   <Table-Template
     v-if="tableName"
     :title="title"
+    :tableName="tableName"
     :rows="rows"
     :columns="columns"
     :columnsVisibleTemplate="columnsVisibleTemplate"
+    :tableBodyMenu="tableBodyMenu"
     :tableFunc="tableFunc"
     @onInfoRow="onInfoRow"
     @onBtnDelete="onInfoRow"
@@ -40,28 +43,9 @@
     noEditTable
     :store="store"
   >
-    <template #contextMenu="dd">
-      <table-Body-Menu
-        :dataSlot="dd"
-        :currentGroupName="parentRow.name"
-        @menuAddToGroup="menuAddToGroup"
-      ></table-Body-Menu>
-    </template>
   </Table-Template>
   <div v-else>не указана таблица</div>
-  <Form-Add-To-Group
-    v-model:show="showDialog"
-    :childRow="childRow"
-    @beforeShow="beforeShowDialog"
-    :parentRow="parentRow"
-    @formOnAddToGroup="formOnAddToGroup"
-    :infoBakery="infoBakery"
-    :minDate="minDate"
-    :maxDate="maxDate"
-    :currentDate="currentDate"
-  ></Form-Add-To-Group>
 </template>
-
 <script>
 import {
   defineComponent,
@@ -69,6 +53,7 @@ import {
   defineAsyncComponent,
   onMounted,
   watch,
+  watchEffect,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
 import { columns, columnsVisibleTemplate } from "./tableColumnList.js";
@@ -79,81 +64,44 @@ export default defineComponent({
     TableTemplate: defineAsyncComponent(() => {
       return import("src/components/template/table/TableTemplate.vue");
     }),
-    FormAddToGroup: defineAsyncComponent(() => {
-      return import("./FormAddToGroup.vue");
-    }),
-    tableBodyMenu: defineAsyncComponent(() => {
-      return import("./TableBodyMenu.vue");
-    }),
   },
   props: {
     modeBody: {
       type: String,
       default: "view",
     },
-    parentRow: {
-      // это строка из сравочника
-      type: Object,
-      default: () => {},
-    },
     tableName: String,
     title: String,
+    panelName: String,
   },
   emits: [""],
   setup(props) {
-    const rows = ref([]);
-    const infoBakery = ref({});
-    const minDate = ref("");
-    const maxDate = ref("");
-    const currentDate = ref("");
-    const tableFunc = useTableFunc(props.tableName, rows);
-    // const tableBodyMenu = defineAsyncComponent(() => {
-    //   return import("./TableBodyMenu.vue");
-    // });
+    const tableFunc = useTableFunc(props.tableName);
+    const tableBodyMenu = defineAsyncComponent(() => {
+      return import("./TableBodyMenu.vue");
+    });
     const store = useBakeryStore();
-
+    const rows = ref([]);
     const currentRow = ref({});
-    async function menuAddToGroup(val) {
-      console.log("menuAddToGroup", val);
-      childRow.value = val;
-      currentDate.value = tableFunc.dateFormatDate(new Date());
-      let info = await tableFunc.info({ childId: val.id });
-      if (info) {
-        minDate.value = tableFunc.dateFormatDate(info?.history?.date_end);
-        maxDate.value = tableFunc.dateFormatDate(new Date());
-        console.log("info", minDate.value, maxDate.value, info);
-        showDialog.value = true;
-      }
-    }
-    async function formOnAddToGroup(val) {
-      await tableFunc.addToGroup(val);
-    }
     const pagination = ref({
       rowsPerPage: 10,
     });
-    const showDialog = ref(false);
-    const childRow = ref({});
-    function beforeShowDialog() {}
+    function reLoadComponent() {}
+    watchEffect(() => {
+      reLoadComponent(props.panelName);
+    });
+
     onMounted(async () => {
-      await tableFunc.loadTable();
+      rows.value = await tableFunc.loadTable();
     });
     return {
-      minDate,
-      maxDate,
-      currentDate,
-      infoBakery,
-      formOnAddToGroup,
-      menuAddToGroup,
       currentRow,
-      showDialog,
-      childRow,
-      beforeShowDialog,
       store,
       pagination,
       rows,
       columns,
       columnsVisibleTemplate,
-      // tableBodyMenu,
+      tableBodyMenu,
       tableFunc,
       onInfoRow(row) {
         console.log("info butt", row);

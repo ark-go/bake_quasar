@@ -1,4 +1,5 @@
 <!--
+    :tableName="tableName" - имя таблицы для обслуживания
     :rows="rows" - [] строки таблицы
     :columns="columns" [] - колонки 
     :columnsVisibleTemplate="columnsVisibleTemplate" [] - какие показываь колонки, а какие в выбор оставить
@@ -26,6 +27,7 @@
   <Table-Template
     v-if="tableName"
     :title="title"
+    :tableName="tableName"
     :rows="rows"
     :columns="columns"
     :columnsVisibleTemplate="columnsVisibleTemplate"
@@ -43,7 +45,7 @@
     <template #contextMenu="dd">
       <table-Body-Menu
         :dataSlot="dd"
-        :currentGroupName="parentRow.name"
+        :currentGroupName="territoryRow.name"
         @menuAddToGroup="menuAddToGroup"
       ></table-Body-Menu>
     </template>
@@ -53,7 +55,7 @@
     v-model:show="showDialog"
     :childRow="childRow"
     @beforeShow="beforeShowDialog"
-    :parentRow="parentRow"
+    :territoryRow="territoryRow"
     @formOnAddToGroup="formOnAddToGroup"
     :infoBakery="infoBakery"
     :minDate="minDate"
@@ -91,12 +93,13 @@ export default defineComponent({
       type: String,
       default: "view",
     },
-    parentRow: {
+    territoryRow: {
       // это строка из сравочника
       type: Object,
       default: () => {},
     },
     tableName: String,
+    commandLoad: Object,
     title: String,
   },
   emits: [""],
@@ -135,7 +138,7 @@ export default defineComponent({
     const childRow = ref({});
     function beforeShowDialog() {}
     onMounted(async () => {
-      await tableFunc.loadTable();
+      await tableFunc.loadTable(props.commandLoad);
     });
     return {
       minDate,

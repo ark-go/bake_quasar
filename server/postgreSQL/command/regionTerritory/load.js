@@ -3,19 +3,19 @@ import { botSendMessage } from "../../../tg/startTgBot.js";
 import escape from "pg-escape";
 
 export async function load(req, res, tabname, timezone, idOne) {
-  //  let wher = req.body?.region_id ? "WHERE " +  tabname + ".region_id = $2" : "";
+  //  let wher = req.body?.parentId ? "WHERE " +  tabname + ".parentId = $2" : "";
   let wher = "";
   let dateend =
     "to_char(bt.date_start,  'DD.MM.YYYY') as date_start, to_char(bt.date_end,  'DD.MM.YYYY') as date_end,";
 
   // для загрузки только группы печек
-  if (req.body?.region_id) {
+  if (req.body?.parentId) {
     if (req.body.nogroup) {
       // не в группе
-      wher = /*sql*/ `WHERE region_g.id <> ${req.body.region_id}`;
+      wher = /*sql*/ `WHERE region_g.id <> ${req.body.parentId}`;
     } else {
       // в других группах
-      wher = /*sql*/ `WHERE region_g.id = ${req.body.region_id}`;
+      wher = /*sql*/ `WHERE region_g.id = ${req.body.parentId}`;
     }
   }
   if (req.body.free) {
@@ -40,7 +40,7 @@ export async function load(req, res, tabname, timezone, idOne) {
           LEFT JOIN  ( select * from region_x_territory 
                       where  is_last = true ) as tr  ON tr.child_id = ${tabname}.id
           LEFT JOIN  region as region_g ON region_g.id = tr.parent_id
-      --LEFT JOIN  region ON region.id = ${tabname}.region_id
+      --LEFT JOIN  region ON region.id = ${tabname}.parentId
       ${wher}
       ORDER BY ${tabname}.name
 `,

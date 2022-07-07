@@ -11,7 +11,7 @@
       <q-separator />
       <q-card-section class="q-pt-sm">
         Перевести территорию <b>{{ childRow.name }}</b> в группу
-        <b>{{ parentRow.name }}</b>
+        <b>{{ territoryRow.name }}</b>
       </q-card-section>
       <q-card-section style="max-height: 20vh" class="scroll">
         <code>{{ infoBakery }}</code> Lorem ipsum dolor sit amet consectetur
@@ -70,30 +70,24 @@ export default defineComponent({
   props: {
     show: Boolean,
     childRow: Object,
-    parentRow: Object,
+    territoryRow: Object,
     tableFunc: Function,
     infoBakery: String,
     minDate: String,
     maxDate: String,
-    currentDate: String,
   },
   emits: ["beforeShow", "update:show"],
   setup(props, { emit }) {
     const $q = useQuasar();
     const title = ref("Перевести территорию в группу");
-    const checkData = ref(false);
     const valueDate = ref("");
     watch(
       () => props.minDate,
       () => {
-        valueDate.value = props.currentDate;
-        // valueDate.value = props.minDate;
-        // if (props.minDate) {
-        //   checkData.value = true;
-        // }
+        valueDate.value = props.minDate;
       }
     );
-
+    const checkData = ref(false);
     function onClick() {
       console.log(valueDate.value);
       if (!valueDate.value && checkData.value) {
@@ -102,7 +96,7 @@ export default defineComponent({
       emit("formOnClick", {
         dateStart: checkData.value ? valueDate.value : null,
         childId: props.childRow.id,
-        parentId: props.parentRow.id,
+        territoryRow: props.territoryRow.id,
       });
     }
     function noData() {

@@ -1,5 +1,4 @@
 <!--
-    :tableName="tableName" - имя таблицы для обслуживания
     :rows="rows" - [] строки таблицы
     :columns="columns" [] - колонки 
     :columnsVisibleTemplate="columnsVisibleTemplate" [] - какие показываь колонки, а какие в выбор оставить
@@ -27,7 +26,6 @@
   <Table-Template
     v-if="tableName"
     :title="title"
-    :tableName="tableName"
     :rows="rows"
     :columns="columns"
     :columnsVisibleTemplate="columnsVisibleTemplate"

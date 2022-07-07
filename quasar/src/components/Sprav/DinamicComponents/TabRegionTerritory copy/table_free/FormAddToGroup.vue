@@ -10,20 +10,21 @@
       </q-card-section>
       <q-separator />
       <q-card-section class="q-pt-sm">
-        Перевести территорию <b>{{ childRow.name }}</b> в группу
-        <b>{{ parentRow.name }}</b>
+        Добавить территорию <b>{{ childRow.name }}</b> в группу
+        <b>{{ territoryRow.name }}</b>
       </q-card-section>
       <q-card-section style="max-height: 20vh" class="scroll">
-        <code>{{ infoBakery }}</code> Lorem ipsum dolor sit amet consectetur
-        adipisicing elit. Rerum repellendus sit voluptate voluptas eveniet
-        porro. Rerum blanditiis perferendis totam, ea at omnis vel numquam
-        exercitationem aut, natus minima, porro labore.
+        <code>{{ infoBakery }}</code>
+        Lorem ipsum dolor sit amet consectetur adipisicing elit. Rerum
+        repellendus sit voluptate voluptas eveniet porro. Rerum blanditiis
+        perferendis totam, ea at omnis vel numquam exercitationem aut, natus
+        minima, porro labore.
       </q-card-section>
       <q-card-section class="row items-center">
         <q-checkbox
           left-label
           v-model="checkData"
-          label="Установить дату перевода в группу"
+          label="Установить дату назначения группы"
           checked-icon="task_alt"
           unchecked-icon="highlight_off"
         />
@@ -41,7 +42,7 @@
           v-close-popup
           flat
           color="primary"
-          label="Переместить"
+          label="Добавить"
           @click="onClick()"
         />
         <q-btn v-close-popup flat color="primary" label="Отмена" />
@@ -59,6 +60,7 @@ import {
 } from "vue";
 import { useQuasar } from "quasar";
 import { dataLoad } from "src/utils/ark.js";
+//import { watch } from "original-fs";
 // для  свойства componentBodyMenu у Table
 export default defineComponent({
   name: "FormAddToGroup",
@@ -70,7 +72,7 @@ export default defineComponent({
   props: {
     show: Boolean,
     childRow: Object,
-    parentRow: Object,
+    territoryRow: Object,
     tableFunc: Function,
     infoBakery: String,
     minDate: String,
@@ -80,7 +82,7 @@ export default defineComponent({
   emits: ["beforeShow", "update:show"],
   setup(props, { emit }) {
     const $q = useQuasar();
-    const title = ref("Перевести территорию в группу");
+    const title = ref("Добавить территорию в группу");
     const checkData = ref(false);
     const valueDate = ref("");
     watch(
@@ -99,10 +101,10 @@ export default defineComponent({
       if (!valueDate.value && checkData.value) {
         return noData();
       }
-      emit("formOnClick", {
+      emit("formOnAddToGroup", {
         dateStart: checkData.value ? valueDate.value : null,
         childId: props.childRow.id,
-        parentId: props.parentRow.id,
+        territoryRow: props.territoryRow.id,
       });
     }
     function noData() {

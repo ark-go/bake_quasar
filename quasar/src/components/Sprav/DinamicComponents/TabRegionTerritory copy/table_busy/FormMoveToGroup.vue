@@ -11,7 +11,7 @@
       <q-separator />
       <q-card-section class="q-pt-sm">
         Перевести территорию <b>{{ childRow.name }}</b> в группу
-        <b>{{ parentRow.name }}</b>
+        <b>{{ territoryRow.name }}</b>
       </q-card-section>
       <q-card-section style="max-height: 20vh" class="scroll">
         <code>{{ infoBakery }}</code> Lorem ipsum dolor sit amet consectetur
@@ -70,7 +70,7 @@ export default defineComponent({
   props: {
     show: Boolean,
     childRow: Object,
-    parentRow: Object,
+    territoryRow: Object,
     tableFunc: Function,
     infoBakery: String,
     minDate: String,
@@ -102,7 +102,7 @@ export default defineComponent({
       emit("formOnClick", {
         dateStart: checkData.value ? valueDate.value : null,
         childId: props.childRow.id,
-        parentId: props.parentRow.id,
+        territoryRow: props.territoryRow.id,
       });
     }
     function noData() {

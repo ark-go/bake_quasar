@@ -2,11 +2,13 @@ import { ref } from "vue";
 import { dataLoad } from "src/utils/ark.js";
 import { date } from "quasar";
 
-export function useTableFunc(nameTable, rows, parentRow) {
+export function useTableFunc(nameTable, rows, territoryRow) {
   const url = ref("/api/" + nameTable);
   const dateFormat = ref("DD.MM.YYYY");
-  console.log("load loadload parentId", nameTable, parentRow); // там регион строка
-  async function loadTable(command = { cmd: "load", parentId: parentRow?.id }) {
+  console.log("load loadload region_id", nameTable, territoryRow); // там регион строка
+  async function loadTable(
+    command = { cmd: "load", region_id: territoryRow?.id }
+  ) {
     let mess = "Загрузка пекарен";
     // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
     let res = await dataLoad(url.value, command, mess);

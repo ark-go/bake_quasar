@@ -2,11 +2,13 @@ import { ref } from "vue";
 import { dataLoad } from "src/utils/ark.js";
 import { date } from "quasar";
 
-export function useTableFunc(nameTable, rows, parentRow) {
+export function useTableFunc(nameTable, rows, territoryRow) {
   const url = ref("/api/" + nameTable);
   const dateFormat = ref("DD.MM.YYYY");
-  console.log("load loadload parentId", nameTable, parentRow); // там регион строка
-  async function loadTable(command = { cmd: "load", parentId: parentRow?.id }) {
+
+  async function loadTable(
+    command = { cmd: "load", nogroup: true, region_id: territoryRow?.id }
+  ) {
     let mess = "Загрузка пекарен";
     // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
     let res = await dataLoad(url.value, command, mess);
@@ -18,12 +20,13 @@ export function useTableFunc(nameTable, rows, parentRow) {
       return false;
     }
   }
-  async function removeFromGroup(val) {
-    let mess = "Удаление из группы";
+  async function moveToGroup(val) {
+    let mess = "Перенос в другую группу";
     let cmdd = val;
     cmdd.dateStart = cmdd.dateStart ? dateToDateUnix(cmdd.dateStart) : null;
-    cmdd.cmd = "removeFromGroup";
-    console.log("Отправляем удаление", cmdd);
+    cmdd.cmd = "moveToGroup";
+    cmdd.transfer = true;
+    console.log("Отправляем перенос", cmdd);
     let res = await dataLoad(url.value, cmdd, mess);
     if (res.result) {
       return await loadTable();
@@ -54,5 +57,5 @@ export function useTableFunc(nameTable, rows, parentRow) {
     // dat - timeStamp
     return date.formatDate(dat, dateFormat.value);
   }
-  return { loadTable, removeFromGroup, info, dateFormatDate };
+  return { loadTable, moveToGroup, info, dateFormatDate };
 }

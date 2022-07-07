@@ -1,5 +1,4 @@
 <!--
-    :tableName="tableName" - имя таблицы для обслуживания
     :rows="rows" - [] строки таблицы
     :columns="columns" [] - колонки 
     :columnsVisibleTemplate="columnsVisibleTemplate" [] - какие показываь колонки, а какие в выбор оставить
@@ -27,7 +26,6 @@
   <Table-Template
     v-if="tableName"
     :title="title"
-    :tableName="tableName"
     :rows="rows"
     :columns="columns"
     :columnsVisibleTemplate="columnsVisibleTemplate"
@@ -44,7 +42,7 @@
     <template #contextMenu="dd">
       <table-Body-Menu
         :dataSlot="dd"
-        :currentGroupName="territoryRow.name"
+        :currentGroupName="parentRow.name"
         @menuMoveToGroup="menuMoveToGroup"
       ></table-Body-Menu>
     </template>
@@ -52,9 +50,9 @@
   <div v-else>не указана таблица</div>
   <Form-Move-To-Group
     v-model:show="showDialog"
-    :bakeryRow="bakeryRow"
+    :childRow="childRow"
     @beforeShow="beforeShowDialog"
-    :territoryRow="territoryRow"
+    :parentRow="parentRow"
     @formOnClick="formOnClick"
     :infoBakery="infoBakery"
     :minDate="minDate"
@@ -91,14 +89,13 @@ export default defineComponent({
       type: String,
       default: "view",
     },
-    territoryRow: {
+    parentRow: {
       // это строка из сравочника
       type: Object,
       default: () => {},
     },
 
     tableName: String,
-    commandLoad: Object,
     objectRow: Object,
     title: String,
   },
@@ -109,11 +106,11 @@ export default defineComponent({
     const minDate = ref("");
     const maxDate = ref("");
     const currentDate = ref("");
-    const tableFunc = useTableFunc(props.tableName, rows, props.territoryRow);
+    const tableFunc = useTableFunc(props.tableName, rows, props.parentRow);
     const store = useBakeryStore();
     const currentRow = ref({});
     const showDialog = ref(false);
-    const bakeryRow = ref({});
+    const childRow = ref({});
     const pagination = ref({
       rowsPerPage: 10,
     });
@@ -123,9 +120,9 @@ export default defineComponent({
     });
     async function menuMoveToGroup(val) {
       console.log("menuMoveToGroup", val);
-      bakeryRow.value = val;
+      childRow.value = val;
       currentDate.value = tableFunc.dateFormatDate(new Date());
-      let info = await tableFunc.info({ bakeryRow: val.id });
+      let info = await tableFunc.info({ childId: val.id });
       if (info) {
         minDate.value = tableFunc.dateFormatDate(info?.history?.date_start);
         maxDate.value = tableFunc.dateFormatDate(new Date());
@@ -148,7 +145,7 @@ export default defineComponent({
       formOnClick,
       menuMoveToGroup,
       showDialog,
-      bakeryRow,
+      childRow,
       currentRow,
       store,
       pagination,

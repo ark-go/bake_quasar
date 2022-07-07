@@ -17,7 +17,7 @@ import { botSendMessage } from "../../../tg/startTgBot.js";
  * @param {*} res
  * @returns
  */
-export async function users(req, res) {
+export async function tabBakery(req, res) {
   let timezone = req?.headers?.timezone
     ? req.headers.timezone
     : "Europe/Moscow";
@@ -25,7 +25,7 @@ export async function users(req, res) {
   let mess = "Таблица bakery Пекарни, cmd: " + req.body?.cmd;
   botSendMessage(mess, req);
 
-  let tabname = "users";
+  let tabname = "bakery";
   switch (req.body.cmd) {
     case "load":
       return await load(req, res, tabname, timezone);

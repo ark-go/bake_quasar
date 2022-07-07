@@ -47,11 +47,11 @@ export async function load(req, res, tabname, timezone, idOne) {
           LEFT JOIN  bakery as bakery_g ON bakery_g.id = tr.parent_id
           --
           LEFT JOIN  ( select * from territory_x_bakery -- 
-            where  is_last = true ) as tb  ON tb.child_id = tr.parent_id
+            where  is_last = true ) as tb  ON tb.child_id = bakery_g.id
           LEFT JOIN  territory as territory_g ON territory_g.id = tb.parent_id
           --
           LEFT JOIN  ( select * from region_x_territory -- 
-            where  is_last = true ) as rt  ON rt.child_id = tb.parent_id
+            where  is_last = true ) as rt  ON rt.child_id = territory_g.id
           LEFT JOIN  region as region_g ON region_g.id = rt.parent_id
 
       --LEFT JOIN  region ON region.id = ${tabname}.region_id

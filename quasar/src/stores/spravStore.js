@@ -7,6 +7,7 @@ export const useSpravStore = defineStore("SpravStore", {
       //все эти свойства будут иметь свой тип автоматически
       selectedNode: {},
       selectedRow: {},
+      historyDate: null,
     };
   },
   // getters: {

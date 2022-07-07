@@ -116,9 +116,14 @@ export default defineComponent({
           case "bakery":
             currentTable.value = BakeryTable;
             break;
-          case "users":
+          case "tabUsers":
             currentTable.value = defineAsyncComponent(() =>
-              import("./users/TablePanel.vue")
+              import("./tabUsers/TablePanel.vue")
+            );
+            break;
+          case "tabBakery":
+            currentTable.value = defineAsyncComponent(() =>
+              import("./tabBakery/TablePanel.vue")
             );
             break;
           default:

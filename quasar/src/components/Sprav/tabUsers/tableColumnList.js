@@ -22,7 +22,7 @@ export const columns = [
   {
     name: "region_count",
     label: "Регионы",
-    align: "left",
+    align: "right",
     field: "region_count",
     required: true,
     sortable: true,
@@ -30,7 +30,7 @@ export const columns = [
   {
     name: "territory_count",
     label: "Территории",
-    align: "left",
+    align: "right",
     field: "territory_count",
     required: true,
     sortable: true,
@@ -38,7 +38,7 @@ export const columns = [
   {
     name: "bakery_count",
     label: "Пекарни",
-    align: "left",
+    align: "right",
     field: "bakery_count",
     required: true,
     sortable: true,

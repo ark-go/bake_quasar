@@ -11,7 +11,20 @@
         <q-card-section>
           <div class="row items-center no-wrap">
             <div class="col">
-              <div class="text-h6">{{ title }}</div>
+              <div
+                class="text-h6 row"
+                :style="{ color: historyOn ? 'red' : 'black' }"
+              >
+                {{ title }}
+                <q-toggle
+                  v-model="historyOn"
+                  :color="historyOn ? 'red' : 'green'"
+                />
+                <Select-Date-Ext
+                  v-if="historyOn"
+                  v-model:valueDate="spravStore.historyDate"
+                ></Select-Date-Ext>
+              </div>
               <div v-if="!!subTitle" class="text-subtitle2">{{ subTitle }}</div>
             </div>
 
@@ -128,6 +141,7 @@ import TabButton from "./TabButton.vue";
 import { useSpravStore } from "stores/spravStore";
 import { useQuasar, dom } from "quasar";
 import { getComponent } from "./selectComponent.js";
+import SelectDateExt from "./SelectDateExt.vue";
 
 // menuObj объект для меню ключ/знчение  значение - показано в меню
 // menuClick вернет событие с именем ключа из объекта menuObj
@@ -147,6 +161,7 @@ export default {
     TabSprav,
     TabButton,
     PageSetupDialog,
+    SelectDateExt,
   },
   setup(props, { emit }) {
     const $q = useQuasar();
@@ -163,11 +178,22 @@ export default {
     const splitHorizont = ref(false);
     const menuDialogShow = ref(false);
     const currentTabComponent = ref();
+    const historyOn = ref(false);
+    //   const historyDate = ref(null);
+    //  const valueDate = ref("");
     watch(
       // ловим изменение т.е. выбор дерева
       () => props.selectedNode.key,
       () => {
         currentTabComponent.value = getComponent();
+      }
+    );
+    watch(
+      () => historyOn.value,
+      () => {
+        if (!historyOn.value) {
+          spravStore.historyDate = null;
+        }
       }
     );
     const splitStyleH = {
@@ -267,6 +293,9 @@ export default {
         });
     }
     return {
+      //  valueDate,
+      //  historyDate,
+      historyOn,
       currentTabComponent,
       onClickMenu,
       menuDialogShow,

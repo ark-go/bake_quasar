@@ -13,7 +13,7 @@
         :key="col.id"
         :props="propsA"
         :style="{
-          textAlign: typeof col.value == 'boolean' ? 'center' : 'left',
+          textAlign: typeof col.value == 'boolean' ? 'center' : col.align,
         }"
         style="max-width: 200px; overflow-x: hidden"
       >

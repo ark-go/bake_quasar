@@ -72,7 +72,7 @@ export default defineComponent({
     },
     tableName: {
       type: String,
-      default: "users",
+      default: "tabUsers", // для запроса сервера
     },
     title: String,
     panelName: String,

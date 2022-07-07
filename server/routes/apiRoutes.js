@@ -65,7 +65,8 @@ import { territoryManager } from "../postgreSQL/command/territoryManager/territo
 import { usersRegionManager } from "../postgreSQL/command/usersRegionManager/usersRegionManager.js";
 import { usersTerritoryManager } from "../postgreSQL/command/usersTerritoryManager/usersTerritoryManager.js";
 import { usersBakeryManager } from "../postgreSQL/command/usersBakeryManager/usersBakeryManager.js";
-import { users } from "../postgreSQL/command/users/users.js";
+import { tabUsers } from "../postgreSQL/command/tabUsers/tabUsers.js";
+import { tabBakery } from "../postgreSQL/command/tabBakery/tabBakery.js";
 
 import { products } from "../postgreSQL/command/products/products.js";
 import { docprice } from "../postgreSQL/command/docprice/docprice.js";
@@ -406,11 +407,14 @@ export async function apiRoutes() {
     res.json(await usersTerritoryManager(req, res));
   });
 
-  router.post("/users", async (req, res) => {
-    console.log("/users", req.body?.cmd);
-    res.json(await users(req, res));
+  router.post("/tabUsers", async (req, res) => {
+    console.log("/tabUsers", req.body?.cmd);
+    res.json(await tabUsers(req, res));
   });
-
+  router.post("/tabBakery", async (req, res) => {
+    console.log("/tabBakery", req.body?.cmd);
+    res.json(await tabBakery(req, res));
+  });
   router.post("/products", async (req, res) => {
     console.log("/products", req.body?.cmd);
     res.json(await products(req, res));

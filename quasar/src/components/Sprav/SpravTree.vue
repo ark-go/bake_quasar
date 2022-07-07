@@ -176,7 +176,9 @@ const dataTree = [
       {
         key: 31,
         label: "Пекарни (помещения с тандыром)",
-        tableName: "bakery", // tableType: "bakery",
+        //tableName: "bakery", // tableType: "bakery",
+        tableName: "tabBakery", // имя для запроса на сервер
+        tableType: "tabBakery", //! убрать после замены всех таблиц - не скоро, оперделяет что таблица внешняя
         component: "TabBakery", // расширение по умолчанию vue
         buttonPanel: [
           { name: "bakeryBaker", label: "Пекари", icon: "person" }, // панель вверху
@@ -209,8 +211,8 @@ const dataTree = [
       {
         key: 35,
         label: "Менеджеры (управляющие)",
-        tableName: "users",
-        tableType: "users",
+        tableName: "tabUsers",
+        tableType: "tabUsers",
         component: "TabManager", // расширение по умолчанию vue, будет TabManager.vue
         buttonPanel: [
           // name - название панели в TabManager.vue

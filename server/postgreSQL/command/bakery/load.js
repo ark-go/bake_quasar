@@ -34,10 +34,12 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.trademark_id,
       trademark.name AS trdemark_name,
       ${tabname}.territory_id,
-      territory.name AS territory_name,
-      territory_g.name AS territory_g_name,
+      -- territory.name AS territory_name,
+      territory_g.name AS territory_name,
+     -- territory_g.name AS territory_g_name,   -- !!!!!!!!!
       ${tabname}.region_id,
-      region.name AS region_name,
+      --region.name AS region_name,
+      region_g.name as region_name,
       ${tabname}.city_id,
       city.name AS city_name,
       ${tabname}.address,
@@ -68,11 +70,14 @@ export async function load(req, res, tabname, timezone, idOne) {
       LEFT JOIN  users ON users.id = ${tabname}.user_id
       LEFT JOIN  trademark ON trademark.id = ${tabname}.trademark_id
       LEFT JOIN  kagent_tm ON kagent_tm.id = ${tabname}.kagent_tm_id  -- здесь только id kagenta
-          LEFT JOIN  ( select * from bakery_territory 
+          LEFT JOIN  ( select * from territory_bakery 
                     where  is_last = true ) as bt  ON bt.bakery_id = ${tabname}.id
           LEFT JOIN  territory as territory_g ON territory_g.id = bt.territory_id
-      LEFT JOIN  territory ON territory.id = ${tabname}.territory_id
-      LEFT JOIN  region ON region.id = ${tabname}.region_id
+             LEFT JOIN  ( select * from region_x_territory 
+                where  is_last = true ) as tr  ON tr.child_id = territory_g.id
+             LEFT JOIN  region as region_g ON region_g.id = tr.parent_id
+      -- LEFT JOIN  territory ON territory.id = ${tabname}.territory_id
+      --LEFT JOIN  region ON region.id = ${tabname}.region_id
       LEFT JOIN  city ON city.id = ${tabname}.city_id
         LEFT JOIN kagent AS tmkagent ON tmkagent.id = kagent_tm.kagent_id 
       LEFT JOIN  kagent AS ownkagent ON ownkagent.id = ${tabname}.own_kagent_id

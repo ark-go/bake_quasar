@@ -52,7 +52,7 @@ export function startIoSocket(serverHTTP, expressSession, app) {
   });
 
   io.on("connection", (socket) => {
-    console.log("999");
+    console.log("io connection");
     //! для чегото это надо, https://socket.io/how-to/use-with-express-session#modifying-the-session
     const req = socket.request;
     socket.use((__, next) => {

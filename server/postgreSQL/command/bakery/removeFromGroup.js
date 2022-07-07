@@ -3,8 +3,8 @@ import { botSendMessage } from "../../../tg/startTgBot.js";
 export async function removeFromGroup(req, res, tabname, timezone) {
   let sqlP = {
     text: /*sql*/ `
-   -- SELECT * from bakery_territory_add($1,$2,$3,$4);
-    SELECT * from bakery_territory_delete($1,$2 at time zone $3,$4); -- перенесли
+ 
+    SELECT * from territory_bakery_delete($1,$2 at time zone $3,$4); -- перенесли
     
           `,
     values: [

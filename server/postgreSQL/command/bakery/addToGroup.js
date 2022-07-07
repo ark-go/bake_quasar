@@ -3,8 +3,8 @@ import { botSendMessage } from "../../../tg/startTgBot.js";
 export async function addToGroup(req, res, tabname, timezone) {
   let sqlP = {
     text: /*sql*/ `
-   -- SELECT * from bakery_territory_add($1,$2,$3,$4);
-    SELECT * from bakery_territory_add($1,$2,$3 at time zone $4,$5,$6); -- перенесли
+ 
+    SELECT * from territory_bakery_add($1,$2,$3 at time zone $4,$5,$6); -- перенесли
     
           `,
     values: [

@@ -7,7 +7,8 @@ import { loadKagentTM } from "./loadKagentTM.js";
 import { botSendMessage } from "../../../tg/startTgBot.js";
 import { deleteFromGroup } from "./deleteFromGroup.js";
 import { addToGroup } from "./addToGroup.js";
-import { removeFromGroup } from "./removeFromGroup.js"
+import { removeFromGroup } from "./removeFromGroup.js";
+import { info } from "./info.js";
 //import { terr_delete } from "./terrytory/terr_delete";
 /**
 
@@ -40,21 +41,24 @@ export async function bakery(req, res) {
       return await allSprav(req, res, timezone);
     case "loadKagentTM":
       return await loadKagentTM(req, res, timezone);
-    case "deleteFromGroup":
-      return await deleteFromGroup(req, res, "bakery_territory", timezone);
+    // case "deleteFromGroup":
+    //   return await deleteFromGroup(req, res, "territory_bakery", timezone);
     case "addToGroup":
       // Добавить территорию к печке
-      return await addToGroup(req, res, "bakery_territory", timezone);
+      return await addToGroup(req, res, "territory_bakery", timezone);
     case "moveToGroup":
       // Перенос территорию к печке
-      return await addToGroup(req, res, "bakery_territory", timezone);
+      return await addToGroup(req, res, "territory_bakery", timezone);
+    case "info":
+      // Перенос территорию к печке
+      return await info(req, res, "territory_bakery", timezone);
     case "removeFromGroup":
       // Перенос территорию к печке
-      return await removeFromGroup(req, res, "bakery_territory", timezone);
+      return await removeFromGroup(req, res, "territory_bakery", timezone);
 
     // case "terr_delete":
     // удалим территорию из печки
-    //   return await terr_delete(req, res, "bakery_territory", timezone);
+    //   return await terr_delete(req, res, "territory_bakery", timezone);
     default:
       return {
         error:

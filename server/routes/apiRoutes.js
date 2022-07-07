@@ -56,6 +56,17 @@ import { trademark } from "../postgreSQL/command/trademark/trademark.js";
 import { kagent_tm } from "../postgreSQL/command/kagent_tm/kagent_tm.js";
 import { city } from "../postgreSQL/command/city/city.js";
 import { bakery } from "../postgreSQL/command/bakery/bakery.js";
+//import { bakeryManager } from "../postgreSQL/command/bakeryManager/bakeryManager.js";
+import { regionTerritory } from "../postgreSQL/command/regionTerritory/regionTerritory.js";
+import { bakeryBaker } from "../postgreSQL/command/bakeryBaker/bakeryBaker.js";
+import { territoryBakery } from "../postgreSQL/command/territoryBakery/territoryBakery.js";
+import { regionManager } from "../postgreSQL/command/regionManager/regionManager.js";
+import { territoryManager } from "../postgreSQL/command/territoryManager/territoryManager.js";
+import { usersRegionManager } from "../postgreSQL/command/usersRegionManager/usersRegionManager.js";
+import { usersTerritoryManager } from "../postgreSQL/command/usersTerritoryManager/usersTerritoryManager.js";
+import { usersBakeryManager } from "../postgreSQL/command/usersBakeryManager/usersBakeryManager.js";
+import { users } from "../postgreSQL/command/users/users.js";
+
 import { products } from "../postgreSQL/command/products/products.js";
 import { docprice } from "../postgreSQL/command/docprice/docprice.js";
 import { departments } from "../postgreSQL/command/departments/departments.js";
@@ -357,6 +368,49 @@ export async function apiRoutes() {
     console.log("/bakery", req.body?.cmd);
     res.json(await bakery(req, res));
   });
+  // router.post("/bakeryManager", async (req, res) => {
+  //   console.log("/bakeryManager", req.body?.cmd);
+  //   res.json(await bakeryManager(req, res));
+  // });
+  router.post("/regionManager", async (req, res) => {
+    console.log("/regionManager", req.body?.cmd);
+    res.json(await regionManager(req, res));
+  });
+  router.post("/regionTerritory", async (req, res) => {
+    console.log("/regionTerritory", req.body?.cmd);
+    res.json(await regionTerritory(req, res));
+  });
+  router.post("/territoryBakery", async (req, res) => {
+    console.log("/territoryBakery", req.body?.cmd);
+    res.json(await territoryBakery(req, res));
+  });
+  router.post("/territoryManager", async (req, res) => {
+    console.log("/territoryManager", req.body?.cmd);
+    res.json(await territoryManager(req, res));
+  });
+  router.post("/bakeryBaker", async (req, res) => {
+    console.log("/bakeryBaker", req.body?.cmd);
+    res.json(await bakeryBaker(req, res));
+  });
+
+  router.post("/usersRegionManager", async (req, res) => {
+    console.log("/usersRegionManager", req.body?.cmd);
+    res.json(await usersRegionManager(req, res));
+  });
+  router.post("/usersBakeryManager", async (req, res) => {
+    console.log("/usersBakeryManager", req.body?.cmd);
+    res.json(await usersBakeryManager(req, res));
+  });
+  router.post("/usersTerritoryManager", async (req, res) => {
+    console.log("/usersTerritoryManager", req.body?.cmd);
+    res.json(await usersTerritoryManager(req, res));
+  });
+
+  router.post("/users", async (req, res) => {
+    console.log("/users", req.body?.cmd);
+    res.json(await users(req, res));
+  });
+
   router.post("/products", async (req, res) => {
     console.log("/products", req.body?.cmd);
     res.json(await products(req, res));

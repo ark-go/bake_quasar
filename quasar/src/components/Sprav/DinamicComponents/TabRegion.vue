@@ -8,21 +8,26 @@
       name="manager"
       :style="{ maxHeight: maxBodyHeight, overflow: 'auto' }"
     >
-      воть туть Манагер
+      <Bakery-Table-Region-Manager></Bakery-Table-Region-Manager>
     </q-tab-panel>
-    <q-tab-panel name="bakeryTerritory" style="padding: 0">
-      <Bakery-Table-Territory></Bakery-Table-Territory>
+    <q-tab-panel name="TabRegion" style="padding: 0">
+      <Region-Territory-Panels></Region-Territory-Panels>
     </q-tab-panel>
   </q-tab-panels>
 </template>
 
 <script>
+// При выборе дерева SpravTree срабатывает и хранится в Storage  spravStore
+// Penia - spravStore.selectedNode
+// в файле Sprav.vue на ArkCard подменяется компнент правого поля
+// selectComponent.js  закачивает нужный компонент
 import { defineComponent, ref } from "vue";
-import BakeryTableTerritory from "./TabTerritory/BakeryTableTerritory.vue";
+import RegionTerritoryPanels from "./TabRegionTerritory/RegionTerritoryPanels.vue";
+import BakeryTableRegionManager from "./TabRegionManager/BakeryTableRegionManager.vue";
 //dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "TabTerritory",
-  components: { BakeryTableTerritory },
+  components: { RegionTerritoryPanels, BakeryTableRegionManager },
   props: {
     maxBodyHeight: String,
     tabModel: String,

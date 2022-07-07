@@ -16,7 +16,7 @@
       style="height: 200px"
     > -->
     <q-tree
-      class="non-selectable"
+      class="non-selectable text-no-wrap"
       :ref="(el) => (refTree = el)"
       :nodes="dataTree"
       node-key="key"
@@ -173,10 +173,19 @@ const dataTree = [
     // icon: "room_service",
     disabled: false,
     children: [
-      { key: 31, label: "Пекарни", tableName: "bakery", tableType: "bakery" },
+      {
+        key: 31,
+        label: "Пекарни (помещения с тандыром)",
+        tableName: "bakery", // tableType: "bakery",
+        component: "TabBakery", // расширение по умолчанию vue
+        buttonPanel: [
+          { name: "bakeryBaker", label: "Пекари", icon: "person" }, // панель вверху
+          //  { name: "manager", label: "Менеджер", icon: "person" },
+        ],
+      },
       {
         key: 32,
-        label: "Группы - территории",
+        label: "Территории (группы пекарен)",
         description: "по территориям",
         tableName: "territory",
         component: "TabTerritory", // расширение по умолчанию vue
@@ -187,17 +196,30 @@ const dataTree = [
       },
       {
         key: 33,
-        label: "Регионы",
+        label: "Регионы (группы территорий)",
         tableName: "region",
         component: "TabRegion", // расширение по умолчанию vue
+        //  tableType: "bakery",
         buttonPanel: [
-          { name: "TabRegion", label: "Пекарни", icon: "home" },
+          { name: "TabRegion", label: "Территории", icon: "home" },
           { name: "manager", label: "Менеджер", icon: "person" },
         ],
       },
       // { key: 34, label: "Регионы", tableName: "region", component: "Tabxxx" },
-
-      { key: 35, label: "Города", tableName: "city", tableType: "city" },
+      {
+        key: 35,
+        label: "Менеджеры (управляющие)",
+        tableName: "users",
+        tableType: "users",
+        component: "TabManager", // расширение по умолчанию vue, будет TabManager.vue
+        buttonPanel: [
+          // name - название панели в TabManager.vue
+          { name: "managerRegion", label: "Регионы", icon: "home" },
+          { name: "managerTerritory", label: "Территории", icon: "home" },
+          { name: "managerBakery", label: "Пекарни", icon: "home" },
+        ],
+      },
+      { key: 36, label: "Города", tableName: "city", tableType: "city" },
     ],
   },
   // {

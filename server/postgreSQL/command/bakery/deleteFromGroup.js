@@ -5,7 +5,7 @@ import escape from "pg-escape";
 export async function deleteFromGroup(req, res, tabname, timezone) {
   let id = req.body.id; // печка
 
-  // table   bakery_territory
+ 
 
   let sqlP = {
     text: /*sql*/ `

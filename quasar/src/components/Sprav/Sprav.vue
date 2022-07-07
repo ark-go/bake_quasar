@@ -26,6 +26,7 @@
           commandLoad: { cmd: 'load' },
           spravRow: spravStore.selectedRow,
         }"
+        @selectedRow="(val) => (spravStore.selectedRow = val)"
       ></component>
       <div v-else class="text-none-table">Выберите что-нибудь.</div>
     </template>
@@ -33,7 +34,14 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch, watchEffect, computed } from "vue";
+import {
+  defineComponent,
+  ref,
+  watch,
+  watchEffect,
+  computed,
+  defineAsyncComponent,
+} from "vue";
 import SpravTree from "components/Sprav/SpravTree.vue";
 import SpravTable from "components/Sprav/SpravTable.vue";
 import TradeMarkTable from "components/Trademark/TrademarkTable.vue";
@@ -107,6 +115,11 @@ export default defineComponent({
             break;
           case "bakery":
             currentTable.value = BakeryTable;
+            break;
+          case "users":
+            currentTable.value = defineAsyncComponent(() =>
+              import("./users/TablePanel.vue")
+            );
             break;
           default:
             currentTable.value = undefined;

@@ -16,7 +16,7 @@
   "dependencies": {
     "@babel/eslint-parser": "^7.17.0",
     "@quasar/babel-preset-app": "^2.0.1",
-    "@quasar/extras": "^1.14.1",
+    "@quasar/extras": "^1.14.2",
     "apexcharts": "^3.33.0",
     "axios": "^0.21.1",
     "core-js": "^3.6.5",
@@ -26,7 +26,7 @@
     "mitt": "^3.0.0",
     "password-generator": "^2.3.2",
     "pinia": "^2.0.11",
-    "quasar": "^2.7.3",
+    "quasar": "^2.7.4",
     "simple-vue-camera": "^1.0.2",
     "socket.io-client": "^4.5.0",
     "tree-model": "^1.0.7",
@@ -37,7 +37,7 @@
   },
   "devDependencies": {
     "@intlify/vite-plugin-vue-i18n": "^3.3.1",
-    "@quasar/app-vite": "^1.0.2",
+    "@quasar/app-vite": "^1.0.4",
     "@quasar/quasar-app-extension-qpdfviewer": "^2.0.0-alpha.6",
     "autoprefixer": "^10.4.2",
     "electron": "^18.2.0",

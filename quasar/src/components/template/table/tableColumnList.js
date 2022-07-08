@@ -1,4 +1,4 @@
-export const columnsVisibleTemplate = [
+export const columnsVisible = [
   "user_email",
   "user_date",
   "territory_name",

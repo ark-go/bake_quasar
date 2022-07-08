@@ -4,7 +4,7 @@
       :title="tableInfo.label"
       :rows="rows"
       :columns="columns"
-      :columnsVisibleTemplate="visibleColumns"
+      :columnsVisible="visibleColumns"
       tableBodyMenu="tableBodyMenu"
       tableFunc="tableFunc"
       onInfoRow="onInfoRow"

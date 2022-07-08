@@ -1,7 +1,7 @@
 <!--
     :rows="rows" - [] строки таблицы
     :columns="columns" [] - колонки 
-    :columnsVisibleTemplate="columnsVisibleTemplate" [] - какие показываь колонки, а какие в выбор оставить
+    :columnsVisible="columnsVisible" [] - какие показываь колонки, а какие в выбор оставить
     :tableBodyMenu="tableBodyMenu" - null - компонент, обработки меню правой мыши
     :tableFunc - Function  функция, ее подключаем по месту
     noExpandPanel  - скрыть расширение заголовка для управления
@@ -28,7 +28,7 @@
     :title="title"
     :rows="rows"
     :columns="columns"
-    :columnsVisibleTemplate="columnsVisibleTemplate"
+    :columnsVisible="columnsVisible"
     @onInfoRow="onInfoRow"
     @onBtnDelete="onInfoRow"
     @onBtnEdit="onInfoRow"
@@ -69,7 +69,7 @@ import {
   watch,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
-import { columns, columnsVisibleTemplate } from "./tableColumnList.js";
+import { columns, columnsVisible } from "./tableColumnList.js";
 import { useBakeryStore } from "stores/bakeryStore.js";
 export default defineComponent({
   name: "TablePanel",
@@ -151,7 +151,7 @@ export default defineComponent({
       pagination,
       rows,
       columns,
-      columnsVisibleTemplate,
+      columnsVisible,
       tableFunc,
       onInfoRow(row) {
         console.log("info butt", row);

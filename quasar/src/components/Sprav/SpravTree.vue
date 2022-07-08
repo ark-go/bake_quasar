@@ -163,7 +163,7 @@ const dataTree = [
         label: "Сети",
         tableName: "trademark",
         tableType: "trademark",
-        children: [{ key: 28, label: "Бреxxxнды", tableName: "brand" }],
+        //children: [{ key: 28, label: "Бреxxxнды", tableName: "brand" }],
       }, //tableName: "brand"
     ],
   },

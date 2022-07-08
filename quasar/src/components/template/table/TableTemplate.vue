@@ -34,7 +34,7 @@
             <q-space />
             <table-top-visible
               v-if="!noTopColumnSelect"
-              v-model:visibleColumns="visibleColumns"
+              v-model:visible-columns="visibleColumns"
               :columns="columns"
             ></table-top-visible>
           </div>
@@ -123,7 +123,7 @@ export default defineComponent({
       type: Array,
       default: () => [],
     },
-    columnsVisibleTemplate: {
+    columnsVisible: {
       type: Array,
       default: () => [],
     },
@@ -169,24 +169,23 @@ export default defineComponent({
     const extendPanel = ref(!props.noExpandPanel);
     const titlePanel = ref(!props.noTitlePanel);
     const filter = ref("");
-    // function reVisibleColumn() {
-    //   props.columns.forEach((item, index, array) => {
-    //     if (props.columnsVisibleTemplate.includes(item.name)) return;
-    //     visibleColumns.value.push(item.name);
-    //   });
-    //   console.log("Колоники толи видимые толи нет", visibleColumns.value);
-    // }
-    // onMounted(() => {
-    //   reVisibleColumn();
-    // });
-    // watch(
-    //   () => {
-    //     props.columnsVisibleTemplate;
-    //   },
-    //   () => {
-    //     reVisibleColumn();
-    //   }
-    // );
+    function reVisibleColumn() {
+      // props.columns.forEach((item, index, array) => {
+      //   if (props.columnsVisible.includes(item.name)) return;
+      //   visibleColumns.value.push(item.name);
+      // });
+      visibleColumns.value = props.columnsVisible;
+      console.log("Колоники толи видимые толи нет", visibleColumns.value);
+    }
+    onMounted(() => {
+      reVisibleColumn();
+    });
+    watch(
+      () => props.columnsVisible,
+      () => {
+        reVisibleColumn();
+      }
+    );
 
     return {
       pagination,

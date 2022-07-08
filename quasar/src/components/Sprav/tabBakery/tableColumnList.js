@@ -1,4 +1,10 @@
-export const columnsVisibleTemplate = ["user_email", "user_date"];
+export const columnsVisible = [
+  "bakery_manager_name",
+  "region_name",
+  "region_manager_name",
+  "territory_name",
+  "territory_manager_name",
+];
 export const columns = [
   {
     name: "name",

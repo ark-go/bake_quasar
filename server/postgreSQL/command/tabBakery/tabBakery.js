@@ -24,7 +24,7 @@ export async function tabBakery(req, res) {
 
   let mess = "Таблица bakery Пекарни, cmd: " + req.body?.cmd;
   botSendMessage(mess, req);
-
+  console.log("tabBakery", req.body);
   let tabname = "bakery";
   switch (req.body.cmd) {
     case "load":

@@ -45,10 +45,10 @@ import {
 import SpravTree from "components/Sprav/SpravTree.vue";
 import SpravTable from "components/Sprav/SpravTable.vue";
 import TradeMarkTable from "components/Trademark/TrademarkTable.vue";
-import BakeryTable from "components/Bakery/BakeryTable.vue";
+//import BakeryTable from "components/Bakery/BakeryTable.vue";
 import CityTable from "components/City/Table.vue";
 import ArkCard from "./ArkCard.vue";
-import NoTable from "components/Sprav/NoTable.vue";
+//import NoTable from "components/Sprav/NoTable.vue";
 
 import { useSpravStore } from "stores/spravStore";
 import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
@@ -113,15 +113,16 @@ export default defineComponent({
           case "city":
             currentTable.value = CityTable;
             break;
-          case "bakery":
-            currentTable.value = BakeryTable;
-            break;
+          // case "bakery":
+          //   currentTable.value = BakeryTable;
+          //   break;
           case "tabUsers":
             currentTable.value = defineAsyncComponent(() =>
               import("./tabUsers/TablePanel.vue")
             );
             break;
           case "tabBakery":
+            console.log("case tree tabBakery");
             currentTable.value = defineAsyncComponent(() =>
               import("./tabBakery/TablePanel.vue")
             );

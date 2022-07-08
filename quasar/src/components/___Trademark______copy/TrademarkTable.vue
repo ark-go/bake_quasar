@@ -1,25 +1,6 @@
 <template>
   <div class="column no-wrap" style="display: grid; max-height: inherit">
-    <Table-Template
-      :title="tableInfo.label"
-      :rows="rows"
-      :columns="columns"
-      :columnsVisibleTemplate="visibleColumns"
-      tableBodyMenu="tableBodyMenu"
-      tableFunc="tableFunc"
-      onInfoRow="onInfoRow"
-      yesBtnEdit
-      yesBtnDelete
-      @onBtnDelete="onDeleteData"
-      @onBtnEdit="onEditData"
-      @onRowClick="onRowClick"
-      @onAdd="addNew"
-      :currentRow="currentRow"
-      noExpandPanel
-      :noEditTable="false"
-    >
-    </Table-Template>
-    <!-- <q-table
+    <q-table
       style="min-width: 100px; max-height: inherit; overflow: auto"
       dense
       :filter="filter"
@@ -79,7 +60,7 @@
       <template v-slot:no-data="dataslot">
         <no-data-footer :dataslot="dataslot"></no-data-footer>
       </template>
-    </q-table> -->
+    </q-table>
   </div>
   <trademark-dialog
     v-model:showDialog="showDialog"
@@ -92,7 +73,6 @@
 <script>
 import {
   defineComponent,
-  defineAsyncComponent,
   ref,
   isRef,
   onMounted,
@@ -112,14 +92,11 @@ import FindTable from "../Sprav/FindTable.vue";
 export default defineComponent({
   name: "TrademarkTable",
   components: {
-    // NoDataFooter,
+    NoDataFooter,
     // ArkTableCell,
-    // ArkTableBody,
+    ArkTableBody,
     TrademarkDialog,
-    //FindTable,
-    TableTemplate: defineAsyncComponent(() => {
-      return import("src/components/template/table/TableTemplate.vue");
-    }),
+    FindTable,
   },
   props: {
     //tableName: String,

@@ -2,6 +2,7 @@ import { pool } from "../../initPostgreSQL.js";
 import escape from "pg-escape";
 
 export async function spravLoad(req, res) {
+  console.log("speavLoad body", req.body);
   let timezone = req?.headers?.timezone
     ? req.headers.timezone
     : "Europe/Moscow";
@@ -52,7 +53,7 @@ export async function spravLoad(req, res) {
   try {
     let result = await pool.query(sqlP);
     result = result.rowCount > 0 ? result.rows : null;
-  //  console.log("sprav load", tabname, result);
+    //  console.log("sprav load", tabname, result);
     return {
       result: result,
     };

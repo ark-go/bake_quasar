@@ -69,7 +69,13 @@
 </template>
 
 <script>
-import { defineComponent, ref, defineAsyncComponent } from "vue";
+import {
+  defineComponent,
+  ref,
+  defineAsyncComponent,
+  watch,
+  onMounted,
+} from "vue";
 export default defineComponent({
   name: "TableTemplate",
   components: {
@@ -163,10 +169,25 @@ export default defineComponent({
     const extendPanel = ref(!props.noExpandPanel);
     const titlePanel = ref(!props.noTitlePanel);
     const filter = ref("");
-    props.columns.forEach((item, index, array) => {
-      if (props.columnsVisibleTemplate.includes(item.name)) return;
-      visibleColumns.value.push(item.name);
-    });
+    // function reVisibleColumn() {
+    //   props.columns.forEach((item, index, array) => {
+    //     if (props.columnsVisibleTemplate.includes(item.name)) return;
+    //     visibleColumns.value.push(item.name);
+    //   });
+    //   console.log("Колоники толи видимые толи нет", visibleColumns.value);
+    // }
+    // onMounted(() => {
+    //   reVisibleColumn();
+    // });
+    // watch(
+    //   () => {
+    //     props.columnsVisibleTemplate;
+    //   },
+    //   () => {
+    //     reVisibleColumn();
+    //   }
+    // );
+
     return {
       pagination,
       visibleColumns,

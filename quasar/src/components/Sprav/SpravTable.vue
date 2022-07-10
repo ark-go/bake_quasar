@@ -1,5 +1,23 @@
 <template>
   <div class="column no-wrap" style="display: grid; max-height: inherit">
+    <!-- <Table-Template
+      :title="tableInfo.label"
+      :rows="rows"
+      :columns="columns"
+      tableBodyMenu="tableBodyMenu"
+      tableFunc="tableFunc"
+      onInfoRow="onInfoRow"
+      yesBtnEdit
+      yesBtnDelete
+      @onBtnDelete="onDeleteData"
+      @onBtnEdit="onSaveData"
+      @onRowClick="onRowClick"
+      @onAdd="addNew"
+      :currentRow="currentRow"
+      noExpandPanel
+      :noEditTable="false"
+    >
+    </Table-Template> -->
     <q-table
       style="min-width: 100px; max-height: inherit; overflow: auto"
       :card-container-style="{ fontSize: 'inherit' }"
@@ -68,6 +86,7 @@
 <script>
 import {
   defineComponent,
+  defineAsyncComponent,
   ref,
   onMounted,
   computed,
@@ -90,6 +109,9 @@ export default defineComponent({
     ArkTableBody,
     SpravDialog,
     FindTable,
+    // TableTemplate: defineAsyncComponent(() => {
+    //   return import("src/components/template/table/TableTemplate.vue");
+    // }),
   },
   props: {
     //tableName: String,
@@ -104,7 +126,6 @@ export default defineComponent({
     const spravStore = useSpravStore();
     const tableNameSting = ref("");
     const rows = ref([]);
-    const columnsVisible = ref([]);
     const visibleColumns = ref([]);
     const filter = ref("");
     const addNewEnabled = ref(false); //включаем кнопку
@@ -182,7 +203,7 @@ export default defineComponent({
       console.log("Колонки показать", visibleColumns.value);
     }
     async function onSaveData(val) {
-      console.log("Пришло и готово на запись ", val.value);
+      console.log("Пришло и готово на запись ", val, val.value);
       let dataToBase = {};
       dataToBase[val.value.colBase] = val.value.colValue;
       dataToBase["id"] = val.value.id;
@@ -292,7 +313,6 @@ export default defineComponent({
       onRowClick,
       rows,
       filter,
-      columnsVisible,
       paginationСatalog,
       visibleColumns,
       columns,

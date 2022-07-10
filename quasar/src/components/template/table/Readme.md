@@ -11,8 +11,7 @@ Props:
     :tableName - "tableName" - имя таблицы для обслуживания
     :rows="rows" - [] строки таблицы
     :columns="columns" [] - колонки
-    :columnsVisible - "columnsVisible" [] - какие показываь колонки, а какие в выбор оставить
-    :tableBodyMenu="tableBodyMenu" - null - компонент, обработки меню правой мыши
+     :tableBodyMenu="tableBodyMenu" - null - компонент, обработки меню правой мыши
     :tableFunc - Function функция, ее подключаем по месту
     noExpandPanel - скрыть расширение заголовка для управления
     noTitlePanel - скрыть заголовок таблицы

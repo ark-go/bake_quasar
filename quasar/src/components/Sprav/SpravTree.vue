@@ -181,32 +181,47 @@ const dataTree = [
         tableType: "tabBakery", //! убрать после замены всех таблиц - не скоро, оперделяет что таблица внешняя
         component: "TabBakery", // расширение по умолчанию vue
         buttonPanel: [
-          { name: "bakeryBaker", label: "Пекари", icon: "person" }, // панель вверху
+          // { name: "bakeryBaker", label: "Пекари", icon: "person" }, // панель вверху
           //  { name: "manager", label: "Менеджер", icon: "person" },
         ],
       },
+      // {
+      //   key: 32,
+      //   label: "Территории (группы пекарен)",
+      //   description: "по территориям",
+      //   tableName: "territory",
+      //   component: "TabTerritory", // расширение по умолчанию vue
+      //   buttonPanel: [
+      //     { name: "bakeryTerritory", label: "Пекарни", icon: "home" },
+      //     // { name: "manager", label: "Менеджер", icon: "person" },
+      //   ],
+      // },
       {
-        key: 32,
+        key: 321,
         label: "Территории (группы пекарен)",
         description: "по территориям",
-        tableName: "territory",
+        tableName: "tabTerritory",
+        tableType: "tabTerritory",
         component: "TabTerritory", // расширение по умолчанию vue
         buttonPanel: [
           { name: "bakeryTerritory", label: "Пекарни", icon: "home" },
-          { name: "manager", label: "Менеджер", icon: "person" },
+          // { name: "manager", label: "Менеджер", icon: "person" },
         ],
       },
       {
         key: 33,
         label: "Регионы (группы территорий)",
-        tableName: "region",
+        // tableName: "region",
+        tableName: "tabRegion",
+        tableType: "tabRegion",
         component: "TabRegion", // расширение по умолчанию vue
         //  tableType: "bakery",
         buttonPanel: [
           { name: "TabRegion", label: "Территории", icon: "home" },
-          { name: "manager", label: "Менеджер", icon: "person" },
+          //  { name: "manager", label: "Менеджер", icon: "person" },
         ],
       },
+
       // { key: 34, label: "Регионы", tableName: "region", component: "Tabxxx" },
       {
         key: 35,

@@ -43,7 +43,7 @@ export async function load(req, res, tabname, timezone, idOne) {
     values: [],
   };
   if (idOne) sqlP.values = [timezone, idOne];
-  console.log("wher", sqlP, req.body);
+  //  console.log("wher", sqlP, req.body);
   try {
     let result = await pool.query(sqlP);
     result = result.rowCount > 0 ? result.rows : null;

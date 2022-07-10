@@ -154,7 +154,7 @@ export default {
     buttonArr: [Object, Boolean],
     menuObj: Object,
     pageMaxHeight: Object,
-    selectedNode: Object,
+    selectedNode: Object, // выбраный пункт Tree дерева
   },
   components: {
     SplitterSprav,
@@ -179,6 +179,15 @@ export default {
     const menuDialogShow = ref(false);
     const currentTabComponent = ref();
     const historyOn = ref(false);
+
+    watch(
+      () => tabModel.value,
+      () => {
+        spravStore.currentTab = tabModel.value; // занесем выбор вкладки в Penia
+        console.log("Выбрана вкладка", tabModel.value, props.selectedNode);
+      }
+    );
+
     //   const historyDate = ref(null);
     //  const valueDate = ref("");
     watch(
@@ -339,5 +348,28 @@ export default {
   height: v-bind(maxBodyHeight);
   max-height: v-bind(maxBodyHeight);
   overflow: auto;
+}
+:deep(.arkadii-sticky-header-table) {
+  /* height or max-height is important */
+  // height: 310px;
+
+  // .q-table__top,
+  // .q-table__bottom,
+  thead tr:first-child th {
+    /* bg color is important for th; just specify one */
+    background-color: #f2f8fd;
+  }
+  thead tr th {
+    position: sticky;
+    z-index: 1;
+  }
+  thead tr:first-child th {
+    top: 0;
+  }
+  /* this is when the loading indicator appears */
+  &.q-table--loading thead tr:last-child th {
+    /* height of all previous header rows */
+    top: 48px;
+  }
 }
 </style>

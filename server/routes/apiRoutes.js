@@ -67,6 +67,8 @@ import { usersTerritoryManager } from "../postgreSQL/command/usersTerritoryManag
 import { usersBakeryManager } from "../postgreSQL/command/usersBakeryManager/usersBakeryManager.js";
 import { tabUsers } from "../postgreSQL/command/tabUsers/tabUsers.js";
 import { tabBakery } from "../postgreSQL/command/tabBakery/tabBakery.js";
+import { tabTerritory } from "../postgreSQL/command/tabTerritory/tabTerritory.js";
+import { tabRegion } from "../postgreSQL/command/tabRegion/tabRegion.js";
 
 import { products } from "../postgreSQL/command/products/products.js";
 import { docprice } from "../postgreSQL/command/docprice/docprice.js";
@@ -414,6 +416,14 @@ export async function apiRoutes() {
   router.post("/tabBakery", async (req, res) => {
     console.log("/tabBakery", req.body?.cmd);
     res.json(await tabBakery(req, res));
+  });
+  router.post("/tabTerritory", async (req, res) => {
+    console.log("/tabTerritory", req.body?.cmd);
+    res.json(await tabTerritory(req, res));
+  });
+  router.post("/tabRegion", async (req, res) => {
+    console.log("/tabRegion", req.body?.cmd);
+    res.json(await tabRegion(req, res));
   });
   router.post("/products", async (req, res) => {
     console.log("/products", req.body?.cmd);

@@ -130,7 +130,6 @@ export default defineComponent({
     const $q = useQuasar();
     const tableNameSting = ref("");
     const rows = ref([]);
-    const columnsVisible = ref([]);
     const visibleColumns = ref([]);
     const filter = ref("");
     const addNewEnabled = ref(false); //включаем кнопку
@@ -323,7 +322,6 @@ export default defineComponent({
       tableNameSting,
       rows,
       filter,
-      columnsVisible,
       paginationСatalog,
       visibleColumns,
       columns,

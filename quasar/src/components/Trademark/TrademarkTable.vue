@@ -4,7 +4,6 @@
       :title="tableInfo.label"
       :rows="rows"
       :columns="columns"
-      :columnsVisible="visibleColumns"
       tableBodyMenu="tableBodyMenu"
       tableFunc="tableFunc"
       onInfoRow="onInfoRow"
@@ -134,7 +133,6 @@ export default defineComponent({
     const $q = useQuasar();
     const tableNameSting = ref("");
     const rows = ref([]);
-    const columnsVisible = ref([]);
     const visibleColumns = ref([]);
     const filter = ref("");
     const addNewEnabled = ref(false); //включаем кнопку
@@ -284,12 +282,14 @@ export default defineComponent({
         label: "Е-Mail",
         align: "left",
         field: "user_email",
+        hidden: true,
       },
       {
         name: "user_date",
         label: "Дата",
         align: "left",
         field: "user_date",
+        hidden: true,
       },
     ]);
 
@@ -300,7 +300,6 @@ export default defineComponent({
       tableNameSting,
       rows,
       filter,
-      columnsVisible,
       paginationСatalog,
       visibleColumns,
       columns,

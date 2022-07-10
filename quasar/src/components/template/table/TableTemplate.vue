@@ -6,7 +6,7 @@
       :filter="filter"
       no-data-label="Нет данных."
       no-results-label="Ничего не найдено."
-      class="my-sticky-virtscroll-table table-kagent-column-table maxBodyHeight"
+      class="my-sticky-virtscroll-table arkadii-sticky-header-table table-kagent-column-table maxBodyHeight"
       virtual-scroll
       v-model:pagination="pagination"
       :rows-per-page-options="[0]"
@@ -123,10 +123,7 @@ export default defineComponent({
       type: Array,
       default: () => [],
     },
-    columnsVisible: {
-      type: Array,
-      default: () => [],
-    },
+
     noTopBtn: {
       type: Boolean,
       default: false,
@@ -170,18 +167,16 @@ export default defineComponent({
     const titlePanel = ref(!props.noTitlePanel);
     const filter = ref("");
     function reVisibleColumn() {
-      // props.columns.forEach((item, index, array) => {
-      //   if (props.columnsVisible.includes(item.name)) return;
-      //   visibleColumns.value.push(item.name);
-      // });
-      visibleColumns.value = props.columnsVisible;
-      console.log("Колоники толи видимые толи нет", visibleColumns.value);
+      props.columns.forEach((item, index, array) => {
+        if (item.hidden == true) return;
+        visibleColumns.value.push(item.name);
+      });
     }
     onMounted(() => {
       reVisibleColumn();
     });
     watch(
-      () => props.columnsVisible,
+      () => props.columns,
       () => {
         reVisibleColumn();
       }

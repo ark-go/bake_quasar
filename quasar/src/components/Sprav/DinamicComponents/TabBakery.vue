@@ -19,7 +19,7 @@
 <script>
 // bakeryBaker имя панели которое есть в SpravTRee
 // При выборе дерева SpravTree срабатывает и хранится в Storage  spravStore
-// Penia - spravStore.selectedNode
+// Penia - spravStore.s electedNode
 // в файле Sprav.vue на ArkCard подменяется компнент правого поля
 // selectComponent.js  закачивает нужный компонент
 import { defineComponent, ref } from "vue";

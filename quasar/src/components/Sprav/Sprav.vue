@@ -68,7 +68,6 @@ export default defineComponent({
     //  const $q = useQuasar();
     const spravStore = useSpravStore();
     const { cardMain } = storeToRefs(usePagesSetupStore());
-    //  const selectedNode2 = ref({});
     const $router = useRouter();
     const subTitle = ref("");
     const currentTableName = ref(null);
@@ -102,7 +101,6 @@ export default defineComponent({
       () => {
         spravStore.selectedRow = {};
         console.log("Выбрал дерево >", spravStore.selectedNode);
-        // spravStore.selectedNode = selectedNode.value;
         switch (spravStore.selectedNode.tableType) {
           case undefined:
             currentTable.value = SpravTable;
@@ -125,6 +123,18 @@ export default defineComponent({
             console.log("case tree tabBakery");
             currentTable.value = defineAsyncComponent(() =>
               import("./tabBakery/TablePanel.vue")
+            );
+            break;
+          case "tabTerritory":
+            console.log("case tree tabTerritory");
+            currentTable.value = defineAsyncComponent(() =>
+              import("./tabTerritory/TablePanel.vue")
+            );
+            break;
+          case "tabRegion":
+            console.log("case tree tabRegion");
+            currentTable.value = defineAsyncComponent(() =>
+              import("./tabRegion/TablePanel.vue")
             );
             break;
           default:
@@ -166,8 +176,6 @@ export default defineComponent({
       menuObj,
       spravStore,
       currentTable,
-      // selectedNode,
-      // selectedNode2,
       currentTableName,
       splitterModel: ref(30),
       splitHorizont,

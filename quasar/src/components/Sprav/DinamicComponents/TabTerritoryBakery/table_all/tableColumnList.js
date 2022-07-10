@@ -1,22 +1,3 @@
-export const columnsVisible = [
-  "user_email",
-  "user_date",
-  "region_name",
-  "description",
-  "date_start",
-  "date_end",
-  "franch",
-  "trdemark_name",
-  "address",
-  "dateopen",
-  "dateclose",
-  "area",
-  "kolbakers",
-  "ispack",
-  "own_kagent_name",
-  "tm_kagent_name",
-  "fr_kagent_name",
-];
 export const columns = [
   {
     name: "name",

@@ -1,17 +1,11 @@
-export const columnsVisible = [
-  "bakery_manager_name",
-  "region_name",
-  "region_manager_name",
-  "territory_name",
-  "territory_manager_name",
-];
+
 export const columns = [
   {
     name: "name",
     label: "Пекарня",
     align: "left",
     field: "name",
-    required: true,
+    required: true, // нельзя выключить
     sortable: true,
   },
   {
@@ -27,6 +21,7 @@ export const columns = [
     align: "left",
     field: "region_name",
     sortable: true,
+    //  hidden: true,
   },
   {
     name: "region_manager_name",

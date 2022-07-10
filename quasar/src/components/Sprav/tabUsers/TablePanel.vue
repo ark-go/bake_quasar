@@ -2,7 +2,6 @@
     :tableName="tableName" - имя таблицы для обслуживания
     :rows="rows" - [] строки таблицы
     :columns="columns" [] - колонки 
-    :columnsVisible="columnsVisible" [] - какие показываь колонки, а какие в выбор оставить
     :tableBodyMenu="tableBodyMenu" - null - компонент, обработки меню правой мыши
     :tableFunc - Function  функция, ее подключаем по месту
     noExpandPanel  - скрыть расширение заголовка для управления
@@ -30,7 +29,6 @@
     :tableName="tableName"
     :rows="rows"
     :columns="columns"
-    :columnsVisible="columnsVisible"
     :tableBodyMenu="tableBodyMenu"
     :tableFunc="tableFunc"
     @onInfoRow="onInfoRow"
@@ -56,8 +54,9 @@ import {
   watchEffect,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
-import { columns, columnsVisible } from "./tableColumnList.js";
+import { columns } from "./tableColumnList.js";
 import { useBakeryStore } from "stores/bakeryStore.js";
+import { useSpravStore } from "stores/spravStore";
 export default defineComponent({
   name: "TablePanel",
   components: {
@@ -74,11 +73,16 @@ export default defineComponent({
       type: String,
       default: "tabUsers", // для запроса сервера
     },
-    title: String,
+    title: {
+      type: String,
+      default: "Менеджеры",
+    },
     panelName: String,
+    tableInfo: Object,
   },
   emits: [""],
   setup(props, { emit }) {
+    const spravStore = useSpravStore();
     const tableFunc = useTableFunc(props.tableName);
     const tableBodyMenu = defineAsyncComponent(() => {
       return import("./TableBodyMenu.vue");
@@ -93,7 +97,17 @@ export default defineComponent({
     watchEffect(() => {
       reLoadComponent(props.panelName);
     });
+    watch(
+      () => spravStore.currentTab,
+      async () => {
+        // Ловим переключение складки
 
+        if (spravStore.currentTab == "main") {
+          console.log("Поймал смену панели", spravStore.currentTab);
+          rows.value = await tableFunc.loadTable();
+        }
+      }
+    );
     onMounted(async () => {
       rows.value = await tableFunc.loadTable();
     });
@@ -103,7 +117,6 @@ export default defineComponent({
       pagination,
       rows,
       columns,
-      columnsVisible,
       tableBodyMenu,
       tableFunc,
       onInfoRow(row) {

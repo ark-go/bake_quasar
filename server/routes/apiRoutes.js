@@ -69,6 +69,7 @@ import { tabUsers } from "../postgreSQL/command/tabUsers/tabUsers.js";
 import { tabBakery } from "../postgreSQL/command/tabBakery/tabBakery.js";
 import { tabTerritory } from "../postgreSQL/command/tabTerritory/tabTerritory.js";
 import { tabRegion } from "../postgreSQL/command/tabRegion/tabRegion.js";
+import { tabHelpPanels } from "../postgreSQL/command/tabHelpPanels/tabHelpPanels.js";
 
 import { products } from "../postgreSQL/command/products/products.js";
 import { docprice } from "../postgreSQL/command/docprice/docprice.js";
@@ -425,6 +426,11 @@ export async function apiRoutes() {
     console.log("/tabRegion", req.body?.cmd);
     res.json(await tabRegion(req, res));
   });
+  router.post("/tabHelpPanels", async (req, res) => {
+    console.log("/tabHelpPanels", req.body?.cmd);
+    res.json(await tabHelpPanels(req, res));
+  });
+
   router.post("/products", async (req, res) => {
     console.log("/products", req.body?.cmd);
     res.json(await products(req, res));

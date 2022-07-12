@@ -31,6 +31,7 @@
       <div v-else class="text-none-table">Выберите что-нибудь.</div>
     </template>
   </ark-card>
+  <Help-Panel v-model:helpShow="helpShow" :helpCode="helpCode"></Help-Panel>
 </template>
 
 <script>
@@ -48,6 +49,7 @@ import TradeMarkTable from "components/Trademark/TrademarkTable.vue";
 //import BakeryTable from "components/Bakery/BakeryTable.vue";
 import CityTable from "components/City/Table.vue";
 import ArkCard from "./ArkCard.vue";
+import HelpPanel from "components/HelpPanel/HelpPanel.vue";
 //import NoTable from "components/Sprav/NoTable.vue";
 
 import { useSpravStore } from "stores/spravStore";
@@ -63,9 +65,12 @@ export default defineComponent({
   components: {
     ArkCard,
     SpravTree,
+    HelpPanel,
   },
   setup() {
     //  const $q = useQuasar();
+    const helpShow = ref(false);
+    const helpCode = ref(null);
     const spravStore = useSpravStore();
     const { cardMain } = storeToRefs(usePagesSetupStore());
     const $router = useRouter();
@@ -76,6 +81,9 @@ export default defineComponent({
     const splitHorizont = ref(false);
     watchEffect(() => {
       subTitle.value = "";
+      if (!spravStore.selectedNode.tableName) {
+        //
+      }
       if (spravStore.selectedNode.pathStr)
         subTitle.value = spravStore.selectedNode.pathStr;
       if (spravStore.selectedRow.name)
@@ -137,8 +145,12 @@ export default defineComponent({
               import("./tabRegion/TablePanel.vue")
             );
             break;
+          // case "help":
+          //   currentTable.value = HelpPanel;
+          //   break;
           default:
             currentTable.value = undefined;
+
             break;
         }
         console.log(
@@ -160,10 +172,21 @@ export default defineComponent({
       }
     }
     //-------------------------------------------
-    const menuObj = ref({ sizeForm: "Размер" });
+    const menuObj = ref({ sizeForm: "Размер", helpPanel: "Справка" });
     function menuClick(val) {
       switch (val) {
         case "sizeForm":
+          break;
+        case "helpPanel":
+          console.log("Справка о", spravStore.selectedNode);
+          if (spravStore.selectedNode.helpCode)
+            helpCode.value = spravStore.selectedNode.helpCode;
+          else if (spravStore.selectedNode.tableName)
+            helpCode.value = spravStore.selectedNode.tableName;
+          else {
+            helpCode.value = "";
+          }
+          helpShow.value = true;
           break;
 
         default:
@@ -172,6 +195,8 @@ export default defineComponent({
     }
     //--------------------------------------------
     return {
+      helpShow,
+      helpCode,
       cardMain,
       menuObj,
       spravStore,

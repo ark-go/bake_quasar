@@ -40,6 +40,15 @@
           </div>
         </table-top>
       </template>
+      <template v-slot:header="props">
+        <table-header
+          :props="props"
+          :yesBtnEdit="yesBtnEdit"
+          :yesBtnDelete="yesBtnDelete"
+          :noEditTable="noEditTable"
+        >
+        </table-header>
+      </template>
       <template v-slot:body="props">
         <table-body
           :propsV="props"
@@ -99,6 +108,9 @@ export default defineComponent({
     }),
     TableBody: defineAsyncComponent(() => {
       return import("./TableBody.vue");
+    }),
+    TableHeader: defineAsyncComponent(() => {
+      return import("./TableHeader.vue");
     }),
   },
   props: {

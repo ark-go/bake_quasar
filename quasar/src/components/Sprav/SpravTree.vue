@@ -36,6 +36,11 @@
           prop.node.description
         }}</span>
       </template>
+      <template v-slot:default-header="prop">
+        <div class="row items-center" @click="clickTreeNode(prop.node.key)">
+          <div class="">{{ prop.node.label }}</div>
+        </div>
+      </template>
     </q-tree>
     <!-- </q-scroll-area> -->
   </div>
@@ -58,12 +63,13 @@ export default defineComponent({
     const refTree = ref(null);
     const filter = ref("");
     const filterRef = ref(null);
+    function clickTreeNode(key) {
+      // let node = refTree.value.getNodeByKey(key);
+      let isExp = refTree.value.isExpanded(key);
+      refTree.value.setExpanded(key, !isExp);
+    }
     function onSelected(key /* node-key */) {
       let node = refTree.value.getNodeByKey(key);
-      let isExp = refTree.value.isExpanded(key);
-      console.log("раскрыт", key, isExp);
-      refTree.value.setExpanded(key, !isExp);
-      //node = refTree.value.getNodeByKey(key); // после снятия
       if (node) {
         let parentNode = getParentTree(node.key);
         if (parentNode && parentNode.length > 1)
@@ -94,7 +100,6 @@ export default defineComponent({
           }
         });
       });
-      console.log("______________>", parents);
       return parents;
     }
 
@@ -106,7 +111,7 @@ export default defineComponent({
       dataTree,
       expanded,
       selected,
-
+      clickTreeNode,
       resetFilter() {
         filter.value = "";
         filterRef.value.focus();
@@ -141,6 +146,7 @@ const dataTree = [
   {
     key: 1,
     label: "Контрагенты",
+    helpCode: "TreeHelp-1", //! менять коды нельзя.. это ключи в базу данных
     //icon: "restaurant_menu",
     children: [
       { key: 11, label: "Вид контрагента", tableName: "kagentvid" },
@@ -154,6 +160,7 @@ const dataTree = [
   {
     key: 2,
     label: "Торговые сети",
+    helpCode: "TreeHelp-2", //! менять коды нельзя.. это ключи в базу данных
     // icon: "room_service",
     disabled: false,
     children: [
@@ -170,6 +177,7 @@ const dataTree = [
   {
     key: 3,
     label: "Пекарни структура",
+    helpCode: "TreeHelp-3", //! менять коды нельзя.. это ключи в базу данных
     // icon: "room_service",
     disabled: false,
     children: [
@@ -217,7 +225,7 @@ const dataTree = [
         component: "TabRegion", // расширение по умолчанию vue
         //  tableType: "bakery",
         buttonPanel: [
-          { name: "TabRegion", label: "Территории", icon: "home" },
+          { name: "TabRegion", label: "Территории", icon: "terrain" },
           //  { name: "manager", label: "Менеджер", icon: "person" },
         ],
       },
@@ -231,8 +239,8 @@ const dataTree = [
         component: "TabManager", // расширение по умолчанию vue, будет TabManager.vue
         buttonPanel: [
           // name - название панели в TabManager.vue
-          { name: "managerRegion", label: "Регионы", icon: "home" },
-          { name: "managerTerritory", label: "Территории", icon: "home" },
+          { name: "managerRegion", label: "Регионы", icon: "terrain" },
+          { name: "managerTerritory", label: "Территории", icon: "terrain" },
           { name: "managerBakery", label: "Пекарни", icon: "home" },
         ],
       },

@@ -372,4 +372,7 @@ export default {
     top: 48px;
   }
 }
+:deep(.arkadii-table-header) {
+  text-align: center;
+}
 </style>

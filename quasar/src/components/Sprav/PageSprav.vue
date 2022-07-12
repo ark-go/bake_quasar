@@ -30,10 +30,12 @@ export default defineComponent({
       console.log("sprav pageMaxHeight ", offset, pageMaxHeight.value);
       return { minHeight: height, maxHeight: height };
     }
+    function clickHelp() {}
     return {
       panelFnHeight,
       pageMaxHeight,
       cardMain,
+      clickHelp,
     };
   },
 });

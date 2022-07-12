@@ -1,5 +1,7 @@
 <template>
-  <router-view />
+  <div @keyup.esc.capture.stop.prevent="clickBody">
+    <router-view />
+  </div>
 </template>
 <script>
 //import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
@@ -27,85 +29,9 @@ export default defineComponent({
         console.log("HELLO Socket IO", val);
       });
     });
-    //const ioSocket = useIoSocket();
-    // const socket = ioSocket.socket;
-    // socket.on("connect", () => {
-    //   // первый коннект, при обрывах после не срабатывает, сработает уже подключенный
-    //   socket.removeAllListeners();
-    //   ioSocket.onLine = true;
-    //   console.log("IO connect", socket.id); // x8WIv7-mJelg7on_ALbx
-    //   socket.on("connect", () => {
-    //     // Восстановление подключения, после обрыва
-    //     ioSocket.onLine = true;
-    //   });
-    //   socket.on("disconnect", () => {
-    //     ioSocket.onLine = false; // undefined
-    //   });
-    //   socket.on("HELL", (val) => {
-    //     ioSocket.timeServer = val.date; //! что это
-    //     ioSocket.versionSite = process.env.versionSite;
-    //   });
-    //   socket.on("on-reload-tree", (val) => {
-    //     emitter.emit("on-reload-tree", val);
-    //   });
-    //   socket.onAny((eventName, arg) => {
-    //     // Все сообщения вообще
-    //     //  console.log("socket io onAny: ", eventName, arg);
-    //   });
-
-    //   socket.on("SOUND", (val) => {
-    //     ioSocket.timeServer = val.date;
-    //     // soundClick();
-    //     soundPlay("/sound/kapli.mp3");
-    //   });
-    //   let timer = null;
-    // socket.on("updateSite", (val) => {
-    //   ioSocket.timeServer = val.date;
-    //   if (val.versionSiteServer != process.env.versionSite) {
-    //     // не совпадает номер версии
-    //     console.log(">>ver", val.versionSiteServer, process.env.versionSite);
-    //     if (timer) {
-    //       clearTimeout(timer);
-    //       timer = null;
-    //     }
-    //     timer = setTimeout(() => {
-    //       notifSite();
-    //     }, 30000);
-    //   }
-    // });
-    // });
-
-    // function notifSite() {
-    //   notify({
-    //     color: "green-6",
-    //     textColor: "white",
-    //     icon: "bolt",
-    //     message: "На сервере другая версия сайта.",
-    //     //caption: "Перегрузить окно",
-    //     position: "top-left",
-    //     // avatar,
-    //     multiLine: true,
-    //     timeout: 0,
-    //     actions: [
-    //       {
-    //         label: "Потом",
-    //         color: "green-3",
-    //         handler: () => {
-    //           /* console.log('wooow') */
-    //         },
-    //       },
-    //       {
-    //         label: "Перегрузить",
-    //         color: "orange-3",
-    //         handler: () => {
-    //           window.location.reload(true);
-    //           // отбросить POST данные
-    //           //window.location.href = window.location.href;
-    //         },
-    //       },
-    //     ],
-    //   });
-    // }
+    function clickBody(key) {
+      console.log("body click стереть если не пригодилось", key);
+    }
     async function dataLoad(UserStore) {
       try {
         let resp = await axios.post("/api/isLogin", {});
@@ -117,6 +43,7 @@ export default defineComponent({
         UserStore.userInfo = {};
       }
     }
+    return { clickBody };
   },
 });
 // function soundClick() {

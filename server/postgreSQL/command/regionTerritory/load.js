@@ -30,7 +30,8 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.id,
       ${tabname}.name,
       region_g.name as region_name,
-      (select count(*) from territory_x_bakery where parent_id = territory.id AND is_last = true ) as bakery_count,
+      NullIf((select count(*) from territory_x_bakery where parent_id = territory.id AND is_last = true ) 
+      ,0)as bakery_count,
 
       -- to_char(${tabname}.dateopen at time zone $1,  'DD.MM.YYYY') as "dateopen",
       -- to_char(${tabname}.dateclose at time zone $1,  'DD.MM.YYYY') as "dateclose",

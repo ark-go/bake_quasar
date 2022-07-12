@@ -1,0 +1,33 @@
+<template>
+  <q-card-section v-if="helpCode">
+    <q-expansion-item
+      v-model="expandedEdit"
+      icon="perm_identity"
+      label="Редактируем"
+      caption="вот..."
+      dense
+    >
+      <q-card>
+        <q-card-section>
+          <q-input
+            v-model="nameHelp"
+            label="Название"
+            color="primary"
+            autocomplete="off"
+            dense
+          />
+        </q-card-section>
+        <q-card-section class="scroll q-pa-none">
+          <Text-Editor
+            max-height="200px"
+            v-model="editor"
+            @saveText="saveText"
+          ></Text-Editor>
+        </q-card-section>
+      </q-card>
+    </q-expansion-item>
+  </q-card-section>
+  <q-card-section class="col q-pt-none scroll">
+    <div v-html="editor"></div>
+  </q-card-section>
+</template>

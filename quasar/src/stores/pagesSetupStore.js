@@ -14,6 +14,10 @@ export const usePagesSetupStore = defineStore("PagesSetupStore", {
        * Установка формы для страницы
        */
       currentPage: "",
+      pageOffset: 100,
+      pageHeight: 200,
+      pagePaddingY: 60,
+
       // cardMain: {
       //   width: {
       //     curr: 704,
@@ -45,6 +49,28 @@ export const usePagesSetupStore = defineStore("PagesSetupStore", {
             curr: 10,
             min: 3,
             max: 30,
+          },
+          fontSize: {
+            curr: 14,
+            min: 9,
+            max: 25,
+          },
+        },
+        usersTree: {
+          width: {
+            curr: 700,
+            min: 360,
+            max: 1200,
+          },
+          rowsPerPage: {
+            curr: 10,
+            min: 3,
+            max: 30,
+          },
+          fontSize: {
+            curr: 14,
+            min: 9,
+            max: 25,
           },
         },
         /**
@@ -108,9 +134,16 @@ export const usePagesSetupStore = defineStore("PagesSetupStore", {
           return state.page.products;
         case "sprav":
           return state.page.sprav;
+        case "usersTree":
+          return state.page.usersTree;
         default:
           return state.page.defaultPage;
       }
+    },
+    /**Рабочий размер Height для ArkCard с padding  ( pagePaddingY )*/
+    arkCardHeight: (state) => {
+      // вычичслим зону
+      return state.pageHeight - state.pageOffset - state.pagePaddingY;
     },
   },
 });

@@ -12,7 +12,7 @@ async function saveUserRegister(userTmp, fa2code) {
         $2,$3,$4,CURRENT_TIMESTAMP,CURRENT_TIMESTAMP)
       RETURNING id;
       `,
-    values: [userTmp.email, userTmp.email.split("@")[0], fa2code, "Temporary"],
+    values: [userTmp.email, userTmp.email, fa2code, "Temporary"], // удалил username (.split("@")[0]) пока дублируем емайл
   };
   try {
     let result = await pool.query(sqlP);

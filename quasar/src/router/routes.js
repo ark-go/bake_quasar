@@ -13,7 +13,7 @@ const routes = [
       },
       {
         path: "departments",
-        component: () => import("components/Departments/PageDepartments.vue"),
+        component: () => import("components/Users/PageUsersTree.vue"),
       },
       {
         path: "registration/:id?/:code?",

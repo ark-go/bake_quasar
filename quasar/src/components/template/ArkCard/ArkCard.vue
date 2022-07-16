@@ -2,7 +2,7 @@
   <q-card
     bordered
     class="arkcard-size my-card bg-grey-1 shadow-10"
-    style="user-select: none"
+    style="user-select: none; overflow: hidden"
     @click.right.prevent
   >
     <div :ref="(el) => (refTitleSection = el)">
@@ -17,7 +17,13 @@
 
           <div class="col-auto">
             <q-btn v-if="menuCard" color="grey-7" round flat icon="more_vert">
-              <q-menu auto-close anchor="bottom left" self="top middle">
+              <q-menu
+                auto-close
+                anchor="bottom left"
+                self="top middle"
+                transition-show="flip-right"
+                transition-hide="flip-left"
+              >
                 <q-list>
                   <q-item
                     clickable
@@ -41,12 +47,16 @@
       </q-card-section>
     </div>
     <div :ref="(el) => (refBodySection = el)">
-      <q-card-section
-        v-if="$slots.bodySection"
-        class="maxBodyHeight"
-        style="padding: 0 16px 16px 16px"
-      >
+      <q-card-section class="maxBodyHeight">
         <slot name="bodySection" />
+        <Ark-Card-Splitter>
+          <template v-slot:before>
+            <slot name="splitBefore"></slot>
+          </template>
+          <template v-slot:after>
+            <slot name="splitAfter"></slot>
+          </template>
+        </Ark-Card-Splitter>
       </q-card-section>
     </div>
     <div
@@ -54,20 +64,34 @@
       style="position: absolute; bottom: 0; width: 100%"
     >
       <q-separator v-if="$slots.bottomSection" />
-      <slot name="bottomSection" />
-      <q-card-actions> </q-card-actions>
+
+      <q-card-actions>
+        <slot name="bottomSection" />
+        <div stile="height:5px;min-height:5px;"></div>
+      </q-card-actions>
     </div>
   </q-card>
   <Page-Setup-Dialog
     v-model:menuDialogShow="menuDialogShow"
   ></Page-Setup-Dialog>
+  <Help-Panel v-model:helpShow="helpShow" :helpCode="helpCode"></Help-Panel>
 </template>
 
 <script>
+/**
+ * Слоты:
+ *  topSection
+ *  bodySection
+ *    splitBefore
+ *    splitAfter
+ *  bottomSection
+ */
 // prettier-ignore
 import {ref,watch, onMounted, watchEffect, defineComponent, onUpdated, computed, nextTick, defineAsyncComponent } from "vue";
 import PageSetupDialog from "./PageSetupDialog.vue";
 import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
+import ArkCardSplitter from "./ArkCardSplitter.vue";
+import HelpPanel from "components/HelpPanel/HelpPanel.vue";
 //import SplitterSprav from "./SplitterSprav.vue";
 //import TabSprav from "./TabSprav.vue";
 ///import TabButton from "./TabButton.vue";
@@ -79,6 +103,7 @@ import { useQuasar, dom } from "quasar";
 // menuClick вернет событие с именем ключа из объекта menuObj
 export default defineComponent({
   name: "nameArkCard",
+  components: { PageSetupDialog, ArkCardSplitter, HelpPanel },
   props: {
     /** Титульная строка */
     title: {
@@ -93,13 +118,6 @@ export default defineComponent({
       default: () => {},
     },
     pageMaxHeight: Object,
-  },
-
-  components: {
-    // SplitterSprav,
-    //  TabSprav,
-    //  TabButton,
-    PageSetupDialog,
   },
   setup(props, eee, ww) {
     //{ emit }
@@ -123,6 +141,8 @@ export default defineComponent({
     const splitHorizont = ref(false);
     const menuDialogShow = ref(false);
     const currentTabComponent = ref();
+    const helpShow = ref(false);
+    const helpCode = ref("");
     const splitStyleH = {
       background: "rgb(214 214 214)",
       minWidth: "6px",
@@ -132,11 +152,12 @@ export default defineComponent({
     function onClickMenu(nameKey) {
       emit("menuClick", nameKey);
       if (nameKey == "sizeForm") {
-        console.log("menu");
         menuDialogShow.value = true;
-        nextTick(() => {
-          console.log("menu", menuDialogShow.value);
-        });
+      }
+      if (nameKey == "helpPanel") {
+        console.log("Справка о", pageSetup.currentPage);
+        helpCode.value = pageSetup.currentPage;
+        helpShow.value = true;
       }
     }
     const splitStyleW = {
@@ -147,25 +168,24 @@ export default defineComponent({
     };
 
     const maxBodyHeight = ref("");
-
-    watchEffect(() => {
-      try {
-        // сложив все секции получим размер для body-секции
-        let headerOtherSize =
-          height(refTitleSection.value) +
-          height(refTopSection.value) +
-          height(refBottomSection.value);
-        let N = `calc(${pageSetup.arkCardHeight}px - ${headerOtherSize}px)`;
-        maxBodyHeight.value = N;
-      } catch (e) {
-        console.log("нет элемента. пропуск");
-        maxBodyHeight.value = `calc(${pageSetup.arkCardHeight}px`; //! не правильно
-      }
-      //  console.log("watchEffect", maxBodyHeight.value);
-    });
     onMounted(() => {
-      //  reSizeCard();
-      console.log("Чтото тут", props?.buttonArr);
+      watchEffect(() => {
+        try {
+          // сложив все секции получим размер для body-секции
+          let headerOtherSize =
+            height(refTitleSection.value) +
+            height(refTopSection.value) +
+            height(refBottomSection.value);
+          let N = `calc(${pageSetup.arkCardHeight}px - ${headerOtherSize}px)`;
+          maxBodyHeight.value = N;
+        } catch (e) {
+          console.log("нет элемента. пропуск");
+          maxBodyHeight.value = `calc(${pageSetup.arkCardHeight}px`; //! не правильно
+        }
+      });
+    });
+
+    onMounted(() => {
       buttonArrProp.value = props.buttonArr; //
     });
     watch(props, () => {
@@ -198,6 +218,8 @@ export default defineComponent({
     }
     return {
       menuCard,
+      helpCode,
+      helpShow,
       currentTabComponent,
       onClickMenu,
       menuDialogShow,
@@ -227,6 +249,8 @@ export default defineComponent({
 :deep(.maxBodyHeight) {
   height: v-bind(maxBodyHeight);
   max-height: v-bind(maxBodyHeight);
+  padding-top: 0; // мешает , и не расчитываем
+  padding-bottom: 0;
   overflow: auto;
 }
 :deep(.arkadii-sticky-header-table) {

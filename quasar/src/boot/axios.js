@@ -45,7 +45,7 @@ export default boot(({ app }) => {
       const user = useUserStore();
       // входящий сюда
       console.log("axios вход ", response.headers?.["x-info-site"]);
-      console.log(response);
+      console.log("response:", response);
       if (response.headers?.["x-info-site"] == "NoLogin") {
         user.userInfo = {};
         let mainStore = useMainStore();

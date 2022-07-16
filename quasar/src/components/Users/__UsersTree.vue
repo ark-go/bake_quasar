@@ -10,20 +10,14 @@
     v-model:selected="selectedKey"
     no-connectors
     :accordion="false"
+    v-model:expanded="expanded"
     @click.right.stop.prevent
     @lazy-load="lazyLoad"
-    class="maxBodyHeight"
   >
-    <!-- <template v-slot:default-header="prop">
-      <div class="row items-center" @click="clickTreeNode(prop.node.key)">
-        <div class="">{{ prop.node.label }}</div>
-      </div>
-    </template> -->
     <template v-slot:default-header="prop">
       <div
         :id="prop.node.id"
         @click.right="rightClick($event, prop.node)"
-        @click="clickTreeNode(prop.node)"
         @dblclick="onDblClick($event, prop.node)"
         :class="[
           { 'text-weight-bold': prop.node.id === selectedKey },
@@ -217,7 +211,6 @@ import { dataLoad } from "src/utils/ark.js";
 import { emitter } from "boot/axios.js";
 import { useRouter } from "vue-router";
 import { useIoSocket } from "stores/ioSocket.js";
-import { useUsersPanelStore } from "stores/usersPanelStore.js";
 
 export default defineComponent({
   name: "UsersTree",
@@ -226,13 +219,10 @@ export default defineComponent({
     //  const $q = useQuasar();
     const $router = useRouter();
     const ioSocket = useIoSocket();
-    const usersPanelStore = useUsersPanelStore();
     const treeNodes = ref([]);
-    // const expanded = ref([]);
+    const expanded = ref([]);
     const selectedNode = ref("");
     const selectedKey = ref("");
-
-    // usersPanelStore.treeRow = selectedNode.value;
     const newDesc = ref("");
     const newName = ref("");
     const refTree = ref();
@@ -244,11 +234,6 @@ export default defineComponent({
       treeNodes.value = arr.nodes.sort(compareSortLft);
       console.log("Load tree", arr);
     }
-    function clickTreeNode(node) {
-      usersPanelStore.treeRow = node;
-      let isExp = refTree.value.isExpanded(node.id);
-      refTree.value.setExpanded(node.id, !isExp);
-    }
     onMounted(async () => {
       await reloadTree();
       emitter.on("on-reload-tree", reloadTree);
@@ -257,7 +242,6 @@ export default defineComponent({
       emitter.off("on-reload-tree", reloadTree);
     });
     async function lazyLoad(details) {
-      console.log("lazy load", details);
       const arr = await loadDepartments({
         root: details.node.root,
         lft: details.node.lft,
@@ -268,6 +252,16 @@ export default defineComponent({
       console.log("lazy", details.node, details.node.lft);
       console.log("res lazy", arr.nodes);
       details.done(arr.nodes.sort(compareSortLft));
+    }
+    const buttonArr = ref([
+      { key: "backRoute", name: "Назад" },
+      //  { key: "Добавить", name: "Второй" },
+    ]);
+    function buttonClick(val) {
+      if (val == "backRoute") {
+        console.log(val);
+        $router.go(-1);
+      }
     }
     function goNode(arr) {
       arr.forEach((val) => {
@@ -485,7 +479,6 @@ export default defineComponent({
       //console.log(tree);
     }
     async function rightClick(event, node) {
-      usersPanelStore.treeRow = node;
       console.log("right click", node);
 
       isRoot.value = node.lft == 1 ? true : false;
@@ -524,13 +517,14 @@ export default defineComponent({
       onInsert,
       onNewRoot,
       refTree,
-      clickTreeNode,
       selectedKey,
       rightClick,
       onDblClick,
       treeNodes,
-      // expanded,
+      expanded,
       selectedNode,
+      buttonArr,
+      buttonClick,
     };
   },
 });

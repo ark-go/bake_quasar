@@ -2,7 +2,7 @@ import { defineStore } from "pinia";
 export { storeToRefs } from "pinia";
 import merge from "merge";
 import { Notify } from "quasar";
-import { nextTick, ref, toRefs } from "vue";
+import { nextTick, unref, ref, toRefs } from "vue";
 /**
  * Настройки страницы для пользователя
  */
@@ -104,6 +104,10 @@ export const usePagesSetupStore = defineStore("PagesSetupStore", {
             min: 9,
             max: 25,
           },
+          splitter: {
+            vertical: 30,
+            horizontal: 50,
+          },
           columnDocDocument: [],
           rowsPerPage: {
             curr: 10,
@@ -135,9 +139,33 @@ export const usePagesSetupStore = defineStore("PagesSetupStore", {
         case "sprav":
           return state.page.sprav;
         case "usersTree":
+          state.page.usersTree = {
+            ...copyObject(state.page.defaultPage),
+            ...state.page.usersTree,
+          };
+          console.log("test должно быть про сплит", state.page.usersTree);
           return state.page.usersTree;
         default:
-          return state.page.defaultPage;
+          if (state.currentPage) {
+            if (!state.page[state.currentPage]) {
+              // указана страница и ее нет в объекте
+              state.page[state.currentPage] = {
+                ...copyObject(state.page.defaultPage),
+              };
+              return state.page[state.currentPage];
+            } else {
+              // есть в памяти, возьмем, возможно новый default. и по верх накатим сохраненное
+              state.page[state.currentPage] = {
+                ...copyObject(state.page.defaultPage),
+                ...state.page[state.currentPage],
+              };
+              return state.page[state.currentPage];
+            }
+          } else {
+            // не указана страница, забыли? выкинуть ошибку ?
+            throw "Не указано название объекта / страницы, для setupPage";
+            return;
+          }
       }
     },
     /**Рабочий размер Height для ArkCard с padding  ( pagePaddingY )*/
@@ -147,6 +175,16 @@ export const usePagesSetupStore = defineStore("PagesSetupStore", {
     },
   },
 });
+function copyObject(o) {
+  if (o === null) return null;
+  var output, v, key;
+  output = Array.isArray(o) ? [] : {};
+  for (key in o) {
+    v = o[key];
+    output[key] = typeof v === "object" ? copyObject(v) : v;
+  }
+  return output;
+}
 const pageSetup = usePagesSetupStore();
 
 // прочитаем при загрузке данные из компа

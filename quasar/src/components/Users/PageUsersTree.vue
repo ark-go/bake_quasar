@@ -1,23 +1,23 @@
 <template>
   <q-page :style-fn="panelFnHeight" class="flex flex-center scroll">
-    <Ark-Card></Ark-Card>
+    <Users-Panel></Users-Panel>
   </q-page>
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, ref, onMounted, onBeforeMount } from "vue";
 import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 import { useQuasar } from "quasar";
-import ArkCard from "./ArkCard.vue";
+import UsersPanel from "./UsersPanel.vue";
 export default defineComponent({
   name: "PageUserTree",
-  components: { ArkCard },
+  components: { UsersPanel },
   setup() {
     const pageSetup = usePagesSetupStore();
     const $q = useQuasar();
-    // pageSetup.currentPage = "usersTree";
-
-    onMounted(() => {
+    onBeforeMount(() => {
+      // необходимо  указать до создания детей, здесь
+      // именно это название используется для настроек, и сохранения размеров
       pageSetup.currentPage = "usersTree";
     });
 
@@ -25,7 +25,8 @@ export default defineComponent({
     function panelFnHeight(offset, height) {
       pageSetup.pageOffset = offset;
       pageSetup.pageHeight = height;
-      pageSetup.pagePaddingY = 60;
+      if ($q.platform.is.mobile) pageSetup.pagePaddingY = 10;
+      else pageSetup.pagePaddingY = 60;
       console.log("pageSetup.arkCardHeight", pageSetup.arkCardHeight);
       let height2 = `calc(100vh - ${offset}px)`;
       cardMain.value.width.max = $q.screen.width - 20;
@@ -34,7 +35,7 @@ export default defineComponent({
         minHeight: height2,
         //height: height2,
         maxHeight: height2,
-        minWidth: "360px",
+        minWidth: "100px",
       };
     }
     function clickHelp() {}
@@ -57,9 +58,10 @@ export default defineComponent({
 }
 
 :deep(.arkcard-size) {
+  /* все кто внизу будут знать размер тела */
   max-height: v-bind("pageSetup.arkCardHeight+'px'");
   height: v-bind("pageSetup.arkCardHeight+'px'");
-  min-height: 200px;
+  min-height: 50px;
   width: 100%;
   min-width: v-bind("cardMain.width.min+'px'");
   max-width: v-bind("cardMain.width.curr+'px'");

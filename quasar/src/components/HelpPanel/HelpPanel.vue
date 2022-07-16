@@ -7,7 +7,10 @@
     @before-show="beforeShow"
     @hide="hideShow"
   >
-    <q-card class="column full-height" style="width: 800px; max-width: 95vw">
+    <q-card
+      class="column full-height no-wrap"
+      style="width: 800px; max-width: 95vw"
+    >
       <q-card-section>
         <div class="text-h6">{{ nameHelp }}</div>
       </q-card-section>

@@ -118,7 +118,6 @@ export default defineComponent({
   emits: ["update:menuDialogShow"],
   setup(props) {
     const { cardMain } = storeToRefs(usePagesSetupStore());
-    console.log("cardMin", cardMain.value);
     return { cardMain };
   },
 });

@@ -266,7 +266,7 @@ export default defineComponent({
       // if (!answer) return false;
     });
     onBeforeRouteUpdate(async (to, from) => {
-      console.log("Упдате то", to);
+      console.log("onBeforeRouteUpdate MainLayout", to);
     });
     return {
       titleBrand,

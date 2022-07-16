@@ -120,5 +120,6 @@ function treeToJson(Arr) {
     }
     A.push(element);
   });
+  console.log("dd", A);
   return A;
 }

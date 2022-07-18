@@ -86,7 +86,7 @@ export async function load(req, res, tabname, timezone, idOne) {
       result = await pool.query(sqlPAll);
       result = result.rowCount > 0 ? result.rows : [];
       result = nestedSets(result);
-      //console.log("tree all", result);
+      // console.log("tree all", JSON.stringify(result, 0, 2));
       return {
         result: {
           nodes: result,

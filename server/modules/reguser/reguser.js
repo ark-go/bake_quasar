@@ -2,11 +2,13 @@ import { FA2qrcode, FA2verify, getToken2FA } from "../../utils/speakeasy.js";
 import { saveUserRegister } from "./saveUserRegister.js";
 import escape from "pg-escape";
 import { emailConfirmSend } from "./emailConfirmSend.js";
+import { emailConfirmSendAdmin } from "./emailConfirmSendAdmin.js";
 import { emailConfirmSave } from "./emailConfirmSave.js";
 import { getHashPassword } from "./passwordHash.js";
 import { findCodeConfirm } from "./findCodeConfirm.js";
 import { emailConfirmDelete } from "./emailConfirmDelete.js";
 import { emailConfirmFindUser } from "./emailConfirmFindUser.js";
+import { emailConfirmFindUserCheck } from "./emailConfirmFindUserCheck.js";
 //import { update2FA } from "../../postgreSQL/command/update2FA.js";
 async function reguser(req, res) {
   if (req.body.qrCode) {
@@ -41,6 +43,16 @@ async function reguser(req, res) {
         error: "Не верный QR код",
       };
     }
+    // проверка таблицы user
+    let resfindPre = await emailConfirmFindUserCheck(req.session.userTmp);
+    if (resfindPre.result) {
+      // уже есть пользователь
+      return {
+        error:
+          "Такой email уже зарегистрирован, и перерегистрация вам, запрещена!",
+      };
+    }
+    // Проверка таблицы user_login
     let resfind = await emailConfirmFindUser(req.session.userTmp);
     if (resfind.result) {
       // уже есть пользователь
@@ -101,8 +113,17 @@ async function reguser(req, res) {
     }
     if (resCode.result) {
       console.log("Нашли код подтверждения:", resCode);
+      //---------------- 18.07 надо отправить письмо админу
+      let resEmail5 = await emailConfirmSendAdmin(
+        res.result?.id,
+        req.headers?.host,
+        req.session?.userTmp
+        // req.session?.userTmp?.password
+      );
+      //----------------
       return {
-        result: "Код найден. Вы зарегистрированы!",
+        result:
+          "Код найден. Вы зарегистрированы! Подождите одобрения администратора.",
       };
     }
     return {
@@ -130,7 +151,7 @@ async function reguser(req, res) {
 
   // нет кода регистрации qrCode, выдадим изображение
   console.log("reguser", req.body);
-  let code = await FA2qrcode();
+  let code = await FA2qrcode(req.body.email);
   req.session.userTmp = req.session.userTmp || {}; // если еще нету то создадим
   req.session.userTmp = { ...req.body };
   req.session.userTmp.fa2code = code.base32secret;

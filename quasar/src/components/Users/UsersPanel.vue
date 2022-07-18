@@ -1,5 +1,5 @@
 <template>
-  <Ark-Card :subTitle="usersPanelStore.treeRow?.name">
+  <Ark-Card :subTitle="usersPanelStore?.currPath?.pathNameStr">
     <template v-slot:topSection>
       <Tab-Button v-model:tabModel="tabModel"></Tab-Button>
     </template>
@@ -16,7 +16,9 @@
         <q-tab-panel name="main" style="padding: 0">
           <Table-Panel tableName="tabUsers"></Table-Panel>
         </q-tab-panel>
-
+        <q-tab-panel name="usersFilter" style="padding: 0">
+          <Table-Panel tableName="tabUsers"></Table-Panel>
+        </q-tab-panel>
         <q-tab-panel name="usersAll" style="padding: 0">
           <Table-Panel tableName="tabUsers"></Table-Panel>
         </q-tab-panel>

@@ -35,7 +35,7 @@
     @onBtnDelete="onInfoRow"
     @onBtnEdit="onInfoRow"
     @onRowClick="onRowClick"
-    @onAdd="onRowClick"
+    @onAdd="onAddClick"
     :currentRow="currentRow"
     noExpandPanel
     yesBtnEdit
@@ -44,6 +44,10 @@
     </template> -->
   </Table-Template>
   <div v-else>не указана таблица</div>
+  <Dialog-User
+    v-model:showDialog="showDialogUser"
+    :inputRow="currentEditRow"
+  ></Dialog-User>
 </template>
 <script>
 import {
@@ -52,14 +56,17 @@ import {
   defineAsyncComponent,
   onMounted,
   watch,
+  nextTick,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
 import { columns } from "./tableColumnList.js";
-import { useUsersPanelStore } from "stores/usersPanelStore.js";
+import { useUsersPanelStore, storeToRefs } from "stores/usersPanelStore.js";
+import DialogUser from "./DialogUser.vue";
 //import { useBakeryStore } from "stores/bakeryStore.js";
 export default defineComponent({
   name: "TablePanel",
   components: {
+    DialogUser,
     TableTemplate: defineAsyncComponent(() => {
       return import("components/template/table/TableTemplate.vue");
     }),
@@ -78,34 +85,56 @@ export default defineComponent({
   emits: [""],
   setup(props) {
     const tableFunc = useTableFunc(props.tableName);
-    const usersPanelStore = useUsersPanelStore();
+    // const usersPanelStore = useUsersPanelStore();
+    const showDialogUser = ref(false);
+    const currentEditRow = ref({});
     const tableBodyMenu = defineAsyncComponent(() => {
       return import("./TableBodyMenu.vue");
     });
     //const store = useBakeryStore();
     const rows = ref([]);
-    const currentRow = ref({});
+    // const currentRow = ref({});
+    const { userRow: currentRow } = storeToRefs(useUsersPanelStore());
+    // const currentRow = ref(usersPanelStore.userRow); // = currentRow.value;
     const pagination = ref({
       rowsPerPage: 10,
     });
+    //let a = currentRow.value;
     onMounted(async () => {
       rows.value = await tableFunc.loadTable();
     });
+    function onInfoRow(row) {
+      // берем инфу из Ctore а можно из строки row таблицы
+      currentEditRow.value = { ...currentRow.value };
+      nextTick(() => {
+        showDialogUser.value = true;
+      });
+      console.log("info butt", row);
+    }
+    function onAddClick() {
+      currentEditRow.value = {};
+      nextTick(() => {
+        showDialogUser.value = true;
+      });
+      console.log("info butt");
+    }
     return {
       currentRow,
+      showDialogUser,
+      currentEditRow,
+      onInfoRow,
+      onAddClick,
       // store,
       pagination,
       rows,
       columns,
       tableBodyMenu,
       tableFunc,
-      onInfoRow(row) {
-        console.log("info butt", row);
-      },
+
       onRowClick(row) {
         console.log("Нажали по строке");
         currentRow.value = row;
-        usersPanelStore.userRow = row;
+        // usersPanelStore.userRow = row;
         //store.selectedRow = row;
       },
     };

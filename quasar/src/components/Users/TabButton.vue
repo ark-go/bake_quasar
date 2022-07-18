@@ -12,7 +12,13 @@
     inline-label
   >
     <q-tab name="main" label="Выбор" />
-    <q-tab name="usersAll" label="Все" :disable="disable" />
+    <q-tab
+      v-if="!disable"
+      name="usersFilter"
+      :label="usersPanelStore.treeRow?.name"
+      :disable="disable"
+    />
+    <q-tab name="usersAll" label="Все" />
     <q-tab v-for="tab in buttonArray" :key="tab.name" v-bind="tab" />
   </q-tabs>
   <q-separator />

@@ -30,6 +30,7 @@ function makeTree(arr, parentObj) {
     const leftState = newArr[i].lft > parentObj.lft;
     const rightState = newArr[i].rgt < parentObj.rgt;
     if (levState && leftState && rightState) {
+      newArr[i].parent = parentObj.id; // расставим Parent которого не было ?
       parentObj.children.push(newArr[i]);
     }
   }

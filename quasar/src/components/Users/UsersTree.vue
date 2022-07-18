@@ -207,7 +207,7 @@
 import {
   defineComponent,
   ref,
-  unref,
+  watch,
   onMounted,
   nextTick,
   onUnmounted,
@@ -218,6 +218,7 @@ import { emitter } from "boot/axios.js";
 import { useRouter } from "vue-router";
 import { useIoSocket } from "stores/ioSocket.js";
 import { useUsersPanelStore } from "stores/usersPanelStore.js";
+import { useTreeFunc } from "./treeFunc.js";
 
 export default defineComponent({
   name: "UsersTree",
@@ -227,6 +228,7 @@ export default defineComponent({
     const $router = useRouter();
     const ioSocket = useIoSocket();
     const usersPanelStore = useUsersPanelStore();
+    const treeFunc = useTreeFunc();
     const treeNodes = ref([]);
     // const expanded = ref([]);
     const selectedNode = ref("");
@@ -237,7 +239,7 @@ export default defineComponent({
     const newName = ref("");
     const refTree = ref();
     const isRoot = ref(false);
-    const memoryCutNode = ref(null);
+    const memoryCutNode = ref(null); // буфер для обмена
 
     async function reloadTree() {
       const arr = await loadDepartments();
@@ -249,12 +251,21 @@ export default defineComponent({
       let isExp = refTree.value.isExpanded(node.id);
       refTree.value.setExpanded(node.id, !isExp);
     }
+    watch(
+      () => selectedKey.value,
+      () => {
+        let pathRes = treeFunc.getParents(refTree.value, selectedKey.value);
+        console.log("Путь родителей", pathRes);
+        usersPanelStore.currPath = pathRes;
+      }
+    );
     onMounted(async () => {
       await reloadTree();
       emitter.on("on-reload-tree", reloadTree);
     });
     onUnmounted(() => {
       emitter.off("on-reload-tree", reloadTree);
+      usersPanelStore.currPath = "";
     });
     async function lazyLoad(details) {
       console.log("lazy load", details);

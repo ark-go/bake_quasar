@@ -14,7 +14,14 @@ export async function load(req, res, tabname, timezone, idOne) {
     text: /*sql*/ `
       SELECT
       ${tabname}.id,
-      ${tabname}.email as name,
+      concat(${tabname}.u_fam,' ',${tabname}.u_name,' ',${tabname}.u_otch) as name,
+      ${tabname}.email as email,
+      ${tabname}.u_name as user_name,
+      ${tabname}.u_fam as user_fam,
+      ${tabname}.u_otch as user_otch,
+      ${tabname}.rereg as rereg,
+      ulogin.status as status,
+
       NullIf( (select count(*) from users_x_region_manager where parent_id = ${tabname}.id AND is_last = true ) 
        ,0) as region_count,
       NullIf( (select count(*) from users_x_territory_manager where parent_id = ${tabname}.id AND is_last = true )
@@ -23,6 +30,8 @@ export async function load(req, res, tabname, timezone, idOne) {
       ,0) as bakery_count
 
       from ${tabname}
+      LEFT JOIN users_login as ulogin  ON ulogin.email = ${tabname}.email
+      
       -- LEFT JOIN (select * from users_x_region_manager where  is_last = true ) 
       --           as urm  ON urm.parent_id = ${tabname}.id
       -- LEFT JOIN region reg ON reg.id = urm.child_id
@@ -30,7 +39,7 @@ export async function load(req, res, tabname, timezone, idOne) {
       -- LEFT JOIN (select * from users_x_territory_manager where  is_last = true ) 
       --           as utm  ON utm.parent_id = ${tabname}.id
       -- LEFT JOIN territory reg ON reg.id = utm.child_id
-      ORDER BY ${tabname}.email
+      ORDER BY name
 `,
     values: [],
   };

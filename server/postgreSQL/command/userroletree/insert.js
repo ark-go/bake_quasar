@@ -66,6 +66,11 @@ export async function insert(req, res, tabname, timezone) {
     };
   } catch (err) {
     console.log("Ошибка Вставки ", tabname, err.toString());
+    if (err?.message) {
+      return {
+        error: err.message,
+      };
+    }
     return {
       error: err.toString(),
     };

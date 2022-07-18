@@ -1,4 +1,5 @@
 import { defineStore } from "pinia";
+export { storeToRefs } from "pinia";
 //import { useQuasar } from "quasar";
 // Спрвочники
 export const useUsersPanelStore = defineStore("UsersPanelStore", {

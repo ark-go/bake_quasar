@@ -87,7 +87,7 @@
  *  bottomSection
  */
 // prettier-ignore
-import {ref,watch, onMounted, watchEffect, defineComponent, onUpdated, computed, nextTick, defineAsyncComponent } from "vue";
+import {ref,watch, onMounted, watchEffect, defineComponent,onBeforeUnmount, onUpdated, computed, nextTick, defineAsyncComponent } from "vue";
 import PageSetupDialog from "./PageSetupDialog.vue";
 import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 import ArkCardSplitter from "./ArkCardSplitter.vue";
@@ -149,6 +149,23 @@ export default defineComponent({
       minHeight: "50px",
       borderRadius: "3px",
     };
+    // -- странная конструкция
+    const obsRefTitleSection = ref(null);
+    const keyResize = ref(false);
+    onMounted(() => {
+      obsRefTitleSection.value = new ResizeObserver(
+        () => (keyResize.value = !keyResize.value)
+      );
+      obsRefTitleSection.value.observe(refTitleSection.value);
+    });
+    onBeforeUnmount(() => {
+      obsRefTitleSection.value.unobserve(refTitleSection.value);
+    });
+    //----------
+    // function refTitleSectionFun(val) {
+    //   refTitleSection.value = val;
+    //   console.log("Размер изменился..", val);
+    // }
     function onClickMenu(nameKey) {
       emit("menuClick", nameKey);
       if (nameKey == "sizeForm") {
@@ -172,6 +189,8 @@ export default defineComponent({
       watchEffect(() => {
         try {
           // сложив все секции получим размер для body-секции
+          let a = keyResize.value; // флаг, для срабатывания
+
           let headerOtherSize =
             height(refTitleSection.value) +
             height(refTopSection.value) +

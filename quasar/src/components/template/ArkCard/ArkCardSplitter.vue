@@ -230,11 +230,11 @@ export default defineComponent({
 //     overflow: auto;
 //   }
 // }
-:slotted(:deep(.splitAfter)) {
+.splitAfter {
   height: 100%;
   max-height: 100%;
   // overflow: hidden;
-  .maxBodyHeight {
+  :deep(.maxBodyHeight) {
     height: v-bind(maxBodyHeightSplitA);
     max-height: v-bind(maxBodyHeightSplitA);
     padding-top: 0; // мешает , и не расчитываем

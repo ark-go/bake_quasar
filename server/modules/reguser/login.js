@@ -19,7 +19,9 @@ async function getUser(req, res) {
   let login = req.body.login.toLowerCase();
   let sqlP = {
     text: `
-         select * from users_login where email = $1;
+         select users_login.*,users.roles as roles from users_login 
+         left join users on users.email = users_login.email
+         where users_login.email = $1
         `,
     values: [login],
   };
@@ -48,9 +50,13 @@ async function getUser(req, res) {
     if (verifyToken) {
       //? Прошли пароль и код 2FA
 
-      UserBase.roles = ["USER"]; // req.session.user
+      if (!Array.isArray(UserBase.roles)) {
+        UserBase.roles = []; // не должно такого быть
+      }
+
+      UserBase.roles = [...new Set([...UserBase.roles, ...["USER"]])]; // ["USER"]; // req.session.user
       //req.session.user = { ...UserBase };
-      console.log("raz id", UserBase.sid);
+      console.log("raz id", UserBase.sid, UserBase.roles);
       req.session.user = UserBase;
       //req.session.login(UserBase);
       return res.json({

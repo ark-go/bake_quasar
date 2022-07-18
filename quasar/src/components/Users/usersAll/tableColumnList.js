@@ -1,13 +1,28 @@
 export const columns = [
   {
     name: "name",
-    label: "Территория",
+    label: "ФИО",
     align: "left",
     field: "name",
     required: true,
     sortable: true,
   },
-
+  {
+    name: "email",
+    label: "E-mail",
+    align: "left",
+    field: "email",
+    required: true,
+    sortable: true,
+  },
+  {
+    name: "status",
+    label: "Уточнить",
+    align: "left",
+    field: "status",
+    required: true,
+    sortable: true,
+  },
   {
     name: "territory_manager_name",
     label: "Терр.менеджер",

@@ -28,14 +28,17 @@ export function getToken2FA(req, base32secret) {
     // time: 1453667708, // specified in seconds
   });
 }
-export async function FA2qrcode() {
+export async function FA2qrcode(email) {
+  if (email) {
+    email = " (" + email + ")";
+  }
   //
   // если не задан - генерируем новый ключ, для нового пользователя или сброса клиента
   let secret = speakeasy.generateSecret();
   // secretCode = secret.otpauth_url; // для регистрации
   let secretCode = speakeasy.otpauthURL({
     secret: secret.ascii,
-    label: process.env.FA2_NAME, //"Kan Server",
+    label: process.env.FA2_NAME + email, //"Kan Server",
     algorithm: "sha1", // sha512
   });
   let base32secret = secret.base32; // в базу

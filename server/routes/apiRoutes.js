@@ -126,7 +126,8 @@ export async function apiRoutes() {
   });
   // -------------------------------------------------------
   router.post("/isLogin", async (req, res) => {
-    console.log("/isLogin", req.session);
+    // проверяем наличие в памяти user-a
+    console.log("/isLogin", req.session?.user?.email, req.session?.user?.roles);
     res.json({
       username: req.session.user?.username || req.session.user?.email,
       email: req.session.user?.email,

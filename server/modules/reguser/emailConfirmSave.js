@@ -9,6 +9,7 @@ import { botSendMessage } from "../../tg/startTgBot.js";
 async function emailConfirmSave(id, pass, hashcode) {
   let tabname1 = "users_login";
   let tabname2 = "users_register";
+  // -------------------- 1
   let qSql1 = /*sql*/ `
      update ${tabname1} set 
       password = $2,
@@ -16,11 +17,18 @@ async function emailConfirmSave(id, pass, hashcode) {
       where id = $1;
   `;
   let qVal1 = [id, pass, "Registration"];
+  // --------------------- 2
   let qSql2 = /*sql*/ `
     insert into ${tabname2} (id,check_mailcode,check_maildate)
        values($1,$2,CURRENT_TIMESTAMP);
 `;
   let qVal2 = [id, hashcode];
+
+  //   let qSql3 = /*sql*/ `
+  //   insert into ${tabname2} (id,check_mailcode,check_maildate)
+  //      values($1,$2,CURRENT_TIMESTAMP);
+  // `;
+  //   let qVal3 = [id, hashcode];
 
   try {
     //let result = await pool.query(sqlP);

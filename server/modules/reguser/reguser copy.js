@@ -91,7 +91,7 @@ async function reguser(req, res) {
     //? раз отправили письмо, запишем и код и пароль пользователя [код в почте, id юзера, хеш-пароль]
     let resSave = await emailConfirmSave(
       res.result?.id,
-      getHashPassword(req.session?.userTmp?.password, res.result?.id),
+      getHashPassword(req.session?.userTmp?.password),
       codeConfirm
     );
 

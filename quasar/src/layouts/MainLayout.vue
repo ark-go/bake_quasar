@@ -179,16 +179,30 @@
 }
 </style>
 <script>
+import { Notify } from "quasar";
 import EssentialLink from "components/EssentialLink.vue";
 import RightItems from "components/mainPage/rightDrawer/rightItems.vue";
-import { defineComponent, ref, onMounted, watchEffect } from "vue";
+//import Vue from "vue";
+import {
+  defineComponent,
+  ref,
+  onMounted,
+  nextTick,
+  watchEffect,
+  onBeforeMount,
+} from "vue";
 import { emitter } from "boot/axios";
 //import FormLogin from "components/FormLogin.vue";
 import FormLogin from "components/Registration/FormLogin.vue";
 import pdfDialog from "components/PDF/PdfDialog.vue";
 //import { arkVuex } from "src/utils/arkVuex"; // const { pdfWindow } = createArkVuex();
 import { dataLoad } from "src/utils/ark.js";
-import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
+import {
+  onBeforeRouteLeave,
+  onBeforeRouteUpdate,
+  useRoute,
+  useRouter,
+} from "vue-router";
 //import { useTest } from "stores/test.js";
 import { useUserStore } from "stores/userStore.js";
 import { useMainStore } from "stores/mainStore.js";
@@ -217,6 +231,8 @@ export default defineComponent({
     const { rightDrawerOpen, leftDrawerOpen, modalLoginOpen } = storeToRefs(
       useMainStore()
     );
+    const route = useRoute();
+    const router = useRouter();
     const { currentPage } = storeToRefs(usePagesSetupStore());
     const { notify, platform } = useQuasar();
     const ioSocket = useIoSocket();
@@ -238,7 +254,11 @@ export default defineComponent({
       //   modalLoginOpen.value = false;
       // });
     };
-    onMounted(() => {
+    onMounted(async () => {
+      if (!(await checkAccess(route.path, route.meta?.title))) {
+        // если мы заходим по URL проверяем доступность первый раз
+        router.push("/");
+      }
       console.log("User rol", userInfo.value.roles);
       essentialLinks.value = linkList(
         userInfo.value.roles,
@@ -246,28 +266,147 @@ export default defineComponent({
       );
     });
     onMounted(emittMitt);
+    //
+    // router.afterEach((to, from) => {
+    //   nextTick(() => {
+    //     let title = to.meta.title;
+    //     document.title = "ХиТ";
+    //     document.title += title ? " | " + title : "";
+    //   });
+    // });
+    router.beforeEach(async (to, from, next) => {
+      // если переходим с корня то затираем ссылку на login  в истории - rplace
+      if (from.path === "/") {
+        if (!from.meta.replace) {
+          from.meta.replace = true; // чтоб не зацикливать
+          console.log("beforeEach", from.meta.replace, from.meta);
+          next({ path: to.path, replace: true }); // начинает обход хуков с начала
+          return;
+        }
+        from.meta.replace = false;
+      }
+      //from.meta.replace = false;
+      // если мы переходим по кнопке проверяем доступность второй раз
+      if (await checkAccess(to.path, to.meta?.title)) {
+        next(); // без этого стоим на месте
+      } else {
+        //  next({ path: "/", replace: true }); // начинает обход хуков с начала replace затираем путь
+        next(false);
+      }
+    });
+    // ошибки роута
+    router.onError((err, to, from) => {
+      // ловим ошибки роута или при пропадании сети
+      console.error("MainLayout route error", err);
+      let caption = "";
+      let captionErr = "";
+      if (err.toString().indexOf("fetch dynamically imported") > 0) {
+        caption =
+          "Ошибка загрузки модуля<br>проверьте подключение интернета.<br>перезагрузите страницу";
+      } else {
+        captionErr = err.toString();
+      }
+      if (err.toString().indexOf("Unable to preload CSS") > 0) {
+        caption =
+          "Ошибка загрузки модуля css<br>проверьте подключение интернета.<br>перезагрузите страницу";
+      } else {
+        captionErr = err.toString();
+      }
+      Notify.create({
+        classes: "notify-error-top",
+        position: "top",
+        // icon: "done", // we add an icon
+        spinner: false, // we reset the spinner setting so the icon can be displayed
+        message: caption ? "Ошибка интернета!" : "Ошибка 1423",
+        caption: caption ? caption : captionErr,
+        progress: true,
+        multiLine: true,
+        timeout: 1000 * 30, // we will timeout it in 2.5s
+        color: "deep-orange",
+        html: caption ? true : false,
+        // textColor: "white",
+        //closeBtn: true,
+        actions: [
+          {
+            label: "Закрыть",
+            color: "yellow",
+            textColor: "white",
+            handler: () => {
+              /* ... */
+            },
+          },
+        ],
+      });
+    });
     //! Здесь будем проверять доступ
-    onBeforeRouteLeave(async (to, from, next) => {
-      currentPage.value = "";
-      console.log("Переход то", to);
-      if (to.name == "registration") {
-        return next(true);
-      }
-
-      let check = await dataLoad("/api/accessCheck", { path: to.path }, "");
+    console.log("route", route.path);
+    async function checkAccess(path, title) {
+      let check = await dataLoad("/api/accessCheck", { path: path }, title);
+      console.log("check:", check.toString());
       if (check.error) {
-        return next(false);
+        // выдали ошибку? она выдается в dataLoad
+        console.log("запрет accessCheck :", path, check.error);
+        return false; //router.push("/");
       }
+      if (check.result) {
+        // запрос прошел, и без ошибки
+        console.log("разрешено accessCheck :", path, check.result);
+        return true;
+      }
+    }
+    watchEffect(
+      async () => {
+        console.log("route2", route.path);
+        // await checkAccess(route.path);
+        let title = route.meta.title;
+        document.title = "ХиТ";
+        document.title += title ? " | " + title : "";
+      }
+      // async newId => {
+      //   userData.value = await fetchUser(newId)
+      // }
+    );
+    // onBeforeMount(() => {
+    //   // Вроде не используем нигде
+    //   onBeforeRouteLeave(async (to, from, next) => {
+    //     console.log("onBeforeRouteLeave mainLayout.vue", to);
+    //     let check = await dataLoad("/api/accessCheck", { path: to.path }, "");
+    //     if (check.error) {
+    //       // выдали ошибку
+    //       console.log("запрет accessCheck :", to.path, check.error);
+    //       return next(false);
+    //     }
+    //     if (check.result) {
+    //       // запрос прошел, и без ошибки
+    //       return next(true);
+    //     }
+    //     // не поняли ничего, стоим на месте
+    //     return next(false);
+    //   });
+    //   onBeforeRouteUpdate(async (to, from) => {
+    //     console.log("onBeforeRouteUpdate mainLayout.vue", to);
+    //   });
+    // });
+    // onBeforeRouteLeave(async (to, from, next) => {
+    //   currentPage.value = "";
+    //   console.log("Переход то", to);
+    //   if (to.name == "registration") {
+    //     return next(true);
+    //   }
 
-      return next(true);
-      // https://router.vuejs.org/guide/advanced/composition-api.html#navigation-guards
-      // const answer = window.confirm("Переходим ?");
-      // // cancel the navigation and stay on the same page
-      // if (!answer) return false;
-    });
-    onBeforeRouteUpdate(async (to, from) => {
-      console.log("onBeforeRouteUpdate MainLayout", to);
-    });
+    //   let check = await dataLoad("/api/accessCheck", { path: to.path }, "");
+    //   if (check.error) {
+    //     console.log("запрет accessCheck :", to.path);
+    //     return next(false);
+    //   }
+
+    //   return next(true);
+    //   // https://router.vuejs.org/guide/advanced/composition-api.html#navigation-guards
+    //   // const answer = window.confirm("Переходим ?");
+    //   // // cancel the navigation and stay on the same page
+    //   // if (!answer) return false;
+    // });
+
     return {
       titleBrand,
       onContainer() {

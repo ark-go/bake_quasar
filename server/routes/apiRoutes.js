@@ -1,9 +1,9 @@
 import express from "express";
 import dotenv from "dotenv";
 dotenv.config();
+import { isAllowPath } from "../modules/access/allowPath.js";
 import { login } from "../modules/reguser/login.js";
 import { reguser } from "../modules/reguser/reguser.js";
-//import { isLogin } from "../modules/isLogin.js";
 import { usersLoad } from "../postgreSQL/command/usersLoad.js";
 import { bakehousesLoad } from "../postgreSQL/command/bakehousesLoad.js";
 import multer from "multer";
@@ -86,6 +86,21 @@ const router = express.Router();
 export async function apiRoutes() {
   router.post("/login", async (req, res) => {
     console.log("/login", req.session.user);
+    //это моя функция, там происходит регенерация сессии
+    //! надо разбираться, потому что без этого 20-07-22
+    //! замена статуса срабатывает на второй вход, с этим быстрее :)
+    // req.session.destroy(async (err) => {
+    //   if (err) {
+    //     //debug(err);
+    //     console.log("Login pre-destroy error:", err); // ошибка, но тоже отдать ответ надо
+    //     await login(req, res);
+    //   } else {
+    //     await login(req, res); // <-- Отдадим ответ, точно после удаления сессии
+    //   }
+    // });
+
+    req.session.login();
+
     await login(req, res);
   });
   router.post("/reguser", async (req, res) => {
@@ -96,38 +111,73 @@ export async function apiRoutes() {
   // проверка на сессию и наличию там User
   router.use(function (req, res, next) {
     // тут session уже из базы если были нужные куки
-    console.log(
-      "Обращение к API, user.id: ",
-      req?.session?.user?.id,
-      ":",
-      req?.session?.user?.email,
-      "Active:",
-      req?.session?.user?.status,
-      new Date().toLocaleString("ru")
-    );
-    if (!req?.session?.user?.status == "Active") {
-      res.status(200).json({
-        error: "noautorizate", //! поменять на нет доступа
-      });
-    } else if (req?.session?.user?.status == "WaitManualConfirm") {
+    // console.log(
+    //   "Обращение к API:",
+    //   req.url,
+    //   req?.session?.user?.id,
+    //   ":",
+    //   req?.session?.user?.email,
+    //   "Статус:",
+    //   req?.session?.user?.status,
+    //   new Date().toLocaleString("ru")
+    // );
+    // if (req?.session?.user?.status != "Registered") {
+    //   res.status(200).json({
+    //     error: "noautorizate", //! TODO: поменять на нет доступа
+    //   });
+    // } else
+    if (req?.session?.user?.status == "WaitManualConfirm") {
       res.status(200).json({
         error: "WaitManualConfirm", //! поменять на нет доступа
       });
     } else {
-      next();
+      // console.log("Проверка: ", req.url);
+      process.stdout.write(
+        new Date().toLocaleString("ru") + " Проверка доступа: " + req?.url
+      );
+      if (isAllowPath(req.url)) {
+        console.log(" : разрешено всем..", req?.session?.user?.email);
+        return next();
+      }
+      if (req?.session?.user?.status != "Registered") {
+        console.log(" отказано not Registered:", req?.session?.user?.email);
+        return res.status(200).json({
+          error: "NoAccess", //! поменять на нет доступа
+        });
+        //return;
+        ///next();
+      } else {
+        console.log(" : registered", req?.session?.user?.email);
+        return next();
+      }
     }
   });
   // -----------------------------------------------------
   router.post("/unLogin", async (req, res) => {
     console.log("/unLogin", process.env.COOKIE_NAME);
     res.clearCookie(process.env.COOKIE_NAME);
-    req.session.destroy();
-    res.json({ result: true });
+    //req.session.destroy();
+    //res.json({ result: true });
+    req.session.destroy((err) => {
+      if (err) {
+        //debug(err);
+        console.log("unLogin error:", err); // ошибка, но тоже отдать ответ надо
+        res.json({ result: true });
+      } else res.json({ result: true }); // <-- Отдадим ответ, точно после удаления сессии
+    });
   });
   // -------------------------------------------------------
   router.post("/isLogin", async (req, res) => {
     // проверяем наличие в памяти user-a
-    console.log("/isLogin", req.session?.user?.email, req.session?.user?.roles);
+    if (req.session?.user) {
+      console.log(
+        "/isLogin",
+        req.session?.user?.email,
+        req.session?.user?.roles
+      );
+    } else {
+      console.log("/isLogin", "Не знакомый");
+    }
     res.json({
       username: req.session.user?.username || req.session.user?.email,
       email: req.session.user?.email,

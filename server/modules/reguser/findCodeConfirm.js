@@ -7,9 +7,11 @@ async function findCodeConfirm(id, code) {
     text: /*sql*/ `
             SELECT 
             ${tabname}.id,
-            ${tabname}.check_maildate
+            ${tabname}.check_maildate,
+            users_login.email as email
             from ${tabname}
-            where id = $1 AND check_mailcode = $2
+            LEFT JOIN users_login ON users_login.id = ${tabname}.id
+            where ${tabname}.id = $1 AND check_mailcode = $2
       `,
     values: [id, code],
   };

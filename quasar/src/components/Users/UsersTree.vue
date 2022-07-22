@@ -386,7 +386,10 @@ export default defineComponent({
         { ...{ cmd: "load" }, ...dat },
         "Чтение дерева"
       );
-      return res?.result;
+      if (res.error) {
+        console.log("Ошибка чтения дерева", res.error);
+      }
+      return res?.result; //! TODO: обрабатывать ошибку
     }
     async function updateNode(cmd, dat) {
       let res = await dataLoad(

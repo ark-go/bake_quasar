@@ -14,11 +14,5 @@ export function emptyRoutes() {
     console.log("start");
     res.send("Privet world: " + req.session?.user?.id);
   });
-  // router.get("/user", (req, res) => {
-  //   //res.json(data);
-  //   req.session.user = { id: 100, name: "proverka tuta" };
-  //   res.send("Privet world !!!");
-  // });
-
   return router;
 }

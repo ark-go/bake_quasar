@@ -48,9 +48,10 @@ export default boot(({ app }) => {
       console.log("response:", response);
       if (response.headers?.["x-info-site"] == "NoLogin") {
         user.userInfo = {};
-        let mainStore = useMainStore();
-        mainStore.modalLoginOpen = true;
-        // emitter.emit("on-login", "NoLogin");
+        //! TODO: Проверить и восстановить
+        // let mainStore = useMainStore();
+        // mainStore.modalLoginOpen = true;
+        // было отключено emitter.emit("on-login", "NoLogin");
       }
 
       return response;

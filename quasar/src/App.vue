@@ -13,7 +13,7 @@ import { defineComponent, onMounted } from "vue";
 import { Cookies } from "quasar";
 import { detect } from "detect-browser";
 import { useUserStore } from "stores/userStore.js";
-
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from "vue-router";
 import { axios, emitter } from "boot/axios";
 export default defineComponent({
   name: "App",
@@ -43,6 +43,7 @@ export default defineComponent({
         UserStore.userInfo = {};
       }
     }
+
     return { clickBody };
   },
 });

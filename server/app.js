@@ -84,11 +84,36 @@ app.use(
 );
 const expSession = configureSession(app);
 
+// изменение Redis? изменения session переписывают redis // import { redisSetUserReload } from "./utils/redis/redisSetUserReload.js";
+//await redisSetUserReload();
+// для чтения юзера из базы
+import { loadUserToReq } from "./modules/reguser/loadUserToReq.js";
+//await redisSetUserReload(90);
+app.use(async (req, res, next) => {
+  if (req?.session?.user?.isReloadUser) {
+    //установлен флаг о необходимости перечитать Юзера из базы.
+    let userFromBase = await loadUserToReq(req);
+    req.session.user.isReloadUser = false;
+    console.log("----Был знак: ", req?.session?.user?.id);
+    if (userFromBase) {
+      delete userFromBase.password;
+      delete userFromBase.fa2code;
+      req.session.user = userFromBase;
+    }
+  }
+  next();
+});
+
 app.use((req, res, next) => {
+  // if (req.session?.user?.status != "Registered") {
+  //   res.append("x-info-site", "NoLogin");
+  // } else {
   res.append(
     "x-info-site",
     req.session?.user?.status ? req.session?.user?.status : "NoLogin"
   ); // NoLogin - служебное слово
+  // console.log("sess vhod:", req.session?.user);
+  // }
   next();
 });
 app.use((req, res, next) => {

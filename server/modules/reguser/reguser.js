@@ -9,7 +9,7 @@ import { findCodeConfirm } from "./findCodeConfirm.js";
 import { emailConfirmDelete } from "./emailConfirmDelete.js";
 import { emailConfirmFindUser } from "./emailConfirmFindUser.js";
 import { emailConfirmFindUserCheck } from "./emailConfirmFindUserCheck.js";
-//import { update2FA } from "../../postgreSQL/command/update2FA.js";
+
 async function reguser(req, res) {
   if (req.body.qrCode) {
     //? Пришел код QRCode
@@ -44,18 +44,26 @@ async function reguser(req, res) {
       };
     }
     // проверка таблицы user
+    let reregister = false; // есть в пользовательской базе, но разрешено перерегистрировать
     let resfindPre = await emailConfirmFindUserCheck(req.session.userTmp);
+    // console.log("Вот так вот", resfindPre);
     if (resfindPre.result) {
       // уже есть пользователь
-      return {
-        error:
-          "Такой email уже зарегистрирован, и перерегистрация вам, запрещена!",
-      };
+      console.log(">>>", resfindPre.result);
+      if (resfindPre.result.rereg) {
+        reregister = true;
+      } else {
+        return {
+          error:
+            "Такой email уже зарегистрирован, и перерегистрация вам, запрещена!",
+        };
+      }
     }
     // Проверка таблицы user_login
     let resfind = await emailConfirmFindUser(req.session.userTmp);
     if (resfind.result) {
       // уже есть пользователь
+
       return {
         error:
           "Такой email уже зарегистрирован, обратитесь к администратору, что бы сбросить регистрацию ",
@@ -65,9 +73,11 @@ async function reguser(req, res) {
     //? Код запишем в базу, пока без пароля
     let res = await saveUserRegister(
       req.session.userTmp,
-      req.session.userTmp.fa2code
+      req.session.userTmp.fa2code,
+      reregister
     );
     if (res.error) {
+      console.log("Ошибка записи в базу saveUserRegister");
       // Юзера не записали
       //! или была поdсторная регистрация , что с этм делать.
       return res;
@@ -82,11 +92,12 @@ async function reguser(req, res) {
       // req.session?.userTmp?.password
     );
     if (resEmail.error) {
+      console.log("Произошла ошибка при регистрации, отправки подтверждения");
       // пользователю не отправили письмо - его надо удалить!!!
       let resdel = await emailConfirmDelete(res.result?.id);
       if (resdel.error) {
         return {
-          error: "Произошла ошибка при регистрации 135",
+          error: "Произошла ошибка при удалении, кода подтверждения почты",
         };
       }
       return resEmail;
@@ -98,12 +109,13 @@ async function reguser(req, res) {
     //? раз отправили письмо, запишем и код и пароль пользователя [код в почте, id юзера, хеш-пароль]
     let resSave = await emailConfirmSave(
       res.result?.id,
-      getHashPassword(req.session?.userTmp?.password, res.result?.id),
+      getHashPassword(req.session?.userTmp?.password),
       codeConfirm
     );
     // возвращаем как есть, то что вернет pg
     return resSave;
   }
+  // если подали код подтверждения
   if (req.body.code && req.body.id) {
     let resCode = await findCodeConfirm(req.body.id, req.body.code);
     if (resCode.error) {
@@ -112,13 +124,16 @@ async function reguser(req, res) {
       };
     }
     if (resCode.result) {
-      console.log("Нашли код подтверждения:", resCode);
+      console.log(
+        "Нашли код подтверждения email:",
+        "для: ",
+        resCode.result.email
+      );
       //---------------- 18.07 надо отправить письмо админу
-      let resEmail5 = await emailConfirmSendAdmin(
-        res.result?.id,
+      await emailConfirmSendAdmin(
+        resCode.result.email,
         req.headers?.host,
-        req.session?.userTmp
-        // req.session?.userTmp?.password
+        resCode.result.email
       );
       //----------------
       return {

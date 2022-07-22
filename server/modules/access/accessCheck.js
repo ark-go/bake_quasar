@@ -1,5 +1,13 @@
+import { isAllowPath } from "./allowPath.js";
 export async function accessCheck(req, res, next) {
-  // console.log(req.body, req.session.user?.roles);
+  // проверяем список разрешенных путей, для всех
+  if (isAllowPath(req.body?.path)) {
+    return res.json({
+      result: "unregistered",
+    });
+  }
+  // нет запроса, юэера, ролей, роли должны быть массивом,
+  // это и не пользователь, запрет
   if (
     !req.body?.path ||
     !req?.session?.user?.status ||
@@ -8,17 +16,24 @@ export async function accessCheck(req, res, next) {
   ) {
     return res.json({
       error: "NoAccess",
+      isAllowPath: isAllowPath,
     });
   }
-  if (req?.session?.user?.status) {
+  // Если зарегистрировались но не прошли подтверждение?
+  if (req?.session?.user?.status == "WaitManualConfirm") {
     return res.json({
       error: "WaitManualConfirm",
+      isAllowPath: isAllowPath,
     });
   }
 
   // хотя бы один совпадет то труе
 
-  let itog = true;
+  let itog = true; // разрешаем , а потом проверяем
+
+  process.stdout.write(
+    new Date().toLocaleString("ru") + " Проверка разрешений: " + req.body.path
+  );
   switch (req.body.path) {
     case "/xls":
       itog = checkRole(req, ["MODERATOR"]);
@@ -32,11 +47,17 @@ export async function accessCheck(req, res, next) {
       // case "/tables":
       //   itog = checkRole(req, ["MODERATOR"]);
       break;
+    // case "/bakery":
+    //   itog = checkRole(req, ["USER_BAK"]);
+    //   break;
+    case "/bakeryttk":
+      itog = checkRole(req, ["USER_TTK"]);
+      break;
     default:
       itog = checkRole(req, ["USER"]);
       break;
   }
-
+  console.log(" ", itog, req.session.user.email);
   if (itog) {
     return res.json({
       result: "YesAcess",
@@ -46,6 +67,7 @@ export async function accessCheck(req, res, next) {
 
   return res.json({
     error: "NoAccess",
+    isAllowPath: isAllowPath,
   });
 }
 //====

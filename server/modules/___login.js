@@ -119,6 +119,7 @@ async function getUser(req, res) {
         );
         if (updFa) {
           delete req.session.userTmp;
+          console.log("запись active ", req.session?.user?.id);
           let active = await updateActiveUser(req.session?.user?.id, true);
           req.session.user.active = active;
           if (!active) {

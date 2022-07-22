@@ -2,6 +2,7 @@ import { pool } from "../../postgreSQL/initPostgreSQL.js";
 import { botSendMessage } from "../../tg/startTgBot.js";
 import { FA2verify, getToken2FA } from "../../utils/speakeasy.js";
 import { compareHashPassword } from "./passwordHash.js";
+import { loadUserToReq } from "./loadUserToReq.js";
 
 export async function login(req, res) {
   //res.json("USER: " + req.session?.user);
@@ -17,28 +18,41 @@ export async function login(req, res) {
 
 async function getUser(req, res) {
   let login = req.body.login.toLowerCase();
-  let sqlP = {
-    text: `
-         select users_login.*,users.roles as roles from users_login 
-         left join users on users.email = users_login.email
-         where users_login.email = $1
-        `,
-    values: [login],
-  };
-  let result = await pool.query(sqlP);
-  //console.log("userLoad", res);
-  result = result.rowCount > 0 ? result.rows[0] : null;
+  //!---------------------------------
+  // let sqlP = {
+  //   // Возможно тут  будут ошибки, три строки были раньше
+  //   // надо выяснить что требовалось для сессии
+  //   // а что требуется для логина.
+
+  //   text: `
+  //    SELECT
+  //      users.*,
+  //      users_login.password AS password,
+  //      users_login.fa2code AS fa2code,
+  //      users_login.status AS status
+  //    from users
+  //    left join users_login on users_login.email = users.email
+  //    where users.email = $1
+
+  //    --    select users_login.*,users.roles as roles from users_login
+  //    --    left join users on users.email = users_login.email
+  //    --    where users_login.email = $1
+  //       `,
+  //   values: [login],
+  // };
+  // let result = await pool.query(sqlP);
+  // console.log("login", req.body, result.rowCount);
+  // result = result.rowCount > 0 ? result.rows[0] : null;
+  //!^^^^^^--------------
+  // прочитаем пользователя по логину
+  let result = await loadUserToReq(null, login);
   let UserBase = {};
   if (result) {
     UserBase = result;
     UserBase.sid = req.sessionID;
     console.log("Найдены данные для:", UserBase?.email);
     // ----------------------- Пароль ---
-    let verifyPass = compareHashPassword(
-      req.body.password,
-      result.password,
-      result.id
-    );
+    let verifyPass = compareHashPassword(req.body.password, result.password);
     if (!verifyPass) {
       console.log("Ошибка пароля:", req.session?.user?.email);
       return res.json({
@@ -54,10 +68,10 @@ async function getUser(req, res) {
         UserBase.roles = []; // не должно такого быть
       }
 
-      UserBase.roles = [...new Set([...UserBase.roles, ...["USER"]])]; // ["USER"]; // req.session.user
-      //req.session.user = { ...UserBase };
-      console.log("raz id", UserBase.sid, UserBase.roles);
+      UserBase.roles = [...new Set([...UserBase.roles, ...["USER"]])]; //! ["USER"]; // req.session.user
       req.session.user = UserBase;
+      delete req.session.user.password;
+      delete req.session.user.fa2code;
       //req.session.login(UserBase);
       return res.json({
         result: "Добро пожаловать!",

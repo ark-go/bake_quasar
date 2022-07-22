@@ -5,9 +5,10 @@ import escape from "pg-escape";
 export async function load(req, res, tabname, timezone, idOne) {
   //  let wher = req.body?.region_id ? "WHERE " +  tabname + ".region_id = $2" : "";
   let wher = "";
+
   // let dateend =
   //   "to_char(bt.date_start,  'DD.MM.YYYY') as date_start, to_char(bt.date_end,  'DD.MM.YYYY') as date_end,";
-
+  //  console.log(">>>>>>> ", req.body.treeId); // allUsers
   // для загрузки только группы печек
   // table - users
   let sqlP = {
@@ -20,7 +21,13 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.u_fam as user_fam,
       ${tabname}.u_otch as user_otch,
       ${tabname}.rereg as rereg,
+      ${tabname}.description as description,
       ulogin.status as status,
+      CASE WHEN ulogin.email IS NULL THEN
+         false
+          ELSE
+         true
+      END AS islogin,
 
       NullIf( (select count(*) from users_x_region_manager where parent_id = ${tabname}.id AND is_last = true ) 
        ,0) as region_count,
@@ -39,11 +46,30 @@ export async function load(req, res, tabname, timezone, idOne) {
       -- LEFT JOIN (select * from users_x_territory_manager where  is_last = true ) 
       --           as utm  ON utm.parent_id = ${tabname}.id
       -- LEFT JOIN territory reg ON reg.id = utm.child_id
+      where   
+        -- allUsers не просят выбираем по id
+        ($2::boolean = false AND $3::boolean = false AND users.tree_id = $1)
+        OR 
+        ($2::boolean = false AND $3::boolean = true AND ulogin.status = 'WaitManualConfirm' )
+        OR
+        ($2::boolean = true)
+
+      --case when $2::boolean = false then
+      --users.tree_id = $1
+      --else users.id > 0 end
+      
+
+
+
       ORDER BY name
 `,
-    values: [],
+    values: [
+      req.body.treeId || null, // 1
+      req.body.allUsers || false, // 2
+      req.body.waitConfirm || false, // 3
+    ],
   };
-  if (idOne) sqlP.values = [timezone, idOne];
+  // if (idOne) sqlP.values = [timezone, idOne];
   //  console.log("wher", sqlP, req.body);
   try {
     let result = await pool.query(sqlP);

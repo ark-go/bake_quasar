@@ -10,19 +10,43 @@ async function emailConfirmUpdStatus(id) {
       `,
     values: [id, "WaitManualConfirm"],
   };
+  // --------------- снимаем галку разрешающу. перерегистрацию
+  let sqlPUpdate = {
+    text: /*sql*/ `
+            update users set 
+            rereg = false
+            where users.email =
+            (select email from users_login where users_login.id = $1)
+
+      `,
+    values: [id],
+  };
+  // ---------------
+
   // Registered
   try {
     let result = await pool.query(sqlP);
     result = result?.rowCount > 0 ? result.rows : null;
-    let mess = `Status Registered  ${tabname}`;
+    let mess = `Status WaitManualConfirm  ${tabname}`;
+
+    try {
+      await pool.query(sqlPUpdate);
+      console.log("Вероятно сняли флаг перерегистрации");
+    } catch (e) {
+      console.log("Ошибка при снятии флага перерегистрации", e);
+    }
+
     console.log(mess, result);
-    mess += "\n" + JSON.stringify(result);
     botSendMessage(mess);
     return {
-      result: true, // одна строка, ее и заберем? а //!может быть null
+      result: true, //  ?
     };
   } catch (err) {
-    console.log("Ошибка удаления кода подтверждения ", tabname, err.toString());
+    console.log(
+      "Ошибка установки статуса на ручное подверждение ",
+      tabname,
+      err.toString()
+    );
     return {
       error: err.toString(),
     };

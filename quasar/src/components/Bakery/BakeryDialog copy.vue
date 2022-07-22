@@ -16,9 +16,7 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import { dataLoad } from "src/utils/ark.js";
 import { useQuasar } from "quasar";
-//dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "$1",
   components: {},

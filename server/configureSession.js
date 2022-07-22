@@ -16,8 +16,10 @@ export function configureSession(app) {
       }
       console.log("regenerate2", req.session.id);
       // здесь новая сессия
-      req.session.user = user;
-      req.session.user.sid = req.sessionID; // ??
+      if (user) {
+        req.session.user = user;
+        req.session.user.sid = req.sessionID; // ??
+      }
       req.session.cookie.maxAge = 8 * 24 * 60 * 60 * 1000; // дней сек мин часы 1000  8дней
       //req.session.
       console.log("записали сессию", req.session.user?.email);
@@ -41,7 +43,7 @@ export function configureSession(app) {
       httpOnly: true, //!true
       maxAge: 1 * 60 * 1000, //7 * 24 * 60 * 60 * 1000, // дней сек мин часы 1000
     },
-    resave: true, // false - не пересохранять сессиию если ничего не менялось
+    resave: true, // false - не пересохранять сессиию если ничего не менялось //! Возможно не дает удалить сессию ..https://github.com/tj/connect-redis/issues/252
     saveUninitialized: false, // если true, то в хранилище будут попадать пустые сессии
     rolling: true, // нужно ли устанавливать идентификатор сессии cookie на каждый запрос
     //store: redisStore,

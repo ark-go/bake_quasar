@@ -15,7 +15,7 @@
     </q-img>
     <q-img
       v-ripple="{ color: 'yellow' }"
-      src="/images/2.webp"
+      src="/images/1.jpg"
       loading="lazy"
       spinner-color="white"
       img-class="img-menu inset-shadow-5 cursor-pointer relative-position"
@@ -26,7 +26,7 @@
       </div>
     </q-img>
     <q-img
-      src="/images/2.webp"
+      src="/images/1.jpg"
       loading="lazy"
       spinner-color="white"
       img-class="img-menu cursor-pointer"
@@ -62,7 +62,7 @@
       </div>
     </q-img>
     <q-img
-      src="/images/2.webp"
+      src="/images/1.jpg"
       loading="lazy"
       spinner-color="white"
       img-class="img-menu cursor-pointer"
@@ -74,7 +74,7 @@
       </div>
     </q-img>
     <q-img
-      src="/images/2.webp"
+      src="/images/1.jpg"
       loading="lazy"
       spinner-color="white"
       img-class="img-menu cursor-pointer"
@@ -108,13 +108,16 @@ export default defineComponent({
   width: 700px;
   grid-template-columns: 1fr 1fr;
   //grid-template-rows: 150px 150px;
-  grid-auto-rows: 150px;
+  //grid-auto-rows: 150px;
+  grid-auto-rows: 50px;
   @media (max-width: 600px) {
-    gap: 8px;
+    gap: 5px;
     grid-template-columns: 90vw;
     justify-content: center;
     // grid-template-rows: 80px 80px;
-    grid-auto-rows: 80px;
+    //grid-auto-rows: 80px;
+    padding: 2px;
+    grid-auto-rows: 40px;
     min-width: 85vw;
   }
 }

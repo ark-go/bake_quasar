@@ -17,7 +17,8 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.lft,
       ${tabname}.rgt,
       ${tabname}.level,
-      ${tabname}.name
+      ${tabname}.name,
+      ${tabname}.meta
       FROM ${tabname}
       WHERE NOT ${tabname}.meta @> '{"hidden":true}'  -- содержит ли meta такой ключ с таким значением
       AND level = 0
@@ -32,7 +33,8 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.lft,
       ${tabname}.rgt,
       ${tabname}.level,
-      ${tabname}.name
+      ${tabname}.name,
+      ${tabname}.meta
       FROM ${tabname}
       WHERE NOT ${tabname}.meta @> '{"hidden":true}'  -- содержит ли meta такой ключ с таким значением
       AND level < 20 
@@ -48,7 +50,8 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.lft,
       ${tabname}.rgt,
       ${tabname}.level,
-      ${tabname}.name
+      ${tabname}.name,
+      ${tabname}.meta
       FROM ${tabname}
       WHERE NOT ${tabname}.meta @> '{"hidden":true}'  -- содержит ли meta такой ключ с таким значением
       AND root = $1
@@ -69,7 +72,8 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.lft,
       ${tabname}.rgt,
       ${tabname}.level,
-      ${tabname}.name
+      ${tabname}.name,
+      ${tabname}.meta
       FROM ${tabname}
       WHERE NOT ${tabname}.meta @> '{"hidden":true}'  -- содержит ли meta такой ключ с таким значением
       AND id = $1

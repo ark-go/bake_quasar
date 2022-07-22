@@ -29,12 +29,16 @@ async function emailConfirmSend(idUser, host, email) {
       code: uuidStr,
       email: email,
     });
-
-    let resSendMail = await sendMail(email, "test", html, subject); //retrun / result/error
-    let mess = "Отправка подтверждения" + email;
+    let mess = "Отправка подтверждения на email: " + email;
     botSendMessage(mess);
-    if (resSendMail.error) return resSendMail;
-    mess = "Отправлено подтверждения" + email;
+    let resSendMail = await sendMail(email, "test", html, subject); //retrun / result/error
+
+    if (resSendMail.error) {
+      mess = "Ошибка отправки подтверждения на email: " + email;
+      botSendMessage(mess);
+      return resSendMail;
+    }
+    mess = "Отправлено подтверждения на email: " + email;
     botSendMessage(mess);
     return {
       result: uuidStr, // отдадим код для сохранения в базе.

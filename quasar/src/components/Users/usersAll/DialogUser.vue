@@ -1,14 +1,29 @@
+<style lang="scss" scoped>
+.show-dialog {
+  min-width: 300px;
+  max-width: 300px;
+  @media (max-width: 600px) {
+    min-width: 94vw;
+    max-width: 94vw;
+  }
+}
+</style>
+
 <template>
   <q-dialog
     :model-value="showDialog"
+    persistent
     @update:model-value="(val) => emit('update:showDialog', val)"
   >
-    <q-card class="my-card">
+    <q-card class="show-dialog" style="">
       <q-card-section class="bg-primary text-white">
         <div class="text-h5">Пользователь</div>
         <div class="text-subtitle2">{{ inputRow.name || "Новый" }}</div>
+        <div class="text-subtitle2">
+          {{ inputRow.islogin ? "" : " (без логина)" }}
+        </div>
       </q-card-section>
-      <q-card-section>
+      <q-card-section class="column">
         <q-input
           style="padding: 0 7px"
           v-model="inputForSave.email"
@@ -46,11 +61,28 @@
           dense
         />
         <q-toggle
-          v-if="inputRow.name"
           v-model="inputForSave.rereg"
           color="red"
-          label="Сбросить регистрацию"
+          label="Сбросить и разрешить регистрацию пользователем"
           :readonly="readOnly"
+        />
+        <q-toggle
+          v-if="inputRow.id"
+          :disable="
+            !['Registered', 'WaitManualConfirm'].includes(inputForSave.status)
+          "
+          v-model="inputForSave.status"
+          true-value="Registered"
+          false-value="WaitManualConfirm"
+          color="green"
+          label="Регистрация подтверждена"
+          :readonly="readOnly"
+        />
+        <q-input
+          v-model="inputForSave.description"
+          label="Заметки"
+          type="textarea"
+          autogrow
         />
       </q-card-section>
       <q-separator />

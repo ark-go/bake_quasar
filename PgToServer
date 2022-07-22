@@ -12,9 +12,10 @@ rsync -avzh \
 
 echo "Создали бекап и отправили, ждем restore"
 
-#ssh nodeuser@tsg-18.ru "pg_restore -e -c --if-exists -h localhost -U postgres -d kanbase /home/nodeuser/node/bake/$backdate-postgresql-bake.dump"
+ssh nodeuser@tsg-18.ru "pg_restore -e -c --if-exists -h localhost -U postgres -d kanbase /home/nodeuser/node/bake/$backdate-postgresql-bake.dump"
 
-
+# --if-exists ?? я убираю когда чтото не идет, не понимаю что оно делает
+# -c очищает базу, но почемуто криво, мешают зависимости,  -с -С очистит и создаст заново. но требует остановки подключений
 
 ###########################
 #ssh nodeuser@tsg-18.ru "pg_restore -e -C -h localhost -U postgres -d kanbase /home/nodeuser/node/Kanevsky/$backdate-postgresql-bake.dump"

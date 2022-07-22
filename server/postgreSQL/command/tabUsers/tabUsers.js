@@ -1,4 +1,6 @@
 import { load } from "./load.js";
+import { add } from "./add.js";
+
 import { botSendMessage } from "../../../tg/startTgBot.js";
 //import { add } from "./add.js";
 // import { update } from "./update.js";
@@ -29,6 +31,9 @@ export async function tabUsers(req, res) {
   switch (req.body.cmd) {
     case "load":
       return await load(req, res, tabname, timezone);
+    case "add":
+      return await add(req, res, tabname, timezone);
+
       // case "add":
       //   // console.log("for update", req.body);
       //   return await add(req, res, tabname, timezone);

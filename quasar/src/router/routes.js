@@ -6,6 +6,7 @@ const routes = [
       {
         path: "",
         component: () => import("components/PageStart/PageStart.vue"),
+        meta: { title: "Главная" },
       },
       {
         path: "test",
@@ -14,12 +15,14 @@ const routes = [
       {
         path: "departments",
         component: () => import("components/Users/PageUsersTree.vue"),
+        meta: { title: "Пользователи" },
       },
       {
         path: "registration/:id?/:code?",
         name: "registration",
         props: true,
         component: () => import("components/Registration/PageRegistration.vue"),
+        meta: { title: "Регистрация" },
       },
       {
         path: "charts",
@@ -41,6 +44,7 @@ const routes = [
       {
         path: "prodaja",
         component: () => import("pages/PageProdaja.vue"),
+        meta: { title: "Продажи" },
       },
       {
         path: "specstore",
@@ -49,26 +53,32 @@ const routes = [
       {
         path: "spravochnik",
         component: () => import("components/Sprav/PageSprav.vue"),
+        meta: { title: "Справочник" },
       },
       {
         path: "kagent",
         component: () => import("components/Kagent/PageKagent.vue"),
+        meta: { title: "Контрагенты" },
       },
       {
         path: "bakery",
         component: () => import("components/Bakery/PageBakery.vue"),
+        meta: { title: "Пекарни" },
       },
       {
         path: "products",
         component: () => import("components/Products/PageProducts.vue"),
+        meta: { title: "Продукция" },
       },
       {
         path: "docprice",
         component: () => import("components/Docprice/PageDocprice.vue"),
+        meta: { title: "Прайс" },
       },
       {
         path: "bakeryttk",
         component: () => import("components/BakeryTTK/PageBakeryTTK.vue"),
+        meta: { title: "Продукты" },
       },
       {
         path: "xls",

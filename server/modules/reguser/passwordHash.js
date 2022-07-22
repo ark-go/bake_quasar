@@ -30,12 +30,11 @@ var sha512 = function (password, salt) {
 /**
  * создание хеша
  * @param {*} userpassword - Пароль
- * @param {*} id  ID - пользователя
  * @returns
  */
-function getHashPassword(userpassword, id) {
+function getHashPassword(userpassword) {
   var salt = genRandomString(16); // дает нам соль длиной 16
-  var passwordData = sha512(userpassword + id, salt);
+  var passwordData = sha512(userpassword, salt);
   //  console.log("UserPassword = " + userpassword);
   //  console.log("Passwordhash = ", passwordData); //.passwordHash);
   // console.log("nSalt = " + passwordData.salt);
@@ -46,10 +45,9 @@ function getHashPassword(userpassword, id) {
  * проверить пароль с хешем
  * @param {*} userpassword  - Пароль
  * @param {*} hash  - хэш из база
- * @param {*} id  - ID пользователя
  * @returns
  */
-function compareHashPassword(userpassword, hash, id) {
+function compareHashPassword(userpassword, hash) {
   try {
     hash = JSON.parse(hash);
   } catch (e) {
@@ -59,7 +57,7 @@ function compareHashPassword(userpassword, hash, id) {
     return false;
   }
 
-  var passwordData = sha512(userpassword + id, hash.p1);
+  var passwordData = sha512(userpassword, hash.p1);
   return passwordData.p2 === hash.p2;
 }
 

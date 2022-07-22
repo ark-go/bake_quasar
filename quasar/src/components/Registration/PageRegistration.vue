@@ -39,6 +39,8 @@ export default defineComponent({
           id: router.currentRoute.value.params.id,
           code: router.currentRoute.value.params.code,
         });
+        //! -------------------------------------------------------------------------------------
+        router.push({ path: "/" });
       }
     });
     async function onCodeRegistration(id, code) {

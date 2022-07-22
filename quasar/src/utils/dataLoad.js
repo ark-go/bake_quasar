@@ -1,7 +1,9 @@
 import { useState } from "src/utils/useState.js";
 import { Notify, Loading } from "quasar";
 import { axios } from "boot/axios";
+import { nextTick } from "vue";
 import { Dark } from "quasar";
+
 /**
  *
  * @param {string} url Адрес
@@ -26,6 +28,7 @@ export async function dataLoad(url, data, logInfo = "") {
       delay: 400, // ms
     });
     let resp = await axios.post(url, data);
+    console.dir("resp", resp);
     let respData = resp.data;
     let keyRes = Object.keys(respData);
     if (!keyRes.includes("result") && !keyRes.includes("error")) {
@@ -33,13 +36,16 @@ export async function dataLoad(url, data, logInfo = "") {
       console.log("При загрузке ", logInfo, "Нет данных");
       throw " Не полученно данных.";
     }
+
     if (respData.error) {
       if (
         ["NoAccess", "noautorizate", "WaitManualConfirm"].includes(
           respData.error
         )
       ) {
-        logInfo = "Нет доступа!";
+        //  await axios.post("/api/unLogin", {});
+
+        logInfo += " запрещено.";
       }
       throw respData.error;
     }
@@ -56,7 +62,8 @@ export async function dataLoad(url, data, logInfo = "") {
     return respData;
   } catch (err) {
     Loading.hide();
-    console.log("XXXXXXXXX", err.toString());
+    console.log("catch dataLoad.js XXXXXXX", err.toString());
+    let captionErr = "";
     let caption = ["NoAccess", "noautorizate", "WaitManualConfirm"].includes(
       err.toString()
     )
@@ -66,21 +73,26 @@ export async function dataLoad(url, data, logInfo = "") {
       caption = caption + " Ожидайте подтверждения регистрации";
     }
 
+    if (err.toString().indexOf("Network Error") > 0) {
+      captionErr = "Нет интернета ! \r\ng";
+    } else {
+      captionErr = err.toString();
+    }
+
     notif(); // для закрытия того что не загрузилось.
     Notify.create({
       classes: "notify-error-top",
-      position: "top",
+      position: caption ? "center" : "top",
       // icon: "done", // we add an icon
       spinner: false, // we reset the spinner setting so the icon can be displayed
-      message: ["NoAccess", "noautorizate"].includes(err.toString())
-        ? "Нет доступа."
-        : "Ошибка зарузки!",
-      caption: caption,
+      message: caption ? "Нет доступа." : "Ошибка зарузки!",
+      caption: (caption ? caption : captionErr) + " " + logInfo,
       progress: true,
       multiLine: true,
       timeout: 1000 * 30, // we will timeout it in 2.5s
       color: "deep-orange",
-      //ignoreDefaults: true,
+      // textColor: "white",
+      //closeBtn: true,
       actions: [
         {
           label: "Закрыть",

@@ -5,20 +5,23 @@ async function emailConfirmFindUserCheck(userTmp) {
   let sqlP = {
     text: /*sql*/ `
             select * from ${tabname} 
-            where ${tabname}.email = $1
+            where ${tabname}.email = $1 LIMIT 1
       `,
     values: [userTmp.email],
   };
   try {
     let result = await pool.query(sqlP);
-    // result = result?.rowCount > 0 ? result.rows : null;
-    if (result?.rowCount > 0) {
+    result = result?.rowCount > 0 ? result.rows : null;
+    if (result) {
       let mess = `Нашли юзера, при проверке пере-регистрации, повторная..: ${userTmp.email}`;
       //  mess += "\n" + JSON.stringify(result.rows[0]);
       botSendMessage(mess);
+      return {
+        result: result[0], // true если нашли
+      };
     }
     return {
-      result: result?.rowCount > 0, // true если нашли
+      result: null, // не нашли
     };
   } catch (err) {
     console.log(

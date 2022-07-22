@@ -129,6 +129,14 @@
       </q-card-section>
       <q-card-section style="padding-top: 0px; padding-bottom: 0px">
         <q-input
+          dense
+          name="text"
+          label="Проверка пароля"
+          type="password"
+          placeholder="Повторите пароль"
+          v-model="rePassword"
+        />
+        <q-input
           autocomplete="off"
           dense
           label="Код:"
@@ -136,14 +144,6 @@
           placeholder="Введите код из устройства"
           v-model="QRCode"
           autofocus
-        />
-        <q-input
-          dense
-          name="text"
-          label="Проверка пароля"
-          type="password"
-          placeholder="Повторите пароль"
-          v-model="rePassword"
         />
       </q-card-section>
       <q-card-actions align="right">
@@ -315,24 +315,25 @@ export default defineComponent({
       //  });
     }
     async function onRegisterQRCode() {
-      // при успехе пошлется письмо
-      const r = await sendCommand("/api/reguser", {
-        qrCode: QRCode.value,
-        rePassword: rePassword.value,
-      });
-      if (r.error) {
+      if (!QRCode.value || !rePassword.value) {
         Notify.create({
           classes: "notify-error-top",
           color: "red",
           position: "top",
-          message: "Попробуйте позже.  Ошибка: " + r.error,
+          message: "Введите все данные.",
           icon: "report_problem",
         });
-        console.log(r);
         return;
       }
+      // при успехе пошлется письмо, при ошибке вернет Null либо ре
+      const r = await sendCommand("/api/reguser", {
+        qrCode: QRCode.value,
+        rePassword: rePassword.value,
+      });
+      QRCode.value = ""; // очищаем, раз отправили
+
       if (r) {
-        console.log(r);
+        console.log(">>22", r);
         savedId.value = r;
         qrCodeDialog.value = false;
         messSendEmailDialog.value = true;
@@ -368,13 +369,6 @@ export default defineComponent({
 
         return null;
       }
-      // Notify.create({
-      //   classes: "notify-error-top",
-      //   color: "green",
-      //   position: "top",
-      //   message: respData.result,
-      //   icon: "report_problem",
-      // });
       return respData.result;
     }
     function startTimer() {

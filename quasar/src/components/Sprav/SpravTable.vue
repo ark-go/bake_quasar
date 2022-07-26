@@ -94,14 +94,14 @@ import {
   watchEffect,
   unref,
 } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+//import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils";
 import { useQuasar } from "quasar";
 import NoDataFooter from "components/NoDataFooter.vue";
 import ArkTableBody from "components/Sprav/ArkTableBody.vue";
 import SpravDialog from "components/Sprav/SpravDialog.vue";
 import { useSpravStore } from "stores/spravStore";
 import FindTable from "./FindTable.vue";
-//dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "SpravTable",
   components: {
@@ -123,6 +123,7 @@ export default defineComponent({
   },
   setup(props) {
     const $q = useQuasar();
+    const arkUtils = useArkUtils();
     const spravStore = useSpravStore();
     const tableNameSting = ref("");
     const rows = ref([]);
@@ -179,7 +180,7 @@ export default defineComponent({
         tableNameLoad: props.tableInfo.tableName,
       };
       let mess = "Загрузка " + props.tableInfo.label;
-      let res = await dataLoad("/api/spravLoad", dat, mess);
+      let res = await arkUtils.dataLoad("/api/spravLoad", dat, mess);
       if (res.result) {
         rows.value = res.result;
       } else {
@@ -214,7 +215,7 @@ export default defineComponent({
       dataToBase["tableName"] = props.tableInfo.tableName;
       console.log("состав:", dataToBase);
       let mess = "Обновление " + tableNameSting.value;
-      let res = await dataLoad("/api/spravUpdate", dataToBase, mess);
+      let res = await arkUtils.dataLoad("/api/spravUpdate", dataToBase, mess);
       if (res.error) {
         return;
       }
@@ -228,7 +229,7 @@ export default defineComponent({
         tableName: props.tableInfo.tableName,
       };
       let mess = "Удаление " + tableNameSting.value + " / " + val.row.name;
-      let res = await dataLoad("/api/spravDelete", dataToBase, mess);
+      let res = await arkUtils.dataLoad("/api/spravDelete", dataToBase, mess);
       if (res.error) {
         return;
       }
@@ -274,7 +275,7 @@ export default defineComponent({
       dataToBase["tableName"] = props.tableInfo.tableName;
       console.log("состав:", dataToBase);
       let mess = "Обновление " + tableNameSting.value;
-      let res = await dataLoad("/api/spravAdd", dataToBase, mess);
+      let res = await arkUtils.dataLoad("/api/spravAdd", dataToBase, mess);
       if (res.error) {
         return;
       }

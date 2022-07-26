@@ -4,6 +4,7 @@ export async function accessCheck(req, res, next) {
   if (isAllowPath(req.body?.path)) {
     return res.json({
       result: "unregistered",
+      isAllowPath: isAllowPath,
     });
   }
   // нет запроса, юэера, ролей, роли должны быть массивом,

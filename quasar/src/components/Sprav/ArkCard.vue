@@ -13,17 +13,23 @@
             <div class="col">
               <div
                 class="text-h6 row"
-                :style="{ color: historyOn ? 'red' : 'black' }"
+                :style="{
+                  color: spravStore.historyOn && historyOn ? 'red' : 'black',
+                }"
               >
                 {{ title }}
-                <q-toggle
-                  v-model="historyOn"
-                  :color="historyOn ? 'red' : 'green'"
-                />
-                <Select-Date-Ext
-                  v-if="historyOn"
-                  v-model:valueDate="spravStore.historyDate"
-                ></Select-Date-Ext>
+                <q-space />
+                <div class="row items-center" v-if="spravStore.historyOn">
+                  <div class="row items-center">История:</div>
+                  <q-toggle
+                    v-model="historyOn"
+                    :color="historyOn ? 'red' : 'green'"
+                  />
+                  <Select-Date-Ext
+                    v-if="historyOn"
+                    v-model:valueDate="spravStore.historyDate"
+                  ></Select-Date-Ext>
+                </div>
               </div>
               <div v-if="!!subTitle" class="text-subtitle2">{{ subTitle }}</div>
             </div>

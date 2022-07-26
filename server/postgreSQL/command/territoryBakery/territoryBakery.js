@@ -22,7 +22,7 @@ export async function territoryBakery(req, res) {
     ? req.headers.timezone
     : "Europe/Moscow";
 
-  let mess = "Таблица bakery Пекарни, cmd: " + req.body?.cmd;
+  let mess = "Таблица территории пекарни, cmd: " + req.body?.cmd;
   botSendMessage(mess, req);
 
   let tabname = "bakery";

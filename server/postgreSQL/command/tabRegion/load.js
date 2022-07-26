@@ -19,21 +19,27 @@ export async function load(req, res, tabname, timezone, idOne) {
      -- terr.name as territory_name,
      -- ustm.email as territory_manager_name,
      -- reg.name as region_name,
-      usrm.email as region_manager_name,
-      NullIf( (select count(*) from territory_x_bakery 
-      where parent_id = ANY (select child_id from region_x_territory where parent_id = ${tabname}.id AND is_last = true ) )
+     concat(usrm.u_fam,' ',usrm.u_name,' ',usrm.u_otch) as region_manager_name,
+    -- usrm.email as region_manager_name,
+    -- это было н 25-07-22
+    --  NullIf( (select count(*) from territory_x_bakery 
+    --  where parent_id = ANY (select child_id from region_x_territory where parent_id = ${tabname}.id AND is_last = true ) )
+    --  ,0) as bakery_count,
+
+
+    ---  NullIf( (select count(*) from region_x_territory where parent_id = ${tabname}.id AND is_last = true )
+    ---  ,0) as territory_count
+    ---  from ${tabname}
+
+    -- по региону количество пекарен и по дате
+    NullIf( (select count(*) from region_x_bakery_get_bakery_ondate(${tabname}.id, $1 AT TIME ZONE $2) )
       ,0) as bakery_count,
 
-    --  NullIf( (select count(*) from users_x_region_manager where parent_id = ${tabname}.id AND is_last = true ) 
-    --   ,0) as region_count,
-    --  NullIf( (select count(*) from users_x_territory_manager where parent_id = ${tabname}.id AND is_last = true )
-    --  ,0) as territory_count,
-    --  NullIf( (select count(*) from users_x_bakery_manager where parent_id = ${tabname}.id AND is_last = true )
-    --  ,0) as bakery_count
-    --  NullIf( (select count(*) from territory_x_bakery where parent_id = ${tabname}.id AND is_last = true )
-    --  ,0) as bakery_count
-      NullIf( (select count(*) from region_x_territory where parent_id = ${tabname}.id AND is_last = true )
+
+    -- выдадим все территории на дату
+      NullIf( (select count(*) from region_x_territory_get_territory_ondate(${tabname}.id, $1 AT TIME ZONE $2) )
       ,0) as territory_count
+
       from ${tabname}
      -- LEFT JOIN LATERAL(select * from users_x_bakery_manager_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
      --         as ubm  ON ubm.child_id = ${tabname}.id

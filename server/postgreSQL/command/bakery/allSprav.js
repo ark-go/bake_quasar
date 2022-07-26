@@ -12,24 +12,24 @@ export async function allSprav(req, res, timezone) {
       ORDER BY name
 `,
   };
-  let territory = {
-    text: /*sql*/ `
-      SELECT
-      id,
-      name
-      FROM territory
-      ORDER BY name
-`,
-  };
-  let region = {
-    text: /*sql*/ `
-      SELECT
-      id,
-      name
-      FROM region
-      ORDER BY name
-`,
-  };
+  //   let territory = {
+  //     text: /*sql*/ `
+  //       SELECT
+  //       id,
+  //       name
+  //       FROM territory
+  //       ORDER BY name
+  // `,
+  //   };
+  //   let region = {
+  //     text: /*sql*/ `
+  //       SELECT
+  //       id,
+  //       name
+  //       FROM region
+  //       ORDER BY name
+  // `,
+  //  };
   let city = {
     text: /*sql*/ `
       SELECT
@@ -78,13 +78,13 @@ export async function allSprav(req, res, timezone) {
     result = result.rowCount > 0 ? result.rows : null;
     allSprav.trademark = result;
 
-    result = await pool.query(territory);
-    result = result.rowCount > 0 ? result.rows : null;
-    allSprav.territory = result;
+    // result = await pool.query(territory);
+    // result = result.rowCount > 0 ? result.rows : null;
+    // allSprav.territory = result;
 
-    result = await pool.query(region);
-    result = result.rowCount > 0 ? result.rows : null;
-    allSprav.region = result;
+    // result = await pool.query(region);
+    // result = result.rowCount > 0 ? result.rows : null;
+    // allSprav.region = result;
 
     result = await pool.query(city);
     result = result.rowCount > 0 ? result.rows : null;

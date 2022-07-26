@@ -10,6 +10,8 @@
     }"
     draggable="false"
     @mousedown="dragging = true"
+    @touchmove="touchmove"
+    @touchstart.stop
   />
 </template>
 
@@ -68,11 +70,42 @@ export default {
         dragging.value = false;
       });
     });
+    function touchmove(event) {
+      // сразу ловим и движение и координаты для мобилок
+      // if (dragging.value) {
+      const diffX = event.touches[0].clientX - mouseX.value;
+      const diffY = event.touches[0].clientY - mouseY.value;
+      x.value += diffX;
+      y.value += diffY;
+      ioSocket.socket.emit("gameCursor", { x: x.value, y: y.value });
+      if (refDrag.value.offsetLeft < 0) x.value = 0; // меньше левого
+      if (refDrag.value.offsetTop < 0) y.value = 0; // меньше верха
+      if (x.value + refDrag.value.offsetWidth > $q.screen.width) {
+        // больше экрана вправо
+        x.value = $q.screen.width - refDrag.value.offsetWidth;
+        mouseX.value = x.value;
+      } else {
+        mouseX.value = event.touches[0].clientX;
+      }
+      if (y.value + refDrag.value.offsetHeight > $q.screen.height) {
+        // больше экрана вниз
+        y.value = $q.screen.height - refDrag.value.offsetHeight;
+        mouseY.value = y.value;
+      } else {
+        mouseY.value = event.touches[0].clientY;
+      }
+      console.log(
+        mouseY.value,
+        event.touches[0].clientY,
+        refDrag.value.offsetTop
+      );
+    }
     return {
       x,
       y,
       dragging,
       refDrag,
+      touchmove,
     };
   },
 };

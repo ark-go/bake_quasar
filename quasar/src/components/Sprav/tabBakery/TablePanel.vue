@@ -40,6 +40,7 @@
     noExpandPanel
     noEditTable
     :store="store"
+    :rowsPerPage="0"
   >
   </Table-Template>
   <div v-else>не указана таблица</div>

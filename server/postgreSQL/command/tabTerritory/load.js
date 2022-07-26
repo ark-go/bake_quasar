@@ -17,16 +17,18 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.name as name,
      -- us.email as bakery_manager_name,
      -- terr.name as territory_name,
-      ustm.email as territory_manager_name,
+     concat(ustm.u_fam,' ',ustm.u_name,' ',ustm.u_otch) as territory_manager_name,
+     -- ustm.email as territory_manager_name,
       reg.name as region_name,
-      usrm.email as region_manager_name,
+      concat(usrm.u_fam,' ',usrm.u_name,' ',usrm.u_otch) as region_manager_name,
+     -- usrm.email as region_manager_name,
     --  NullIf( (select count(*) from users_x_region_manager where parent_id = ${tabname}.id AND is_last = true ) 
     --   ,0) as region_count,
     --  NullIf( (select count(*) from users_x_territory_manager where parent_id = ${tabname}.id AND is_last = true )
     --  ,0) as territory_count,
     --  NullIf( (select count(*) from users_x_bakery_manager where parent_id = ${tabname}.id AND is_last = true )
     --  ,0) as bakery_count
-      NullIf( (select count(*) from territory_x_bakery where parent_id = ${tabname}.id AND is_last = true )
+      NullIf( (select count(*) from territory_x_bakery_get_bakery_ondate(${tabname}.id, $1 AT TIME ZONE $2) )
       ,0) as bakery_count
 
       from ${tabname}

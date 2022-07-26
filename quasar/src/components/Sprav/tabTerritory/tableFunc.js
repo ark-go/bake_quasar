@@ -45,7 +45,7 @@ export function useTableFunc(rows, nameTable) {
     let command = { cmd: "delete" };
     command.row = row;
     command.historyDate = dateToDateUnix(spravStore.historyDate);
-    let mess = "Обновление";
+    let mess = "Удаление";
     let url = "/api/" + nameTable;
     let res = await dataLoad(url, command, mess);
     if (res.result) {

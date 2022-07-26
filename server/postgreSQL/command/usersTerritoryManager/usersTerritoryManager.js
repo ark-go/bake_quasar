@@ -22,7 +22,7 @@ export async function usersTerritoryManager(req, res) {
     ? req.headers.timezone
     : "Europe/Moscow";
 
-  let mess = "Таблица bakery Пекарни, cmd: " + req.body?.cmd;
+  let mess = "Таблица терр манагер, cmd: " + req.body?.cmd;
   botSendMessage(mess, req);
 
   let tabname = "territory";

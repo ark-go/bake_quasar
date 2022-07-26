@@ -41,6 +41,7 @@
     noExpandPanel
     :noEditTable="false"
     :store="store"
+    :rowsPerPage="0"
   >
   </Table-Template>
   <div v-else>не указана таблица</div>
@@ -189,6 +190,4 @@ export default defineComponent({
 });
 </script>
 
-<style lang="scss" scoped>
-
-</style>
+<style lang="scss" scoped></style>

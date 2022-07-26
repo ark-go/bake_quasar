@@ -19,6 +19,6 @@ export async function changeUser(keyRedis, valueRedis) {
     valueRedis.user.id,
     sessKey
   );
-  console.log(await redisClient.get(sessKey));
+  //  console.log(await redisClient.get(sessKey));
   return;
 }

@@ -84,8 +84,15 @@ app.use(
 );
 const expSession = configureSession(app);
 
-// изменение Redis? изменения session переписывают redis // import { redisSetUserReload } from "./utils/redis/redisSetUserReload.js";
-//await redisSetUserReload();
+// изменение Redis? изменения session переписывают redis //
+
+import { redisSetUserReload } from "./utils/redis/redisSetUserReload.js";
+if (process.argv.length > 2 && process.argv[2] == "reload") {
+  let m = async () => {
+    await redisSetUserReload("all");
+  };
+  m();
+}
 // для чтения юзера из базы
 import { loadUserToReq } from "./modules/reguser/loadUserToReq.js";
 //await redisSetUserReload(90);

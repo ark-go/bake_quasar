@@ -3,7 +3,8 @@ import { getAllKeys } from "./getAllKeys.js";
 import { changeUser } from "./changeUser.js";
 /**
  * установить в сессию в редисе, признак перечитать настройки пользователя, который уде получил сессию
- * idUser
+ * idUser  может быть 'all'
+ *
  *
  */
 export async function redisSetUserReload(idUser) {

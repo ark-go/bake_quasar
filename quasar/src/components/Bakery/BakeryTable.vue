@@ -102,15 +102,13 @@
 
 <script>
 import { defineComponent, ref, onMounted } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import NoDataFooter from "components/NoDataFooter.vue";
 import BakeryDialog from "./BakeryDialog.vue";
 import TableBody from "./TableBody.vue";
 import FindTable from "./FindTable.vue";
 import { useQuasar } from "quasar";
 //import { Meta } from "quasar";
-
-//dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "SpravTable",
   props: {
@@ -131,6 +129,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const $q = useQuasar();
+    const arkUtils = useArkUtils();
     const rows = ref([]);
     const visibleColumns = ref([]);
     const showDialog = ref(false);
@@ -156,9 +155,8 @@ export default defineComponent({
     // Вставить проверку отрытого окна
     async function loadTable() {
       let mess = "Загрузка пекарен";
-      // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
       // команда cmd может задаваться из родительских компонентов
-      let res = await dataLoad("/api/bakery", props.commandLoad, mess);
+      let res = await arkUtils.dataLoad("/api/bakery", props.commandLoad, mess);
       if (res.result) {
         rows.value = res.result;
       } else {
@@ -167,7 +165,7 @@ export default defineComponent({
     }
     async function deleteTable(row) {
       let mess = "Удаление";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/bakery",
         { id: row.id, cmd: "delete" },
         mess
@@ -194,7 +192,7 @@ export default defineComponent({
     }
     async function addTable(row) {
       let mess = "Запись новой пекарни";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/bakery",
         { ...row, ...{ cmd: "add" } },
         mess

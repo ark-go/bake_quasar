@@ -40,6 +40,7 @@
     noExpandPanel
     noEditTable
     :store="store"
+    :rowsPerPage="0"
   >
   </Table-Template>
   <div v-else>не указана таблица</div>
@@ -83,12 +84,12 @@ export default defineComponent({
   emits: [""],
   setup(props, { emit }) {
     const spravStore = useSpravStore();
-    const tableFunc = useTableFunc(props.tableName);
+    const rows = ref([]);
+    const tableFunc = useTableFunc(rows, props.tableName);
     const tableBodyMenu = defineAsyncComponent(() => {
       return import("./TableBodyMenu.vue");
     });
     const store = useBakeryStore();
-    const rows = ref([]);
     const currentRow = ref({});
     const pagination = ref({
       rowsPerPage: 10,
@@ -104,12 +105,12 @@ export default defineComponent({
 
         if (spravStore.currentTab == "main") {
           console.log("Поймал смену панели", spravStore.currentTab);
-          rows.value = await tableFunc.loadTable();
+          await tableFunc.loadTable();
         }
       }
     );
     onMounted(async () => {
-      rows.value = await tableFunc.loadTable();
+      await tableFunc.loadTable();
     });
     return {
       currentRow,

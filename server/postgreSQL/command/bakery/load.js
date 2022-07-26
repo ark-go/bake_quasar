@@ -30,7 +30,8 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.id,
       ${tabname}.name,
       ${tabname}.franch,
-      ${dateend}
+     -- ${dateend}
+      to_char(${tabname}.dateopen,  'DD.MM.YYYY') as date_start, to_char(${tabname}.dateclose,  'DD.MM.YYYY') as date_end,
       ${tabname}.trademark_id,
       trademark.name AS trdemark_name,
       ${tabname}.territory_id,
@@ -70,14 +71,24 @@ export async function load(req, res, tabname, timezone, idOne) {
       LEFT JOIN  users ON users.id = ${tabname}.user_id
       LEFT JOIN  trademark ON trademark.id = ${tabname}.trademark_id
       LEFT JOIN  kagent_tm ON kagent_tm.id = ${tabname}.kagent_tm_id  -- здесь только id kagenta
-          LEFT JOIN  ( select * from territory_bakery 
-                    where  is_last = true ) as bt  ON bt.bakery_id = ${tabname}.id
-          LEFT JOIN  territory as territory_g ON territory_g.id = bt.territory_id
-             LEFT JOIN  ( select * from region_x_territory 
-                where  is_last = true ) as tr  ON tr.child_id = territory_g.id
-             LEFT JOIN  region as region_g ON region_g.id = tr.parent_id
-      -- LEFT JOIN  territory ON territory.id = ${tabname}.territory_id
-      --LEFT JOIN  region ON region.id = ${tabname}.region_id
+      --
+      LEFT JOIN LATERAL(select * from territory_x_bakery_get_last(${tabname}.id) ) 
+      as tb  ON tb.child_id = ${tabname}.id
+      LEFT JOIN territory territory_g ON territory_g.id = tb.parent_id
+      LEFT JOIN LATERAL(select * from region_x_territory_get_last(territory_g.id) ) 
+                 as rt  ON rt.child_id = territory_g.id
+       LEFT JOIN region region_g ON region_g.id = rt.parent_id
+      --
+
+         -- LEFT JOIN  ( select * from territory_bakery 
+         --           where  is_last = true ) as bt  ON bt.bakery_id = ${tabname}.id
+         -- LEFT JOIN  territory as territory_g ON territory_g.id = bt.territory_id
+
+         --    LEFT JOIN  ( select * from region_x_territory 
+         --       where  is_last = true ) as tr  ON tr.child_id = territory_g.id
+         --    LEFT JOIN  region as region_g ON region_g.id = tr.parent_id
+
+
       LEFT JOIN  city ON city.id = ${tabname}.city_id
         LEFT JOIN kagent AS tmkagent ON tmkagent.id = kagent_tm.kagent_id 
       LEFT JOIN  kagent AS ownkagent ON ownkagent.id = ${tabname}.own_kagent_id

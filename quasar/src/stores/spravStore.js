@@ -18,15 +18,38 @@ export const useSpravStore = defineStore("SpravStore", {
        */
       historyDate: null,
       /**
+       * Включение режима истории
+       */
+      // historyOn: false,
+      /**
        * выбранная вкладка
        */
       currentTab: "",
     };
   },
-  // getters: {
-  //   isMobile: (state) => {
-  // //    let { platform } = useQuasar();
-  // //    return platform.is.mobile;
-  //   },
-  // },
+
+  getters: {
+    /**
+     * Уточнить точно ли это надоа
+     * @param {*} state
+     * @returns
+     */
+    historyOn: (state) => {
+      console.log(">>>>!>>>", state.currentTab, ">>", state.selectedRow);
+      if (!Object.keys(state.selectedRow).length) {
+        // строка не выбрана
+        return true;
+      } else if (!state.currentTab || state.currentTab == "main") {
+        // и строка выбрана вкладка main, или ваще никакая не выбрана
+        return true;
+      }
+
+      return false;
+    },
+
+    //   isMobile: (state) => {
+    // //    let { platform } = useQuasar();
+    // //    return platform.is.mobile;
+    //   },
+  },
 });

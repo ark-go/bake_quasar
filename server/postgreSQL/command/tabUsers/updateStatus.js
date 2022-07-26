@@ -77,8 +77,11 @@ export async function updateStatus(req, res, tabname, timezone, idOne) {
       client.release();
     }
     if (updUser) {
-      req.session.user.isReloadUser = true;
-      // await redisSetUserReload(+updUser.id);
+      // ! Ваще не то !!!!!
+      if (updUser.id == req.session.user.id) {
+        req.session.user.isReloadUser = true;
+      }
+      await redisSetUserReload(+updUser.id);
     }
     let mess = `Обновление статуса:` + req.body.email;
     botSendMessage(mess);

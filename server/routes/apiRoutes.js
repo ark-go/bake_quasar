@@ -147,7 +147,11 @@ export async function apiRoutes() {
         //return;
         ///next();
       } else {
-        console.log(" : registered", req?.session?.user?.email);
+        console.log(
+          " : registered",
+          req?.session?.user?.email,
+          req?.session?.user?.fio
+        );
         return next();
       }
     }

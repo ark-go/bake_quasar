@@ -2,7 +2,16 @@ import { ref } from "vue";
 import { dataLoad } from "src/utils/ark.js";
 import { useUsersPanelStore, storeToRefs } from "stores/usersPanelStore.js";
 const { userRow: currentRow, treeRow } = storeToRefs(useUsersPanelStore());
+import { useIoBroadcast } from "src/utils/ioBroadcast.js";
 export function useTableFunc(nameTable, rows) {
+  const io = useIoBroadcast(ioBroadcastUpdate, "Пользователи");
+  async function ioBroadcastUpdate(param) {
+    if (param.tableName == nameTable) {
+      // tableName - здесь, название команды, которая обслуживает таблицу.. хз, повелось так
+      console.log("ктото обновил нашу таблицу.");
+      await loadTable();
+    }
+  }
   async function loadTable() {
     console.log(
       "захотелось у дерева ",
@@ -41,6 +50,7 @@ export function useTableFunc(nameTable, rows) {
     let res = await dataLoad(url, body, mess);
     if (res.result) {
       await loadTable();
+      io.sendBroadcast(nameTable);
       return true;
     } else {
       return false;

@@ -25,7 +25,7 @@ export async function tabTerritory(req, res) {
     ? req.headers.timezone
     : "Europe/Moscow";
 
-  let mess = "Таблица bakery Пекарни, cmd: " + req.body?.cmd;
+  let mess = "Таблица территории, cmd: " + req.body?.cmd;
   botSendMessage(mess, req);
   console.log("tabTerritory", req.body);
   let tabname = "territory";

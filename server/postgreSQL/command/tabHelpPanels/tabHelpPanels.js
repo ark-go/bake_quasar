@@ -23,7 +23,7 @@ export async function tabHelpPanels(req, res) {
     ? req.headers.timezone
     : "Europe/Moscow";
 
-  let mess = "Таблица bakery Пекарни, cmd: " + req.body?.cmd;
+  let mess = "Таблица хелп, cmd: " + req.body?.cmd;
   botSendMessage(mess, req);
   // console.log("tabHelpPanels", req.body);
   let tabname = "help_panels";

@@ -29,12 +29,21 @@ export async function load(req, res, tabname, timezone, idOne) {
          true
       END AS islogin,
 
-      NullIf( (select count(*) from users_x_region_manager where parent_id = ${tabname}.id AND is_last = true ) 
-       ,0) as region_count,
-      NullIf( (select count(*) from users_x_territory_manager where parent_id = ${tabname}.id AND is_last = true )
-      ,0) as territory_count,
-      NullIf( (select count(*) from users_x_bakery_manager where parent_id = ${tabname}.id AND is_last = true )
-      ,0) as bakery_count
+      NullIf( (select count(*) from users_x_region_manager_get_region_ondate(${tabname}.id, $4 AT TIME ZONE $5) )
+      ,0) as region_count,
+
+    --  NullIf( (select count(*) from users_x_region_manager where parent_id = ${tabname}.id AND is_last = true ) 
+    --   ,0) as region_count,
+       
+       NullIf( (select count(*) from users_x_territory_manager_get_territory_ondate(${tabname}.id, $4 AT TIME ZONE $5) )
+       ,0) as territory_count,
+
+     -- NullIf( (select count(*) from users_x_territory_manager where parent_id = ${tabname}.id AND is_last = true )
+     -- ,0) as territory_count,
+     NullIf( (select count(*) from users_x_bakery_manager_get_bakery_ondate(${tabname}.id, $4 AT TIME ZONE $5) )
+     ,0) as bakery_count
+   --  NullIf( (select count(*) from users_x_bakery_manager where parent_id = ${tabname}.id AND is_last = true )
+   --   ,0) as bakery_count
 
       from ${tabname}
       LEFT JOIN users_login as ulogin  ON ulogin.email = ${tabname}.email
@@ -67,6 +76,8 @@ export async function load(req, res, tabname, timezone, idOne) {
       req.body.treeId || null, // 1
       req.body.allUsers || false, // 2
       req.body.waitConfirm || false, // 3
+      req.body.historyDate || null, // 4
+      timezone, // 5
     ],
   };
   // if (idOne) sqlP.values = [timezone, idOne];

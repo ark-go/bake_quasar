@@ -27,6 +27,7 @@
     "password-generator": "^2.3.2",
     "pinia": "^2.0.11",
     "quasar": "^2.7.5",
+    "sanitize-html": "^2.7.1",
     "simple-vue-camera": "^1.0.2",
     "socket.io-client": "^4.5.0",
     "tree-model": "^1.0.7",

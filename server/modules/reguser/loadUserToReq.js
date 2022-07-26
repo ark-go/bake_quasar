@@ -22,6 +22,7 @@ export async function loadUserToReq(req, email) {
     text: `
          SELECT 
            users.*, 
+           concat(users.u_fam,' ', users.u_name,' ', users.u_otch) as fio,
            users_login.password AS password,
            users_login.fa2code AS fa2code,
            users_login.status AS status

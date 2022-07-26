@@ -48,10 +48,13 @@ export default boot(({ app }) => {
       console.log("response:", response);
       if (response.headers?.["x-info-site"] == "NoLogin") {
         user.userInfo = {};
+        user.isAllowPath = response.data?.isAllowPath || [];
         //! TODO: Проверить и восстановить
         // let mainStore = useMainStore();
         // mainStore.modalLoginOpen = true;
         // было отключено emitter.emit("on-login", "NoLogin");
+      } else {
+        user.isAllowPath = [];
       }
 
       return response;
@@ -74,11 +77,20 @@ export default boot(({ app }) => {
   );
 
   axios.interceptors.request.use(function (config) {
+    // исходящий  туда
     const user = useUserStore();
     user.isAdmin = true;
-    // исходящий  туда
+    //! только чтоб не посылать, лишний раз запросы если было закрыто.
+    //! т.е. если уже было запрещено, то не стоит и посылать запрос, пока не пройдет разрешение
+    // вобщемэто можно отключить - пока не вижу нужности
+    if (user.isAllowPath && user.isAllowPath.length > 0) {
+      if (!user.isAllowPath.includes(config.url.replace(new RegExp("^/api")))) {
+        return Promise.reject(new Error("Запрещено."));
+      }
+    }
+    //! ------
     //const value = Cookies.getAll(); //
-    //console.log("axios xxx:" + JSON.stringify(value));
+    //получим таймзону и засунем header
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone;
     console.log("TimeZone", tz);
     // const token = localStorage.getItem('token');

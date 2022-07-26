@@ -87,18 +87,31 @@
             :sprav="allSprav.city"
             v-model:selectId="currentRow.city_id"
           />
-          <bakery-select
+          <q-input
+            dense
+            label="Регион"
+            v-model="currentRow.region_name"
+            readonly
+          >
+          </q-input>
+          <q-input
+            dense
+            label="Территория"
+            v-model="currentRow.territory_name"
+            readonly
+          ></q-input>
+          <!-- <bakery-select
             label="Регион"
             :sprav="allSprav.region"
             v-model:selectId="currentRow.region_id"
-          ></bakery-select>
+          ></bakery-select> -->
 
-          <bakery-select
+          <!-- <bakery-select
             label="Территория"
             :sprav="allSprav.territory"
             v-model:selectId="currentRow.territory_id"
           >
-          </bakery-select>
+          </bakery-select> -->
           <bakery-input
             dense
             v-model="currentRow.area"
@@ -174,7 +187,7 @@ name            территория  описание
 
 */
 import { defineComponent, ref, onMounted, watch, watchEffect } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils";
 import { useQuasar } from "quasar";
 import BakerySelect from "./BakerySelect.vue";
 import BakeryInput from "./BakeryInput.vue";
@@ -190,6 +203,7 @@ export default defineComponent({
   emits: ["update:showDialog"],
   setup(props, { emit }) {
     const $q = useQuasar();
+    const arkUtils = useArkUtils();
     const allSprav = ref([]);
     const currentRow = ref(null);
     const spravKagentTrademark = ref([]);
@@ -227,7 +241,7 @@ export default defineComponent({
       console.log("Показываем окно: ", currentRow.value);
     }
     async function loadAllSprav() {
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/bakery",
         { cmd: "allSprav" },
         "Чтение справочников пекарни"
@@ -235,7 +249,7 @@ export default defineComponent({
       return res?.result || [];
     }
     async function loadTrademarkKagentsv(trademark_id) {
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/bakery",
         { cmd: "loadKagentTM", trademark_id: trademark_id },
         "Чтение контрагентов торговой сети"

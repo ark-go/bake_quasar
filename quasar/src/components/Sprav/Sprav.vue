@@ -40,7 +40,7 @@ import {
   ref,
   watch,
   watchEffect,
-  computed,
+  onBeforeUnmount,
   defineAsyncComponent,
 } from "vue";
 import SpravTree from "components/Sprav/SpravTree.vue";
@@ -79,6 +79,11 @@ export default defineComponent({
     const currentTable = ref(SpravTable);
     const $q = useQuasar();
     const splitHorizont = ref(false);
+    onBeforeUnmount(() => {
+      // при входе могло остаться чтото, желательно удалять при выходе
+      spravStore.selectedNode = {};
+      spravStore.selectedRow = {};
+    });
     watchEffect(() => {
       subTitle.value = "";
       if (!spravStore.selectedNode.tableName) {

@@ -10,9 +10,11 @@ export function onConnection(io, socket) {
   socket.join("siteCommandShare"); //!TODO сделать!! комната для всех общих сообщений сайта,
   socket.join("public room");
   socket.join("system web arkadii");
+  socket.join("sysroom"); // группа для системных сообщений
   // комната Админ
   // socket.join("admin room");
   socket.data.username = socket.request?.session?.user?.email; // в data сувать что хочешь
+  socket.data.fio = socket.request?.session?.user?.fio;
   socket.data.userBrowser = socket.request?.session?.userBrowser;
   // socket.data.userAgent = socket.request?.session?.userAgent;
   //socket.data.timezone = socket.request?.session?.timezone;
@@ -36,6 +38,8 @@ export function onConnection(io, socket) {
   console.log(
     "IO Подключился:",
     socket.request?.session?.user?.email +
+      " - " +
+      socket.request?.session?.user?.fio +
       " : " +
       socket.request?.session?.timezone
   );
@@ -56,11 +60,25 @@ export function onConnection(io, socket) {
         val.data.ipAddress
     );
   });
+  // приняв сообщение, оно рассылается по всем кто находится в комнате,sysroom
+  // логики вступления в группу пока еще нет, и там все пользователи
+  // серверу сама команда не нужна, но ее будут ловить все клиенты
+  socket.on("sysroom", (val) => {
+    console.log("broadcast прислал ", val);
+    if (val.command) {
+      val.userFio = socket.data.fio;
+      console.log(">>E>>", val, socket.data);
+      console.log(">>E>>", val, socket.data);
+      socket.to("sysroom").emit("sysroom", val);
+    }
+  });
+  //-------------
   socket.on("system_website", (val) => {
     if (val.room && val.msg) {
       socket.to(val.room).emit("on-reload-tree", { date: "Обновление дерева" });
     }
   });
+
   socket.on("gameCursor", (val) => {
     socket.to("system web arkadii").emit("gameCursor", val);
   });
@@ -89,12 +107,20 @@ export function onConnection(io, socket) {
     console.log("нажал на сайте", payload);
     let clients = io.sockets.sockets;
     let mess = "";
+
     clients.forEach((val, key) => {
+      let tz = val.data.userBrowser?.timezone;
+      if (tz) {
+        tz = tz.split("/");
+        if (tz.length > 1) {
+          tz = tz[1];
+        }
+      }
       mess +=
         escape(
           val.data.username +
             " : " +
-            val.data.userBrowser?.timezone +
+            tz +
             " : " +
             val.data.userBrowser?.name +
             " : " +

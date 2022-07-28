@@ -71,7 +71,6 @@
 </template>
 <script>
 import { ref, onMounted } from "vue";
-import { dataLoad } from "src/utils/ark.js";
 import KagentTableBody from "components/Kagent/KagentTableBody.vue";
 export default {
   name: "KagentListTable",
@@ -89,17 +88,6 @@ export default {
     const confirmDelete = ref({});
     const rows = ref([]);
     onMounted(async () => {
-      // let dat = {
-      //   tableNameLoad: props.tableName,
-      // };
-      // let mess = "Загрузка " + props.tableName;
-      // let res = await dataLoad("/api/spravLoad", dat, mess);
-      // console.log(res);
-      // if (res.result) {
-      //   rows.value = res.result;
-      // } else {
-      //   rows.value = [];
-      // }
     });
 
     return {

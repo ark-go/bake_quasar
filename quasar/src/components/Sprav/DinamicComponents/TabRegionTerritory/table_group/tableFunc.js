@@ -8,7 +8,6 @@ export function useTableFunc(nameTable, rows, parentRow) {
   console.log("load loadload parentId", nameTable, parentRow); // там регион строка
   async function loadTable(command = { cmd: "load", parentId: parentRow?.id }) {
     let mess = "Загрузка пекарен";
-    // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
     let res = await dataLoad(url.value, command, mess);
     if (res.result) {
       rows.value = res.result;

@@ -39,7 +39,7 @@ import {
   watch,
   watchEffect,
 } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 export default {
   name: "KagentSelectLazy",
   props: {
@@ -59,6 +59,7 @@ export default {
   },
   emits: ["update:currentId"],
   setup(props, { attrs, slots, emit, expose }) {
+    const arkUtils = useArkUtils();
     const selectRef = ref({});
     const options = ref(null);
     const optionsBuff = ref(null);
@@ -86,7 +87,7 @@ export default {
 
     async function spravLoad() {
       let dat = { tableNameLoad: props.spravName };
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/spravLoad",
         dat,
         `список ${props.spravName}`

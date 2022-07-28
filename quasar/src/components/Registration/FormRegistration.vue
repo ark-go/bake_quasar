@@ -202,7 +202,6 @@ import generatePassword from "password-generator";
 import ArkCard from "./ArkCard.vue";
 import { axios } from "boot/axios";
 import { Notify } from "quasar";
-import { dataLoad } from "src/utils/ark.js";
 //import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 

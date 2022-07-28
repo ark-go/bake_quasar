@@ -24,7 +24,6 @@ export function useTableFunc(rows, nameTable) {
     let command = { cmd: "load", allUsers: true };
     command.historyDate = dateToDateUnix(spravStore.historyDate);
     let mess = "Загрузка пользователей";
-    // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
     let url = "/api/" + nameTable;
     let res = await dataLoad(url, command, mess);
     if (res.result) {

@@ -8,7 +8,6 @@ export function useTableFunc(nameTable, rows) {
 
   async function loadTable(command = { cmd: "load", free: true }) {
     let mess = "Загрузка пекарен";
-    // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
     let res = await dataLoad(url.value, command, mess);
     if (res.result) {
       rows.value = res.result;

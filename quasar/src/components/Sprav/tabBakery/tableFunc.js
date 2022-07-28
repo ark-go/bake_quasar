@@ -6,7 +6,6 @@ export function useTableFunc(nameTable) {
   async function loadTable(historyDate, command = { cmd: "load" }) {
     command.historyDate = historyDate;
     let mess = "Загрузка пекарен";
-    // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
     let url = "/api/" + nameTable;
     let res = await dataLoad(url, command, mess);
     if (res.result) {

@@ -58,7 +58,6 @@ import {
   nextTick,
   onMounted,
 } from "vue";
-import { dataLoad } from "src/utils/ark.js";
 import NoTable from "components/Products/NoTable.vue";
 //import ArkCard from "components/Card/ArkCard.vue";
 import ArkCard from "components/Products/ArkCard.vue";

@@ -66,12 +66,13 @@
 <script>
 import { ref, watchEffect } from "vue";
 import { arkVuex } from "src/utils/arkVuex"; // const { pdfWindow } = createArkVuex();
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { useQuasar } from "quasar";
 import { dom } from "quasar";
 export default {
   setup() {
     const q = useQuasar();
+    const arkUtils = useArkUtils();
     const { pdfWindow } = arkVuex();
     const command = ref(pdfWindow.command);
     const pdfSrc = ref("");
@@ -100,8 +101,7 @@ export default {
     // const maximizedToggle = ref(true);
     async function loadData(dat) {
       console.log("pdfDialog", dat);
-      //  let res = await dataLoad("/api/pdfget", command, "Запрос PDF");
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/pdfmodal",
         { action: "products" },
         "Запрос PDF"

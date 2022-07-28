@@ -65,8 +65,6 @@
 </template>
 
 <script>
-//import TableBody from "./TableBody.vue";
-import { dataLoad } from "src/utils/ark.js";
 import ButtonMenuTableBody from "./ButtonMenuTableBody.vue";
 import ButtonMenuTableHeader from "./ButtonMenuTableHeader.vue";
 import NoDataFooter from "components/NoDataFooter.vue";

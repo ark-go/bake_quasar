@@ -104,13 +104,12 @@ import {
   watchEffect,
   unref,
 } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import NoDataFooter from "components/NoDataFooter.vue";
 import KagentDialog from "components/Kagent/KagentDialog.vue";
 import KagentTableBody from "components/Kagent/KagentTableBody.vue";
 import { Meta } from "quasar";
 
-//dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "SpravTable",
   components: {
@@ -119,6 +118,7 @@ export default defineComponent({
     KagentDialog,
   },
   setup(props) {
+    const arkUtils = useArkUtils();
     const allDataDialog = ref({
       userId: -1,
       userName: "Петров",
@@ -154,7 +154,7 @@ export default defineComponent({
     }
     async function loadTable() {
       let mess = "Загрузка контрагентов";
-      let res = await dataLoad("/api/kagentLoad", {}, mess);
+      let res = await arkUtils.dataLoad("/api/kagentLoad", {}, mess);
       if (res.result) {
         rows.value = res.result;
       } else {
@@ -188,38 +188,6 @@ export default defineComponent({
       }
 
       // ----------------------------------
-      // let d = { tableNameLoad: "kagentvid" };
-      // let res = await dataLoad("/api/spravLoad", d, "Виды контрагента");
-      // let vid_id = {};
-      // if (res.result) {
-      //   vid_id = {
-      //     allData: {
-      //       nameLabel: "Вид контрагента",
-      //       options: res.result,
-      //       optLabel: "name",
-      //       modelValue: null,
-      //     },
-      //   };
-      // }
-
-      // allDataDialog.value.vid_id = vid_id;
-      // // ----------------------------------
-      // d = { tableNameLoad: "kagentgroup" };
-      // res = await dataLoad("/api/spravLoad", d, "Группы контрагента");
-      // let group_id = {};
-      // if (res.result) {
-      //   group_id = {
-      //     allData: {
-      //       nameLabel: "Группа контрагента",
-      //       options: res.result,
-      //       optLabel: "name",
-      //       modelValue: null,
-      //     },
-      //   };
-      // }
-      // allDataDialog.value.group_id = group_id;
-
-      // ----------------------------------
       let vidreg = {
         allData: {
           modelValue: [], //res.result.find(
@@ -247,7 +215,7 @@ export default defineComponent({
       };
 
       if (dat.id) {
-        let res = await dataLoad(
+        let res = await arkUtils.dataLoad(
           "/api/kagentUpdate",
           dat,
           "Обновление контрагента"
@@ -260,7 +228,7 @@ export default defineComponent({
         return res;
       } else {
         // вернет записанную строку целиком в result
-        let res = await dataLoad(
+        let res = await arkUtils.dataLoad(
           "/api/kagentAdd",
           dat,
           "Добавление контрагента"
@@ -286,7 +254,7 @@ export default defineComponent({
     async function kagentDel(id) {
       let mess = "Удаление контрагента";
       let dat = { id: id };
-      let res = await dataLoad("/api/kagentDelete", dat, mess);
+      let res = await arkUtils.dataLoad("/api/kagentDelete", dat, mess);
       if (res.result) {
         allDataDialog.value.id = res.result.id; // удалить у нас оно еще в окне нвисит
         await loadTable();

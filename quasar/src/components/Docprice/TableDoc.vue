@@ -71,7 +71,7 @@ import {
   watchEffect,
   unref,
 } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import NoDataFooter from "components/NoDataFooter.vue";
 //import FormDialog from "./FormDialog.vue";
 import TableBody from "./TableBody.vue";
@@ -82,7 +82,6 @@ import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 //import { emitter } from "src/boot/axios";
 //import { Meta } from "quasar";
 
-//dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "TableDoc",
   components: {
@@ -98,6 +97,7 @@ export default defineComponent({
   },
   setup(props, { emit }) {
     const $q = useQuasar();
+    const arkUtils = useArkUtils();
     const { cardMain } = storeToRefs(usePagesSetupStore());
     const docPrice = useDocPrice();
     const rows = ref([]);
@@ -124,7 +124,7 @@ export default defineComponent({
     }
     async function loadTable(datRange = props.dateRange) {
       let mess = "Загрузка документов";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         { cmd: "load", tabname: "docprice", dateRange: datRange },
         mess
@@ -137,7 +137,7 @@ export default defineComponent({
     }
     async function deleteTable(row) {
       let mess = "Удаление";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         { id: row.id, cmd: "delete", tabname: "docprice" },
         mess
@@ -165,7 +165,7 @@ export default defineComponent({
     async function addTable(row) {
       let mess = "Добавить документ";
       console.log("SAVE-0: ", row);
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         { ...row, ...{ cmd: "add", tabname: "docprice" } },
         mess
@@ -229,14 +229,6 @@ export default defineComponent({
 
       //--------------------
     }
-    // async function loadAllSprav() {
-    //   let res = await dataLoad(
-    //     "/api/docprice",
-    //     { cmd: "allSprav", tabname: props.tabname },
-    //     "Чтение справочников для вида продукции"
-    //   );
-    //   return res?.result || [];
-    // }
     async function showDialogStart(row) {
       emit("onShowDialog", row);
     }

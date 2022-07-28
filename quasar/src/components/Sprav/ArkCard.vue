@@ -8,7 +8,9 @@
       @click.right.prevent="$emit('stop')"
     >
       <div :ref="(el) => (refTopSection = el)">
-        <q-card-section>
+        <q-card-section
+          :class="{ 'bg-red-3': spravStore.historyOn && historyOn }"
+        >
           <div class="row items-center no-wrap">
             <div class="col">
               <div

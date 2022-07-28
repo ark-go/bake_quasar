@@ -10,7 +10,6 @@ export function useTableFunc(nameTable, rows, parentRow) {
     command = { cmd: "load", nogroup: true, parentId: parentRow?.id }
   ) {
     let mess = "Загрузка пекарен";
-    // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
     let res = await dataLoad(url.value, command, mess);
     if (res.result) {
       rows.value = res.result;

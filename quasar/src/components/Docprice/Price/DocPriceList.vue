@@ -62,7 +62,7 @@
 <script>
 import { useDocPrice } from "stores/storeDocPrice.js";
 import { useQuasar } from "quasar";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { defineComponent, ref, nextTick, onMounted, computed } from "vue";
 import ButtonItem from "../ButtonItem.vue";
 import DocPriceListTable from "./DocPriceListTable.vue";
@@ -72,6 +72,7 @@ export default defineComponent({
   components: { ButtonItem, DocPriceListTable, FormDialogProduct },
   setup(props, { emit }) {
     const { notify, dialog } = useQuasar();
+    const arkUtils = useArkUtils();
     const docPrice = useDocPrice(); // currRowPrice - выбор
     const showDialog = ref(false);
     const rowsSprav = ref([]);
@@ -82,7 +83,7 @@ export default defineComponent({
     });
     async function loadTable() {
       let mess = "Загрузка прайса";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         {
           cmd: "load",
@@ -100,7 +101,7 @@ export default defineComponent({
     }
     async function loadTableSprav() {
       let mess = "Загрузка продуктов";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         {
           cmd: "loadTovars", // "loadProducts",
@@ -119,7 +120,7 @@ export default defineComponent({
     async function addTable(rowProducts) {
       //if (selectId.value < 1) return;
       let mess = "Добавить документ";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         {
           cmd: "add",
@@ -182,7 +183,7 @@ export default defineComponent({
     }
     async function deleteTable(rowPriceList) {
       let mess = "Удаление";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         {
           id: rowPriceList.id,

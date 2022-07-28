@@ -41,7 +41,6 @@
   </q-dialog>
 </template>
 <script>
-import { dataLoad } from "src/utils/ark.js";
 import { useQuasar } from "quasar";
 import { ref, defineComponent, onMounted, onUnmounted } from "vue";
 export default defineComponent({

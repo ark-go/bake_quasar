@@ -118,7 +118,8 @@ import { visibleCol } from "src/utils/visibleCol.js";
 import StoreBuiltIn from "components/StoreBuiltIn.vue";
 import { Screen } from "quasar";
 //import { useState, Task } from "src/utils/useState.js";
-import { useState, dataLoad } from "src/utils/ark.js";
+import { useState } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 //import PartnersForm from "components/PartnersForm.vue";
 import { useQuasar } from "quasar";
 
@@ -132,6 +133,7 @@ export default {
     StoreBuiltIn,
   },
   setup(props, { emit }) {
+    const arkUtils = useArkUtils();
     const { vidTable } = useState(); // import { useState, Task } from "src/utils/useState.js";
     // console.log("::::::::::", vidTable.specDocStore);
     let rows = ref([]);
@@ -254,6 +256,68 @@ export default {
     watch(groupSelect, async () => {
       await dataAllLoad();
     });
+    async function dataLoadM(groupData, rowData, isChilds = false) {
+      return await arkUtils.dataLoad("/api/specdocLoad", {
+        groupby: groupData, //["store_name", "region", "city", "street"],
+        rowData: rowData, // выбранные данные
+        isChilds: isChilds, // если true - выдавать детей по группе
+      });
+      return;
+      try {
+        let resp = await axios.post("/api/specdocLoad", {
+          groupby: groupData, //["store_name", "region", "city", "street"],
+          rowData: rowData, // выбранные данные
+          isChilds: isChilds, // если true - выдавать детей по группе
+        });
+        let data = resp.data;
+        // console.log("specdocLoad", data.result);
+        return data;
+      } catch (err) {
+        console.log(err);
+        return {
+          error: "specdocLoad: Ошибка чтения данных",
+        };
+      }
+    }
+    // ждем массив группировки
+    // отправляем запрос магазинов по выбранной группировке и дате
+    async function dataExpandTableLoad(groupData, rowData) {
+      console.log("отправляем", rowData);
+      return await dataLoadM(groupData, rowData, true);
+    }
+    function getColumnsGroup(groupSelect, groupAll) {
+      let result = [];
+      groupSelect.forEach((item) => {
+        let res = {};
+        // поиск объекта в массиве объектов
+        res.name = item;
+        res.label = groupAll.find((x) => x.value.field === item).label; // русское
+        res.sortId = groupAll.find((x) => x.value.field === item).value.sortId; // Сортировка
+        res.align = "left";
+        res.field = item;
+        result.push(res);
+      });
+      //result.sort(sortColumn);
+      result.push({
+        name: "count",
+        label: "Позиций",
+        align: "center",
+        field: "count",
+      });
+      // console.log("Колонки", result);
+      return result;
+    }
+    // для сортировки столбцов
+    function sortColumn(a, b) {
+      if (a.sortId < b.sortId) {
+        return -1;
+      }
+      if (a.sortId > b.sortId) {
+        return 1;
+      }
+      return 0;
+    }
+
     return {
       Screen,
       editData,
@@ -329,99 +393,6 @@ export default {
     };
   },
 };
-async function dataLoadM(groupData, rowData, isChilds = false) {
-  return await dataLoad("/api/specdocLoad", {
-    groupby: groupData, //["store_name", "region", "city", "street"],
-    rowData: rowData, // выбранные данные
-    isChilds: isChilds, // если true - выдавать детей по группе
-  });
-  return;
-  try {
-    let resp = await axios.post("/api/specdocLoad", {
-      groupby: groupData, //["store_name", "region", "city", "street"],
-      rowData: rowData, // выбранные данные
-      isChilds: isChilds, // если true - выдавать детей по группе
-    });
-    let data = resp.data;
-   // console.log("specdocLoad", data.result);
-    return data;
-  } catch (err) {
-    console.log(err);
-    return {
-      error: "specdocLoad: Ошибка чтения данных",
-    };
-  }
-}
-// ждем массив группировки
-// отправляем запрос магазинов по выбранной группировке и дате
-async function dataExpandTableLoad(groupData, rowData) {
-  console.log("отправляем", rowData);
-  return await dataLoadM(groupData, rowData, true);
-}
-function getColumnsGroup(groupSelect, groupAll) {
-  let result = [];
-  groupSelect.forEach((item) => {
-    let res = {};
-    // поиск объекта в массиве объектов
-    res.name = item;
-    res.label = groupAll.find((x) => x.value.field === item).label; // русское
-    res.sortId = groupAll.find((x) => x.value.field === item).value.sortId; // Сортировка
-    res.align = "left";
-    res.field = item;
-    result.push(res);
-  });
-  //result.sort(sortColumn);
-  result.push({
-    name: "count",
-    label: "Позиций",
-    align: "center",
-    field: "count",
-  });
- // console.log("Колонки", result);
-  return result;
-}
-// для сортировки столбцов
-function sortColumn(a, b) {
-  if (a.sortId < b.sortId) {
-    return -1;
-  }
-  if (a.sortId > b.sortId) {
-    return 1;
-  }
-  return 0;
-}
-// const columnsGroup = [
-//   {
-//     name: "store_name", // value
-//     label: "Магазин",
-//     align: "left",
-//     field: "store_name",
-//   },
-//   {
-//     name: "date_start",
-//     label: "Дата",
-//     align: "right",
-//     field: "date_start",
-//   },
-//   {
-//     name: "doc_number",
-//     label: "№ Документа",
-//     align: "left",
-//     field: "doc_number",
-//   },
-//   {
-//     name: "count",
-//     label: "Позиций",
-//     align: "center",
-//     field: "count",
-//   },
-//   {
-//     name: "prim",
-//     label: "Примечание",
-//     align: "left",
-//     field: "prim",
-//   },
-// ];
 
 const columnsAll = [
   {

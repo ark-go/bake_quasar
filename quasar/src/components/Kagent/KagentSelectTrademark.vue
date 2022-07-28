@@ -42,7 +42,7 @@ import {
   watch,
   watchEffect,
 } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 export default {
   name: "KagentSelectTrademark",
   props: {
@@ -62,6 +62,7 @@ export default {
   },
   emits: ["update:currentId"],
   setup(props, { attrs, slots, emit, expose }) {
+    const arkUtils = useArkUtils();
     const selectRef = ref({});
     const options = ref(null);
     const optionsBuff = ref(null);
@@ -106,7 +107,11 @@ export default {
 
     async function loadTrademarkKagent() {
       let dat = { cmd: "loadTrademark", kagent_id: props.currentId };
-      let res = await dataLoad("/api/kagent_tm", dat, `список ${props.title}`);
+      let res = await arkUtils.dataLoad(
+        "/api/kagent_tm",
+        dat,
+        `список ${props.title}`
+      );
       console.log("++++ loadTrademark", res.result);
       if (res.result) {
         return res.result;
@@ -117,7 +122,11 @@ export default {
 
     async function loadOptions() {
       let dat = { cmd: "load", tabname: "trademark" };
-      let res = await dataLoad("/api/trademark", dat, `список ${props.title}`);
+      let res = await arkUtils.dataLoad(
+        "/api/trademark",
+        dat,
+        `список ${props.title}`
+      );
       console.log("+++++ loadOptions ", res.result);
       if (res.result) {
         return res.result;
@@ -131,7 +140,11 @@ export default {
         idKagent: props.currentId,
         idTrademark: id,
       };
-      let res = await dataLoad("/api/kagent_tm", dat, `список ${props.title}`);
+      let res = await arkUtils.dataLoad(
+        "/api/kagent_tm",
+        dat,
+        `список ${props.title}`
+      );
       console.log("++++++++++++++++Ю+", res.result);
 
       if (res.result) {
@@ -147,7 +160,11 @@ export default {
         idKagent: props.currentId,
         idTrademark: id,
       };
-      let res = await dataLoad("/api/kagent_tm", dat, `список ${props.title}`);
+      let res = await arkUtils.dataLoad(
+        "/api/kagent_tm",
+        dat,
+        `список ${props.title}`
+      );
       console.log("++++++++++++++++Ю+", res.result);
       if (res.result) {
         optionsBuff.value = await loadOptions();

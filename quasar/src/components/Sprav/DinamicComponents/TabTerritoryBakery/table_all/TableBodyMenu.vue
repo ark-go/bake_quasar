@@ -16,8 +16,6 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import { dataLoad } from "src/utils/ark.js";
-// для  свойства componentBodyMenu у Table
 export default defineComponent({
   name: "TableBodyMenu",
   components: {},
@@ -44,11 +42,6 @@ export default defineComponent({
     }
     async function commandTable() {
       console.log("хотим удалить", props.row?.id);
-      // let res = await dataLoad(
-      //   "/api/bakery",
-      //   { cmd: "deleteFromGroup", id: props.row?.id },
-      //   "Удаляем из группы пекарен"
-      // );
       console.log("refTable", props.funcTable);
       if (props.funcTable) {
         let r = await props.funcTable();

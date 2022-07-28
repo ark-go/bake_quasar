@@ -68,7 +68,6 @@
 <script>
 import ButtonMenuTableBody from "./ButtonMenuTableBody.vue";
 import ButtonMenuTableHeader from "./ButtonMenuTableHeader.vue";
-import { dataLoad } from "src/utils/ark.js";
 import NoDataFooter from "components/NoDataFooter.vue";
 import FindTable from "./FindTable.vue";
 import { useDocPrice } from "stores/storeDocPrice.js";
@@ -92,23 +91,7 @@ export default {
     onMounted(() => {
       // loadTable();
     });
-    // async function loadTable() {
-    //   let mess = "Загрузка документов";
-    //   let res = await dataLoad(
-    //     "/api/docprice",
-    //     {
-    //       cmd: "load",
-    //       tabname: "bakery",
-    //
-    //     },
-    //     mess
-    //   );
-    //   if (res.result) {
-    //     rows.value = res.result;
-    //   } else {
-    //     rows.value = [];
-    //   }
-    // }
+
     return {
       //  rows,
       visibleColumns,

@@ -108,7 +108,6 @@ import ArkTableCell from "components/Sprav/ArkTableCell.vue";
 import ArkTableBody from "components/Sprav/ArkTableBody.vue";
 import SpravDialog from "components/Sprav/SpravDialog.vue";
 import FindTable from "./FindTable.vue";
-//dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "SpravTable",
   components: {

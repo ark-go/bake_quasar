@@ -178,7 +178,7 @@
 <script>
 import { defineComponent, ref, unref, onMounted, nextTick } from "vue";
 import ArkCard from "components/Card/ArkCard.vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 //import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 
@@ -189,6 +189,7 @@ export default defineComponent({
   },
   setup() {
     //  const $q = useQuasar();
+    const arkUtils = useArkUtils();
     const $router = useRouter();
     const treeNodes = ref([]);
     const expanded = ref([]);
@@ -271,7 +272,7 @@ export default defineComponent({
       console.log("added", res);
     }
     async function loadDepartments() {
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/departments",
         { cmd: "load" },
         "Чтение дерева"
@@ -279,7 +280,7 @@ export default defineComponent({
       return res?.result;
     }
     async function depAddDell(cmd, dat) {
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/departments",
         { ...dat, ...{ cmd: cmd } },
         "Удаление дерева"

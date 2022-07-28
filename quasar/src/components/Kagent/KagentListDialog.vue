@@ -38,7 +38,7 @@
 import { ref, onMounted } from "vue";
 import KagentListTable from "components/Kagent/KagentListTable.vue";
 import KagentSpravTable from "components/Kagent/KagentSpravTable.vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 export default {
   components: {
     KagentListTable,
@@ -57,13 +57,14 @@ export default {
     agentName: String,
   },
   setup(props) {
+    const arkUtils = useArkUtils();
     const rowsList = ref([]);
     const rowsSprav = ref([]);
     // перечитываем список контрагента
     async function listLoad(kagentId, listName) {
       console.log("Загрузка List", kagentId, listName);
       let dat = { tableName: listName, id: kagentId };
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/kagentListLoad",
         dat,
         `список ${listName} контрагента`
@@ -77,7 +78,7 @@ export default {
       let dat2 = {
         tableNameLoad: props.spravName,
       };
-      let resS = await dataLoad(
+      let resS = await arkUtils.dataLoad(
         "/api/spravLoad",
         dat2,
         `Справочник ${props.spravName}`
@@ -112,7 +113,7 @@ export default {
           kagentId: props.kagentId,
           kagentSpravId: id,
         };
-        let res = await dataLoad(
+        let res = await arkUtils.dataLoad(
           "/api/kagentListAdd",
           dat,
           `Добавляем в список ${listName} контрагента`
@@ -125,7 +126,7 @@ export default {
           idList: id,
         };
         console.log("удаляем из списка", dat);
-        let res = await dataLoad(
+        let res = await arkUtils.dataLoad(
           "/api/kagentListDelete",
           dat,
           `Удаляем из списка ${props.listName} контрагента`

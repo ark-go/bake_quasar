@@ -69,7 +69,6 @@
 </template>
 <script>
 import { ref, onMounted } from "vue";
-import { dataLoad } from "src/utils/ark.js";
 import KagentTableBody from "components/Kagent/KagentTableBody.vue";
 export default {
   name: "KagentListTable",

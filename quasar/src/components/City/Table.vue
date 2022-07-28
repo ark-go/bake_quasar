@@ -89,7 +89,7 @@ import {
   watchEffect,
   unref,
 } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { getSprav } from "./getSprav";
 import { useQuasar } from "quasar";
 import NoDataFooter from "components/NoDataFooter.vue";
@@ -115,6 +115,7 @@ export default defineComponent({
   },
   setup(props) {
     const $q = useQuasar();
+    const arkUtils = useArkUtils();
     const tableNameSting = ref("");
     const rows = ref([]);
     const visibleColumns = ref([]);
@@ -184,7 +185,7 @@ export default defineComponent({
       }
       console.log("Пришло и готово на запись ", cmd, valUn);
       let mess = "Обновление " + props.tableInfo.label; // сообщение в загрузчик для
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         url.value,
         { ...valUn, cmd: cmd }, // если нет cmd то update
         mess
@@ -204,7 +205,11 @@ export default defineComponent({
       // приходит строка таблицы в row
       console.log("Пришло и готово на удаление ", val.id);
       let mess = "Удаление " + tableNameSting.value + " / " + val.name;
-      let res = await dataLoad(url.value, { ...val, cmd: "delete" }, mess);
+      let res = await arkUtils.dataLoad(
+        url.value,
+        { ...val, cmd: "delete" },
+        mess
+      );
       if (res.error) {
         return console.log("Ошибка удаления:", dataToBase);
       }
@@ -244,7 +249,7 @@ export default defineComponent({
         cmd: "load",
       };
       let mess = "Загрузка " + props.tableInfo.label;
-      let res = await dataLoad(url.value, dat, mess);
+      let res = await arkUtils.dataLoad(url.value, dat, mess);
       if (res.result) {
         rows.value = res.result;
       } else {

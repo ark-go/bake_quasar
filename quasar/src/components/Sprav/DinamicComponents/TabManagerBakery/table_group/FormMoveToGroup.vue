@@ -58,7 +58,6 @@ import {
   watch,
 } from "vue";
 import { useQuasar } from "quasar";
-import { dataLoad } from "src/utils/ark.js";
 // для  свойства componentBodyMenu у Table
 export default defineComponent({
   name: "FormAddToGroup",

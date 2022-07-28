@@ -87,8 +87,6 @@
 import { defineComponent, ref, onMounted, watch, watchEffect } from "vue";
 import { useQuasar } from "quasar";
 import FormInput from "./FormInput.vue";
-//import SelectDateExt from "./SelectDateExt.vue";
-import { dataLoad } from "src/utils/ark.js";
 import FieldSelect from "./FieldSelect.vue";
 export default defineComponent({
   name: "FormDialogProduct",
@@ -114,16 +112,7 @@ export default defineComponent({
       // перед открытием, надо скачать справочники
       console.log("Показываем окно: ", currentRow.value);
     }
-    // async function loadTable() {
-    //   let mess = "Загрузка справочников";
-    //   let res = await dataLoad(
-    //     "/api/docprice",
-    //     { cmd: "allSprav", tabname: "docprice" },
-    //     mess
-    //   );
-    //   allSprav.value = res?.result || [];
-    //   console.log("справ", allSprav.value);
-    // }
+
     return {
       //    allSprav,
       emit,

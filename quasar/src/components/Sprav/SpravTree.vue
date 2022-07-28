@@ -18,7 +18,7 @@
     <q-tree
       class="non-selectable text-no-wrap"
       :ref="(el) => (refTree = el)"
-      :nodes="dataTree"
+      :nodes="dataTreeFilter"
       node-key="key"
       v-model:selected="selected"
       no-connectors
@@ -47,7 +47,8 @@
 </template>
 
 <script>
-import { defineComponent, ref, watch } from "vue";
+import { defineComponent, ref, onMounted, watch } from "vue";
+import { useUserStore } from "src/stores/userStore";
 import TreeModel from "tree-model";
 
 export default defineComponent({
@@ -58,11 +59,38 @@ export default defineComponent({
   },
   emits: ["update:selectedNode"],
   setup(props, { emit }) {
+    const userStore = useUserStore();
     const expanded = ref([]);
     const selected = ref(null);
     const refTree = ref(null);
     const filter = ref("");
     const filterRef = ref(null);
+    const dataTreeFilter = ref([]);
+    onMounted(() => {
+      dataTreeFilter.value = dataTreePermiss(dataTree);
+      console.log("ЮЗЕР: ", userStore.userInfo.email);
+    });
+    function dataTreePermiss(rootOriginal) {
+      let result = [];
+      let tree = new TreeModel();
+      rootOriginal.forEach((element) => {
+        let root = tree.parse(element);
+        var nodesDrop = root.all(function (node) {
+          console.log("rootttree", node);
+          return (
+            node.model.permiss && node.model.permiss != "Arkadii@yandex.ru"
+          );
+        });
+        nodesDrop.forEach(function (node) {
+          console.log("node>>", node);
+          node.drop();
+        });
+        console.log("rootres>>", root);
+        result.push(root.model);
+      });
+      return result;
+      //return root.model;
+    }
     function clickTreeNode(key) {
       // let node = refTree.value.getNodeByKey(key);
       let isExp = refTree.value.isExpanded(key);
@@ -89,7 +117,7 @@ export default defineComponent({
     function getParentTree(key) {
       let parents = [];
       let tree = new TreeModel();
-      dataTree.forEach((element) => {
+      dataTreeFilter.value.forEach((element) => {
         let rootMain = tree.parse(element);
         rootMain.walk(function (node) {
           if (node.model.key === key) {
@@ -104,6 +132,7 @@ export default defineComponent({
     }
 
     return {
+      dataTreeFilter,
       refTree,
       filter,
       filterRef,
@@ -149,7 +178,11 @@ const dataTree = [
     helpCode: "TreeHelp-1", //! менять коды нельзя.. это ключи в базу данных
     //icon: "restaurant_menu",
     children: [
-      { key: 11, label: "Вид контрагента", tableName: "kagentvid" },
+      {
+        key: 11,
+        label: "Вид контрагента",
+        tableName: "kagentvid",
+      },
       { key: 12, label: "Вид регистрации", tableName: "kagentvidreg" },
       { key: 13, label: "Группы контрагента", tableName: "kagentgroup" },
     ],
@@ -244,7 +277,40 @@ const dataTree = [
           { name: "managerBakery", label: "Пекарни", icon: "home" },
         ],
       },
-      { key: 36, label: "Города", tableName: "city", tableType: "city" },
+      {
+        key: 4,
+        label: "Контрагенты",
+        helpCode: "TreeHelp-Контрагенты", //! менять коды нельзя.. это ключи в базу данных
+        // icon: "room_service",
+        disabled: false,
+        children: [
+          {
+            key: 41,
+            label: "Торговых сетей",
+            tableName: "tabKagent",
+            tableType: "tabKagent",
+            component: "TabKagent", // расширение по умолчанию vue, будет TabKagent.vue
+            //  permiss: "Arkadii@yandex.ru",
+            buttonPanel: [
+              // name - название панели в TabManager.vue
+              { name: "kagentBakery", label: "Пекарни", icon: "home" },
+            ],
+          },
+        ],
+      },
+      {
+        key: 37,
+        label: "Торговые сети (пекарни)",
+        tableName: "tabTrademark",
+        tableType: "tabTrademark",
+        component: "TabTrademark", // расширение по умолчанию vue, будет TabTrademark.vue
+        // permiss: "Arkadii@yandex.ru",
+        buttonPanel: [
+          // name - название панели в TabManager.vue
+          { name: "trademarkBakery", label: "Пекарни", icon: "home" },
+        ],
+      },
+      { key: 38, label: "Города", tableName: "city", tableType: "city" },
     ],
   },
   // {

@@ -75,15 +75,13 @@ import {
   watchEffect,
   unref,
 } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import NoDataFooter from "components/NoDataFooter.vue";
 import FormDialog from "./FormDialog.vue";
 import TableBody from "./TableBody.vue";
 import FindTable from "./FindTable.vue";
 import { useQuasar } from "quasar";
-//import { Meta } from "quasar";
 
-//dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "SpravTable",
   components: {
@@ -98,6 +96,7 @@ export default defineComponent({
   },
   setup(props) {
     const $q = useQuasar();
+    const arkUtils = useArkUtils();
     const rows = ref([]);
     const visibleColumns = ref([]);
     const showDialog = ref(false);
@@ -126,7 +125,7 @@ export default defineComponent({
     async function loadTable() {
       let mess = "Загрузка Видов продукции";
       console.log("load: ", props.tabname);
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/products",
         { cmd: "load", tabname: props.tabname },
         mess
@@ -139,7 +138,7 @@ export default defineComponent({
     }
     async function deleteTable(row) {
       let mess = "Удаление";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/products",
         { id: row.id, cmd: "delete", tabname: props.tabname },
         mess
@@ -167,7 +166,7 @@ export default defineComponent({
     async function addTable(row) {
       let mess = "Добавление вида сырья";
       console.log("SAVE-0: ", row);
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/products",
         { ...row, ...{ cmd: "add", tabname: props.tabname } },
         mess
@@ -230,7 +229,7 @@ export default defineComponent({
       //--------------------
     }
     async function loadAllSprav() {
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/products",
         { cmd: "allSprav", tabname: props.tabname },
         "Чтение справочников для вида продукции"

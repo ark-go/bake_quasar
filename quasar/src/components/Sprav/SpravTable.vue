@@ -94,8 +94,7 @@ import {
   watchEffect,
   unref,
 } from "vue";
-//import { dataLoad } from "src/utils/ark.js";
-import { useArkUtils } from "src/utils/arkUtils";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { useQuasar } from "quasar";
 import NoDataFooter from "components/NoDataFooter.vue";
 import ArkTableBody from "components/Sprav/ArkTableBody.vue";

@@ -58,8 +58,6 @@ import {
   watch,
 } from "vue";
 import { useQuasar } from "quasar";
-import { dataLoad } from "src/utils/ark.js";
-// для  свойства componentBodyMenu у Table
 export default defineComponent({
   name: "FormAddToGroup",
   components: {
@@ -75,7 +73,7 @@ export default defineComponent({
     infoBakery: String,
     minDate: String,
     maxDate: String,
-    currentDate: String
+    currentDate: String,
   },
   emits: ["beforeShow", "update:show"],
   setup(props, { emit }) {
@@ -86,7 +84,7 @@ export default defineComponent({
     watch(
       () => props.minDate,
       () => {
-         valueDate.value = props.currentDate;
+        valueDate.value = props.currentDate;
         // valueDate.value = props.minDate;
         // if (props.minDate) {
         //   checkData.value = true;

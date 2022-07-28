@@ -33,7 +33,6 @@
   </q-dialog>
 </template>
 <script>
-//import { dataLoad } from "src/utils/ark.js";
 import { ref, defineComponent, onMounted, onUnmounted } from "vue";
 import { axios } from "boot/axios.js";
 import { useQuasar } from "quasar";
@@ -85,7 +84,6 @@ export default defineComponent({
     }
     async function loadPDF() {
       //let mess = "Загрузка PDF";
-      // let res = await dataLoad("/api/pdfMainLoad", props.param, mess);
       let res = await axios.post("/api/pdf", props.param, {
         responseType: "text",
         // headers: {

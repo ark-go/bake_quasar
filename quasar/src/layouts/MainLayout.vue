@@ -521,13 +521,13 @@ function linkList(roles = [], email) {
     //   icon: "dynamic_form",
     //   link: "/nomencl",
     // },
-    {
-      title: "Спецификации магазина",
-      caption: "Спецификации магазинов",
-      icon: "code",
-      link: "/specstore",
-      visible: roles.includes("ADMIN"),
-    },
+    // {
+    //   title: "Спецификации магазина",
+    //   caption: "Спецификации магазинов",
+    //   icon: "code",
+    //   link: "/specstore",
+    //   visible: roles.includes("ADMIN"),
+    // },
     // {
     //   title: "Продажи",
     //   caption: "продажи, регистрация",

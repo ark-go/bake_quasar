@@ -57,7 +57,7 @@ import DocBakeTable from "./DocBakeTable.vue";
 //import DocBakeSelect from "./DocBakeSelect.vue";
 import ButtonItemMenu from "./ButtonItemMenu.vue";
 import ButtonMenuTable from "./ButtonMenuTable.vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { useDocPrice } from "stores/storeDocPrice.js";
 import { ref, onMounted, watch } from "vue";
 export default {
@@ -70,6 +70,7 @@ export default {
     ButtonMenuTable,
   },
   setup(props, { emit }) {
+    const arkUtils = useArkUtils();
     const docPrice = useDocPrice();
     const rowsSprav = ref([]);
     const rows = ref([]);
@@ -102,7 +103,7 @@ export default {
     async function loadTable() {
       console.log("Загрузка документов:", docPrice.currRowDoc);
       let mess = "Загрузка документов";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         {
           cmd: "load",
@@ -119,7 +120,7 @@ export default {
     }
     async function loadTableSprav() {
       let mess = "Загрузка документов";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         {
           cmd: "loadSprav",
@@ -138,7 +139,7 @@ export default {
     async function addTable(rowBakery) {
       //if (selectId.value < 1) return;
       let mess = "Добавить документ";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         {
           cmd: "add",
@@ -187,7 +188,7 @@ export default {
     async function deleteTable(rowBakery) {
       console.log(">>>>> del ", rowBakery);
       let mess = "Удаление";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         { id: rowBakery.id, cmd: "delete", tabname: "bakery" },
         mess

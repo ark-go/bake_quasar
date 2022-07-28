@@ -9,11 +9,12 @@
 </template>
 <script>
 import { ref, onMounted, onUnmounted } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 export default {
   name: "ProductsPdf", // pdfMainLoad
   props: ["cmd"],
   setup(props) {
+    const arkUtils = useArkUtils();
     const pdfData = ref("");
     const showPdf = ref(true);
     onMounted(() => {
@@ -26,7 +27,7 @@ export default {
     });
     async function loadTable() {
       let mess = "Загрузка прайса";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/pdfMainLoad",
         { command: "priselist" },
         mess

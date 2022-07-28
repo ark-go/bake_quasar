@@ -62,7 +62,7 @@
 <script>
 import { ref, onMounted, watch, nextTick } from "vue";
 import TextEditor from "./TextEditor.vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 
 export default {
   props: {
@@ -73,6 +73,7 @@ export default {
   },
   components: { TextEditor },
   setup(props) {
+    const arkUtils = useArkUtils();
     const nameHelp = ref("");
     const expandedEdit = ref(false);
     const editor = ref("<b>Нет справки</b>");
@@ -115,7 +116,7 @@ export default {
       };
       let mess = "Загрузка справки";
       let url = "/api/tabHelpPanels";
-      let res = await dataLoad(url, command, mess);
+      let res = await arkUtils.dataLoad(url, command, mess);
       if (res.result) {
         editor.value = res.result[0].text;
         nextTick(() => {
@@ -141,7 +142,7 @@ export default {
       };
       let mess = "Загрузка справки";
       let url = "/api/tabHelpPanels";
-      let res = await dataLoad(url, command, mess);
+      let res = await arkUtils.dataLoad(url, command, mess);
       if (res.result && res.result[0].text) {
         editor.value = res.result[0].text;
         nextTick(() => {

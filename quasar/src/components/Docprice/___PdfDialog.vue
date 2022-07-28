@@ -33,7 +33,7 @@
   </q-dialog>
 </template>
 <script>
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { ref, defineComponent, onMounted, onUnmounted } from "vue";
 export default defineComponent({
   name: "PdfDialog",
@@ -60,6 +60,7 @@ export default defineComponent({
     // command: String,
   },
   setup(props) {
+    const arkUtils = useArkUtils();
     const title = ref("");
     const pdfData = ref("");
     async function onBeforeShowDialog() {
@@ -72,7 +73,7 @@ export default defineComponent({
     // });
     async function loadTable() {
       let mess = "Загрузка PDF";
-      let res = await dataLoad("/api/pdfMainLoad", props.param, mess);
+      let res = await arkUtils.dataLoad("/api/pdfMainLoad", props.param, mess);
       if (res.result) {
         pdfData.value = res.result;
       } else {

@@ -80,16 +80,14 @@
 
 <script>
 import { defineComponent, ref, onMounted, computed, watchEffect } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import NoDataFooter from "components/NoDataFooter.vue";
 import FormDialog from "./FormDialog.vue";
 import TableBody from "./TableBody.vue";
 import FindTable from "./FindTable.vue";
 import { arkVuex } from "src/utils/arkVuex.js";
 import { useQuasar } from "quasar";
-//import { Meta } from "quasar";
 
-//dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "TableRaw",
   components: {
@@ -106,6 +104,7 @@ export default defineComponent({
   emits: ["addIngredient"],
   setup(props, { emit }) {
     const $q = useQuasar();
+    const arkUtils = useArkUtils();
     const { selectedRowsVuex } = arkVuex();
     const rows = ref([]);
     const visibleColumns = ref([]);
@@ -139,7 +138,7 @@ export default defineComponent({
       //! вызывается снаружи из родительского компонента напрямую
       currentTab.value = cmd;
       let mess = "Загрузка продукции";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/products",
         { cmd: cmd, tabname: tabname },
         // { cmd: cmd, tabname: "recept" },
@@ -172,7 +171,7 @@ export default defineComponent({
         dat.products_id_child = row.id;
       }
 
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/products",
         { ...dat, ...{ cmd: "add", tabname: "productingred" } },
         mess
@@ -223,14 +222,6 @@ export default defineComponent({
 
       //--------------------
     }
-    // async function loadAllSprav() {
-    //   let res = await dataLoad(
-    //     "/api/products",
-    //     { cmd: "allSprav", tabname: props.tabname },
-    //     "Чтение справочников для вида продукции"
-    //   );
-    //   return res?.result || [];
-    // }
     async function showDialogStart(row) {
       console.log("Dialog new show", row);
 

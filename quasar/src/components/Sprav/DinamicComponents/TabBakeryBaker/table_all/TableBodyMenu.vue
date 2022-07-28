@@ -16,7 +16,6 @@
 
 <script>
 import { defineComponent, ref } from "vue";
-import { dataLoad } from "src/utils/ark.js";
 // для  свойства componentBodyMenu у Table
 export default defineComponent({
   name: "TableBodyMenu",

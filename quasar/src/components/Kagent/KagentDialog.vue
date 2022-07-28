@@ -123,7 +123,6 @@ import KagentSelectLazy from "components/Kagent/KagentSelectLazy.vue";
 import KagentListSelect from "components/Kagent/KagentListSelect.vue";
 import KagentListDialog from "components/Kagent/KagentListDialog.vue";
 import KagentSelectTrademark from "components/Kagent/KagentSelectTrademark.vue";
-import { dataLoad } from "src/utils/ark.js";
 export default {
   components: {
     KagentInput,

@@ -91,7 +91,7 @@ import { defineComponent, ref, onMounted, watch, watchEffect } from "vue";
 import { useQuasar } from "quasar";
 import FormInput from "./FormInput.vue";
 import SelectDateExt from "./SelectDateExt.vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import FieldSelect from "./FieldSelect.vue";
 export default defineComponent({
   name: "FormDialogDoc",
@@ -105,6 +105,7 @@ export default defineComponent({
   emits: ["update:showDialog"],
   setup(props, { emit }) {
     const $q = useQuasar();
+    const arkUtils = useArkUtils();
     const currentRow = ref(null);
     const allSprav = ref({});
     onMounted(async () => {
@@ -118,7 +119,7 @@ export default defineComponent({
     }
     async function loadTable() {
       let mess = "Загрузка справочников";
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/docprice",
         { cmd: "allSprav", tabname: "docprice" },
         mess

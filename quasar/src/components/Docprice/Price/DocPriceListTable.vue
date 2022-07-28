@@ -66,8 +66,6 @@
 </template>
 
 <script>
-//import TableBody from "./TableBody.vue";
-import { dataLoad } from "src/utils/ark.js";
 import DocPriceTableBody from "./DocPriceTableBody.vue";
 import DocPriceTableHeader from "./DocPriceTableHeader.vue";
 import NoDataFooter from "components/NoDataFooter.vue";

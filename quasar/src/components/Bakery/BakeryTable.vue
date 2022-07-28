@@ -309,10 +309,10 @@ let columns = [
     required: true,
   },
   {
-    name: "trdemark_name",
+    name: "trademark_name",
     label: "Торг.сеть",
     align: "left",
-    field: "trdemark_name",
+    field: "trademark_name",
   },
   {
     name: "territory_name",
@@ -376,7 +376,7 @@ let columns = [
   },
   {
     name: "tm_kagent_name",
-    label: "Торг.сеть",
+    label: "Кагент Торг.сеть",
     align: "left",
     field: "tm_kagent_name",
   },

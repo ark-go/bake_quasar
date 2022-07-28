@@ -286,11 +286,35 @@ const dataTree = [
         children: [
           {
             key: 41,
-            label: "Торговых сетей",
+            label: "Торговых сетей (пекарни)",
             tableName: "tabKagent",
             tableType: "tabKagent",
             component: "TabKagent", // расширение по умолчанию vue, будет TabKagent.vue
             //  permiss: "Arkadii@yandex.ru",
+            buttonPanel: [
+              // name - название панели в TabManager.vue
+              { name: "kagentBakery", label: "Пекарни", icon: "home" },
+            ],
+          },
+          {
+            key: 42,
+            label: "Собственные (пекарни)",
+            tableName: "tabKagentOwn",
+            tableType: "tabKagentOwn",
+            component: "TabKagentOwn", // расширение по умолчанию vue, будет TabKagent.vue
+            // permiss: "Arkadii@yandex.ru",
+            buttonPanel: [
+              // name - название панели в TabManager.vue
+              { name: "kagentBakery", label: "Пекарни", icon: "home" },
+            ],
+          },
+          {
+            key: 43,
+            label: "Франчайзинг (пекарни)",
+            tableName: "tabKagentFranch",
+            tableType: "tabKagentFranch",
+            component: "TabKagentFranch", // расширение по умолчанию vue, будет TabKagent.vue
+            // permiss: "Arkadii@yandex.ru",
             buttonPanel: [
               // name - название панели в TabManager.vue
               { name: "kagentBakery", label: "Пекарни", icon: "home" },

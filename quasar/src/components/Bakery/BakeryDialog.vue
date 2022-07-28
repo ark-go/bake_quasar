@@ -34,23 +34,34 @@
               />
             </template>
           </q-field>
-
-          <bakery-select
+          <q-input
+            dense
+            label="Торговая сеть"
+            v-model="currentRow.trademark_name"
+            readonly
+          ></q-input>
+          <!-- <bakery-select
             label="Торговая сеть"
             :sprav="allSprav.trademark"
             v-model:selectId="currentRow.trademark_id"
-          ></bakery-select>
+          ></bakery-select> -->
           <bakery-select
             label="Контрагент Собственный"
             :filter="{ key: 'owncompany', val: true }"
             :sprav="allSprav.noFranchKagent"
             v-model:selectId="currentRow.own_kagent_id"
           ></bakery-select>
-          <bakery-select
+          <q-input
+            dense
+            label="Контрагент Торговой сети"
+            v-model="currentRow.tm_kagent_name"
+            readonly
+          ></q-input>
+          <!-- <bakery-select
             label="Контрагент Торговой сети"
             :sprav="spravKagentTrademark"
             v-model:selectId="currentRow.kagent_tm_id"
-          ></bakery-select>
+          ></bakery-select> -->
           <bakery-select
             :showClear="currentRow.franch"
             :filter="{ key: 'franchising', val: true }"

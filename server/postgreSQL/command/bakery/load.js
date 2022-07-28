@@ -32,8 +32,10 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.franch,
      -- ${dateend}
       to_char(${tabname}.dateopen,  'DD.MM.YYYY') as date_start, to_char(${tabname}.dateclose,  'DD.MM.YYYY') as date_end,
-      ${tabname}.trademark_id,
-      trademark.name AS trdemark_name,
+     -- ${tabname}.trademark_id,
+     -- trademark.name AS trdemark_name,
+     trademark_g.name as trademark_name,
+
       ${tabname}.territory_id,
       -- territory.name AS territory_name,
       territory_g.name AS territory_name,
@@ -53,13 +55,11 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.ispack,     -- есть упаковка
       ${tabname}.own_kagent_id,
       ownkagent.name AS own_kagent_name,
-
-      --${tabname}.tm_kagent_id,         -- new kagent_tm_id   торговые сети
-      --tmkagent.name AS tm_kagent_name, --  торговые сети
       --
-      ${tabname}.kagent_tm_id,          -- ID из списка trademark/kagent Торговые сети
-      tmkagent.name AS tm_kagent_name, -- Имя контрагента Торогоые сети
-      tmkagent.id AS tm_kagent_id,     -- не нужно? ID контрагента  Торговые сети
+     -- ${tabname}.kagent_tm_id,          -- ID из списка trademark/kagent Торговые сети
+     -- tmkagent.name AS tm_kagent_name, -- Имя контрагента Торогоые сети
+     -- tmkagent.id AS tm_kagent_id,     -- не нужно? ID контрагента  Торговые сети
+     kagent_g.name as tm_kagent_name,
       --
       ${tabname}.fr_kagent_id,
       frkagent.name AS fr_kagent_name,
@@ -69,16 +69,27 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.meta
       FROM ${tabname}
       LEFT JOIN  users ON users.id = ${tabname}.user_id
-      LEFT JOIN  trademark ON trademark.id = ${tabname}.trademark_id
-      LEFT JOIN  kagent_tm ON kagent_tm.id = ${tabname}.kagent_tm_id  -- здесь только id kagenta
-      --
+      -- LEFT JOIN  trademark ON trademark.id = ${tabname}.trademark_id
+      -- LEFT JOIN  kagent_tm ON kagent_tm.id = ${tabname}.kagent_tm_id  -- здесь только id kagenta
+      -- Территория
       LEFT JOIN LATERAL(select * from territory_x_bakery_get_last(${tabname}.id) ) 
       as tb  ON tb.child_id = ${tabname}.id
       LEFT JOIN territory territory_g ON territory_g.id = tb.parent_id
+      -- Регион
       LEFT JOIN LATERAL(select * from region_x_territory_get_last(territory_g.id) ) 
-                 as rt  ON rt.child_id = territory_g.id
+      as rt  ON rt.child_id = territory_g.id
        LEFT JOIN region region_g ON region_g.id = rt.parent_id
+      -- Торговая сеть
+      LEFT JOIN LATERAL(select * from trademark_x_bakery_get_last(${tabname}.id) ) 
+      as tdm  ON tdm.child_id = ${tabname}.id
+      LEFT JOIN trademark trademark_g ON trademark_g.id = tdm.parent_id
+      -- Контрагент сети
+      LEFT JOIN LATERAL(select * from kagent_x_bakery_get_last(${tabname}.id) ) 
+      as kb  ON kb.child_id = ${tabname}.id
+      LEFT JOIN kagent kagent_g ON kagent_g.id = kb.parent_id
       --
+
+
 
          -- LEFT JOIN  ( select * from territory_bakery 
          --           where  is_last = true ) as bt  ON bt.bakery_id = ${tabname}.id
@@ -90,7 +101,7 @@ export async function load(req, res, tabname, timezone, idOne) {
 
 
       LEFT JOIN  city ON city.id = ${tabname}.city_id
-        LEFT JOIN kagent AS tmkagent ON tmkagent.id = kagent_tm.kagent_id 
+     -- LEFT JOIN kagent AS tmkagent ON tmkagent.id = kagent_tm.kagent_id 
       LEFT JOIN  kagent AS ownkagent ON ownkagent.id = ${tabname}.own_kagent_id
       --LEFT JOIN  kagent AS tmkagent ON tmkagent.id = ${tabname}.tm_kagent_id
       LEFT JOIN  kagent AS frkagent ON frkagent.id = ${tabname}.fr_kagent_id

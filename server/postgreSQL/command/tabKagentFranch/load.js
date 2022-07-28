@@ -16,13 +16,14 @@ export async function load(req, res, tabname, timezone, idOne) {
       ${tabname}.id,
       ${tabname}.name as name,
 
-      NullIf( (select count(*) from kagent_x_bakery_get_bakery_ondate(${tabname}.id, $1 AT TIME ZONE $2) )
+      NullIf( (select count(*) from kagent_x_bakery_franch_get_bakery_ondate(${tabname}.id, $1 AT TIME ZONE $2) )
       ,0) as bakery_count
      -- concat(ustm.u_fam,' ',ustm.u_name,' ',ustm.u_otch) as territory_manager_name,
     --  reg.name as region_name,
     --  concat(usrm.u_fam,' ',usrm.u_name,' ',usrm.u_otch) as region_manager_name,
     --  NullIf( (select count(*) from territory_x_bakery_get_bakery_ondate(${tabname}.id, $1 AT TIME ZONE $2) )
     --  ,0) as bakery_count
+
       from ${tabname}
       -- LEFT JOIN LATERAL(select * from kagent_x_bakery_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
       --          as kb  ON kb.child_id = ${tabname}.id
@@ -38,7 +39,7 @@ export async function load(req, res, tabname, timezone, idOne) {
       where kagent.id = ANY(
         select kagent_id from kagentgroups kgs
         LEFT JOIN kagentgroup kg ON kg.id = kgs.kagentgroup_id
-        where kg.meta ->> 'kagentType' = 'trademark'
+        where kg.meta ->> 'kagentType' = 'franch'
         )
        ORDER BY ${tabname}.name
 `,

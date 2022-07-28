@@ -156,6 +156,18 @@ export default defineComponent({
               import("./tabKagent/TablePanel.vue")
             );
             break;
+          case "tabKagentOwn":
+            console.log("case tree tabKagentOwn");
+            currentTable.value = defineAsyncComponent(() =>
+              import("./tabKagentOwn/TablePanel.vue")
+            );
+            break;
+          case "tabKagentFranch":
+            console.log("case tree tabKagentFranch");
+            currentTable.value = defineAsyncComponent(() =>
+              import("./tabKagentFranch/TablePanel.vue")
+            );
+            break;
           case "tabTrademark":
             console.log("case tree tabKagent");
             currentTable.value = defineAsyncComponent(() =>

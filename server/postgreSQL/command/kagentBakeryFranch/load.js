@@ -24,9 +24,6 @@ export async function load(req, res, tabname, timezone, idOne) {
   }
   console.log("kagenBakery", tabname, req.body);
   if (idOne) wher = "WHERE " + tabname + ".id = $2";
-
-  // eckjdbt njkmrj cj,cndtyys[]
-
   let sqlP = {
     text: /*sql*/ `
       SELECT
@@ -45,7 +42,7 @@ export async function load(req, res, tabname, timezone, idOne) {
       -- to_char(${tabname}.dateclose at time zone $1,  'DD.MM.YYYY') as "dateclose",
       ${tabname}.meta
       FROM ${tabname}
-          LEFT JOIN  ( select * from kagent_x_bakery  -- territory-parent / bakery- child
+          LEFT JOIN  ( select * from kagent_x_bakery_franch  -- territory-parent / bakery- child
                       where  is_last = true ) as tr  ON tr.child_id = ${tabname}.id --  пекарни по child
           LEFT JOIN  kagent as kagent_g ON kagent_g.id = tr.parent_id -- территории по parent
       -- мнеджер печки
@@ -61,9 +58,9 @@ export async function load(req, res, tabname, timezone, idOne) {
                  as rt  ON rt.child_id = terr.id
       LEFT JOIN region reg ON reg.id = rt.parent_id
 
+
       ${wher}
       ORDER BY ${tabname}.name
-
 `,
     values: [timezone],
   };

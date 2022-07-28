@@ -3,15 +3,15 @@ import { botSendMessage } from "../../../tg/startTgBot.js";
 import escape from "pg-escape";
 
 export async function allSprav(req, res, timezone) {
-  let trademark = {
-    text: /*sql*/ `
-      SELECT
-      id,
-      name
-      FROM trademark
-      ORDER BY name
-`,
-  };
+  //   let trademark = {
+  //     text: /*sql*/ `
+  //       SELECT
+  //       id,
+  //       name
+  //       FROM trademark
+  //       ORDER BY name
+  // `,
+  //   };
   //   let territory = {
   //     text: /*sql*/ `
   //       SELECT
@@ -74,9 +74,9 @@ export async function allSprav(req, res, timezone) {
     // result = result.rowCount > 0 ? result.rows : null;
     // allSprav.nofranchkagent = result;
 
-    let result = await pool.query(trademark);
-    result = result.rowCount > 0 ? result.rows : null;
-    allSprav.trademark = result;
+    // let result = await pool.query(trademark);
+    // result = result.rowCount > 0 ? result.rows : null;
+    // allSprav.trademark = result;
 
     // result = await pool.query(territory);
     // result = result.rowCount > 0 ? result.rows : null;
@@ -86,7 +86,7 @@ export async function allSprav(req, res, timezone) {
     // result = result.rowCount > 0 ? result.rows : null;
     // allSprav.region = result;
 
-    result = await pool.query(city);
+    let result = await pool.query(city);
     result = result.rowCount > 0 ? result.rows : null;
     allSprav.city = result;
 

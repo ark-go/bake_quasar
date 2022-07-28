@@ -71,7 +71,11 @@ import { tabTerritory } from "../postgreSQL/command/tabTerritory/tabTerritory.js
 import { tabRegion } from "../postgreSQL/command/tabRegion/tabRegion.js";
 import { tabHelpPanels } from "../postgreSQL/command/tabHelpPanels/tabHelpPanels.js";
 import { tabKagent } from "../postgreSQL/command/tabKagent/tabKagent.js";
+import { tabKagentOwn } from "../postgreSQL/command/tabKagentOwn/tabKagentOwn.js";
+import { tabKagentFranch } from "../postgreSQL/command/tabKagentFranch/tabKagentFranch.js";
 import { kagentBakery } from "../postgreSQL/command/kagentBakery/kagentBakery.js";
+import { kagentBakeryOwn } from "../postgreSQL/command/kagentBakeryOwn/kagentBakeryOwn.js";
+import { kagentBakeryFranch } from "../postgreSQL/command/kagentBakeryFranch/kagentBakeryFranch.js";
 import { tabTrademark } from "../postgreSQL/command/tabTrademark/tabTrademark.js";
 import { trademarkBakery } from "../postgreSQL/command/trademarkBakery/trademarkBakery.js";
 
@@ -485,9 +489,25 @@ export async function apiRoutes() {
     console.log("/tabKagent", req.body?.cmd);
     res.json(await tabKagent(req, res));
   });
+  router.post("/tabKagentOwn", async (req, res) => {
+    console.log("/tabKagentOwn", req.body?.cmd);
+    res.json(await tabKagentOwn(req, res));
+  });
+  router.post("/tabKagentFranch", async (req, res) => {
+    console.log("/tabKagentFranch", req.body?.cmd);
+    res.json(await tabKagentFranch(req, res));
+  });
   router.post("/kagentBakery", async (req, res) => {
     console.log("/kagentBakery", req.body?.cmd);
     res.json(await kagentBakery(req, res));
+  });
+  router.post("/kagentBakeryOwn", async (req, res) => {
+    console.log("/kagentBakeryOwn", req.body?.cmd);
+    res.json(await kagentBakeryOwn(req, res));
+  });
+  router.post("/kagentBakeryFranch", async (req, res) => {
+    console.log("/kagentBakeryFranch", req.body?.cmd);
+    res.json(await kagentBakeryFranch(req, res));
   });
   router.post("/tabTrademark", async (req, res) => {
     console.log("/tabTrademark", req.body?.cmd);

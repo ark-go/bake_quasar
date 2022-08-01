@@ -85,17 +85,32 @@
         Дерево строим
       </div>
     </q-img>
+    <q-img
+      v-if="userStore.userInfo.email == 'Arkadii@yandex.ru'"
+      src="/images/1.jpg"
+      loading="lazy"
+      spinner-color="white"
+      img-class="img-menu cursor-pointer"
+      :img-style="{ cursor: 'pointer' }"
+      @click="router.push({ path: '/price' })"
+    >
+      <div class="absolute-bottom text-subtitle1 text-center cursor-pointer">
+        Прайс Прайс
+      </div>
+    </q-img>
   </div>
 </template>
 
 <script>
+import { useUserStore } from "src/stores/userStore";
 import { defineComponent, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 export default defineComponent({
   name: "PageIndex",
   setup() {
     const router = useRouter();
-    return { router };
+    const userStore = useUserStore();
+    return { router, userStore };
   },
 });
 </script>

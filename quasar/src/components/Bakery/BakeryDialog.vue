@@ -23,115 +23,10 @@
       <div class="row" style="justify-content: center">
         <div class="column card-body">
           <bakery-input label="Наименование" v-model="currentRow.name" />
-          <q-field dense label="Вид аренды" stack-label>
-            <template v-slot:control>
-              <q-toggle
-                size="2em"
-                :model-value="currentRow.franch"
-                @update:model-value="(val) => (currentRow.franch = val)"
-                color="green"
-                label="Франшиза"
-              />
-            </template>
-          </q-field>
-          <q-input
-            dense
-            label="Торговая сеть"
-            v-model="currentRow.trademark_name"
-            readonly
-          ></q-input>
-          <!-- <bakery-select
-            label="Торговая сеть"
-            :sprav="allSprav.trademark"
-            v-model:selectId="currentRow.trademark_id"
-          ></bakery-select> -->
-          <bakery-select
-            label="Контрагент Собственный"
-            :filter="{ key: 'owncompany', val: true }"
-            :sprav="allSprav.noFranchKagent"
-            v-model:selectId="currentRow.own_kagent_id"
-          ></bakery-select>
-          <q-input
-            dense
-            label="Контрагент Торговой сети"
-            v-model="currentRow.tm_kagent_name"
-            readonly
-          ></q-input>
-          <!-- <bakery-select
-            label="Контрагент Торговой сети"
-            :sprav="spravKagentTrademark"
-            v-model:selectId="currentRow.kagent_tm_id"
-          ></bakery-select> -->
-          <bakery-select
-            :showClear="currentRow.franch"
-            :filter="{ key: 'franchising', val: true }"
-            clearable
-            label="Контрагент Франчайзи"
-            :sprav="allSprav.kagent"
-            v-model:selectId="currentRow.fr_kagent_id"
-          ></bakery-select>
-          <q-field dense label="Упаковка" stack-label>
-            <template v-slot:control>
-              <q-toggle
-                size="2em"
-                :model-value="currentRow.ispack"
-                @update:model-value="(val) => (currentRow.ispack = val)"
-                color="green"
-                label="Упаковка"
-              />
-            </template>
-          </q-field>
-          <bakery-input
-            dense
-            v-model="currentRow.kolbakers"
-            hide-hint
-            hide-bottom-space
-            label="Кол-во пекарей"
-            type="number"
-            :lazy-rules="false"
-            :rules="[(val) => val >= 0 || 'Нужно положительное число']"
-          />
-        </div>
-        <div class="column card-body">
           <bakery-select
             label="Город"
             :sprav="allSprav.city"
             v-model:selectId="currentRow.city_id"
-          />
-          <q-input
-            dense
-            label="Регион"
-            v-model="currentRow.region_name"
-            readonly
-          >
-          </q-input>
-          <q-input
-            dense
-            label="Территория"
-            v-model="currentRow.territory_name"
-            readonly
-          ></q-input>
-          <!-- <bakery-select
-            label="Регион"
-            :sprav="allSprav.region"
-            v-model:selectId="currentRow.region_id"
-          ></bakery-select> -->
-
-          <!-- <bakery-select
-            label="Территория"
-            :sprav="allSprav.territory"
-            v-model:selectId="currentRow.territory_id"
-          >
-          </bakery-select> -->
-          <bakery-input
-            dense
-            v-model="currentRow.area"
-            hide-hint
-            hide-bottom-space
-            label="Площадь пекарни"
-            type="number"
-            :lazy-rules="false"
-            :rules="[(val) => val >= 0 || 'Нужно положительное число']"
           />
           <select-date-ext
             label="Дата открытия"
@@ -143,6 +38,39 @@
             :min-date="currentRow.dateopen"
             v-model:value-date="currentRow.dateclose"
           />
+
+          <!-- <q-field dense label="Упаковка" stack-label>
+            <template v-slot:control>
+              <q-toggle
+                size="2em"
+                :model-value="currentRow.ispack"
+                @update:model-value="(val) => (currentRow.ispack = val)"
+                color="green"
+                label="Упаковка"
+              />
+            </template>
+          </q-field> -->
+          <bakery-input
+            dense
+            v-model="currentRow.kolbakers"
+            hide-hint
+            hide-bottom-space
+            label="Кол-во пекарей"
+            type="number"
+            :lazy-rules="false"
+            :rules="[(val) => val >= 0 || 'Нужно положительное число']"
+          />
+          <bakery-input
+            dense
+            v-model="currentRow.area"
+            hide-hint
+            hide-bottom-space
+            label="Площадь пекарни"
+            type="number"
+            :lazy-rules="false"
+            :rules="[(val) => val >= 0 || 'Нужно положительное число']"
+          />
+
           <q-input
             dense
             label="Адрес полный"
@@ -152,8 +80,60 @@
             v-model="currentRow.address"
             type="textarea"
             autogrow
-            clearable
           />
+        </div>
+        <div class="column card-body">
+          <q-input
+            filled
+            dense
+            label="Торговая сеть"
+            v-model="currentRow.trademark_name"
+            readonly
+          ></q-input>
+          <q-input
+            filled
+            dense
+            label="Контрагент Собственный"
+            v-model="currentRow.own_kagent_name"
+            readonly
+          ></q-input>
+          <q-input
+            filled
+            dense
+            label="Контрагент Торговой сети"
+            v-model="currentRow.tm_kagent_name"
+            readonly
+          ></q-input>
+          <q-input
+            filled
+            dense
+            label="Аренда франчайзи"
+            :model-value="currentRow.fr_kagent_name || 'Нет'"
+            readonly
+          ></q-input>
+
+          <q-input
+            filled
+            dense
+            label="Регион"
+            v-model="currentRow.region_name"
+            readonly
+          >
+          </q-input>
+          <q-input
+            filled
+            dense
+            label="Территория"
+            v-model="currentRow.territory_name"
+            readonly
+          ></q-input>
+          <q-input
+            filled
+            dense
+            label="Упаковка"
+            :model-value="currentRow.packtype_name || 'Нет'"
+            readonly
+          ></q-input>
           <q-input
             dense
             label="Примечание"
@@ -166,8 +146,19 @@
             @update:model-value="(val) => (currentRow.description = val)"
             type="textarea"
             autogrow
-            clearable
           />
+          <!-- <bakery-select
+            label="Регион"
+            :sprav="allSprav.region"
+            v-model:selectId="currentRow.region_id"
+          ></bakery-select> -->
+
+          <!-- <bakery-select
+            label="Территория"
+            :sprav="allSprav.territory"
+            v-model:selectId="currentRow.territory_id"
+          >
+          </bakery-select> -->
         </div>
       </div>
       <q-separator />
@@ -221,9 +212,9 @@ export default defineComponent({
     onMounted(async () => {
       console.log("Mounted BakeryDialog");
       allSprav.value = await loadAllSprav();
-      allSprav.value.noFranchKagent = allSprav.value.kagent.filter(
-        (v) => v.franchising == false
-      );
+      // allSprav.value.noFranchKagent = allSprav.value.kagent.filter(
+      //   (v) => v.franchising == false
+      // );
       console.log("Справочники", allSprav.value);
       //  spravKagentTrademark.value = await loadTrademarkKagentsv(2);
     });
@@ -232,22 +223,22 @@ export default defineComponent({
       if (stopWatch) stopWatch(); //! сбрасываем наблюдатель до обновления
       // перед открытием, скопируем текущую строку таблицы если она есть
       currentRow.value = { ...props.rowData };
-      currentRow.value.franch = currentRow.value.franch || false;
+      //currentRow.value.franch = currentRow.value.franch || false;
       currentRow.value.ispack = currentRow.value.ispack || false;
       //* ----------------------- обработка выбора контрагентов для торговой сети ----
       // запрос контрагентов, для текущей торговой сети
-      spravKagentTrademark.value = await loadTrademarkKagentsv(
-        currentRow.value.trademark_id
-      );
+      // spravKagentTrademark.value = await loadTrademarkKagentsv(
+      //   currentRow.value.trademark_id
+      // );
       // наблюдатель для торговой сети, для обновления ее контрагентов
-      stopWatch = watch(
-        //! watch заряжается при каждом вызове и плодится, надо вручную останавливать перед обновлением
-        () => currentRow.value.trademark_id,
-        async (val) => {
-          spravKagentTrademark.value = await loadTrademarkKagentsv(val);
-          //   console.log("<*>", val, spravKagentTrademark.value);
-        }
-      );
+      // stopWatch = watch(
+      //   //! watch заряжается при каждом вызове и плодится, надо вручную останавливать перед обновлением
+      //   () => currentRow.value.trademark_id,
+      //   async (val) => {
+      //     spravKagentTrademark.value = await loadTrademarkKagentsv(val);
+      //     //   console.log("<*>", val, spravKagentTrademark.value);
+      //   }
+      // );
       // -----------------------
       console.log("Показываем окно: ", currentRow.value);
     }
@@ -259,14 +250,14 @@ export default defineComponent({
       );
       return res?.result || [];
     }
-    async function loadTrademarkKagentsv(trademark_id) {
-      let res = await arkUtils.dataLoad(
-        "/api/bakery",
-        { cmd: "loadKagentTM", trademark_id: trademark_id },
-        "Чтение контрагентов торговой сети"
-      );
-      return res?.result || [];
-    }
+    // async function loadTrademarkKagentsv(trademark_id) {
+    //   let res = await arkUtils.dataLoad(
+    //     "/api/bakery",
+    //     { cmd: "loadKagentTM", trademark_id: trademark_id },
+    //     "Чтение контрагентов торговой сети"
+    //   );
+    //   return res?.result || [];
+    // }
 
     return {
       emit,

@@ -15,13 +15,19 @@ export async function load(req, res, tabname, timezone, idOne) {
       SELECT
       ${tabname}.id,
       ${tabname}.name as name,
-      concat(us.u_fam,' ',us.u_name,' ',us.u_otch) as bakery_manager_name,
+      kg.name as kagent_name,
+      kgown.name as kagent_own_name,
+      kgfranch.name as kagent_franch_name,
+      concat(us.u_fam,' ',substring(us.u_name,1,1),' ',substring(us.u_otch,1,1))  as bakery_manager_name,
+     -- concat(us.u_fam,' ',us.u_name,' ',us.u_otch) as bakery_manager_name,
     --  us.email as bakery_manager_name,
       terr.name as territory_name,
-      concat(ustm.u_fam,' ',ustm.u_name,' ',ustm.u_otch) as territory_manager_name,
+      concat(ustm.u_fam,' ',substring(ustm.u_name,1,1),' ',substring(ustm.u_otch,1,1))  as territory_manager_name,
+   --  concat(ustm.u_fam,' ',ustm.u_name,' ',ustm.u_otch) as territory_manager_name,
     --  ustm.email as territory_manager_name,
       reg.name as region_name,
-      concat(usrm.u_fam,' ',usrm.u_name,' ',usrm.u_otch) as region_manager_name
+      concat(usrm.u_fam,' ',substring(usrm.u_name,1,1),' ',substring(usrm.u_otch,1,1))  as region_manager_name
+    --  concat(usrm.u_fam,' ',usrm.u_name,' ',usrm.u_otch) as region_manager_name
     --  usrm.email as region_manager_name
     --  NullIf( (select count(*) from users_x_region_manager where parent_id = ${tabname}.id AND is_last = true ) 
     --   ,0) as region_count,
@@ -34,6 +40,18 @@ export async function load(req, res, tabname, timezone, idOne) {
       LEFT JOIN LATERAL(select * from users_x_bakery_manager_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
               as ubm  ON ubm.child_id = ${tabname}.id
       LEFT JOIN users us ON us.id = ubm.parent_id
+      --
+      LEFT JOIN LATERAL(select * from kagent_x_bakery_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
+              as kb  ON kb.child_id = ${tabname}.id
+      LEFT JOIN kagent kg ON kg.id = kb.parent_id
+      --
+      LEFT JOIN LATERAL(select * from kagent_x_bakery_own_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
+              as kbown  ON kbown.child_id = ${tabname}.id
+      LEFT JOIN kagent kgown ON kgown.id = kbown.parent_id
+      --
+      LEFT JOIN LATERAL(select * from kagent_x_bakery_franch_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
+              as kbfr  ON kbfr.child_id = ${tabname}.id
+      LEFT JOIN kagent kgfranch ON kgfranch.id = kbfr.parent_id      
       --
       LEFT JOIN LATERAL(select * from territory_x_bakery_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
                  as tb  ON tb.child_id = ${tabname}.id

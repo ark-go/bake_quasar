@@ -29,13 +29,15 @@ export async function load(req, res, tabname, timezone, idOne) {
       SELECT
       ${tabname}.id,
       ${tabname}.name,
-      ${tabname}.franch,
+     -- ${tabname}.franch,
+      CASE WHEN kagent_franch.name is null THEN FALSE ELSE TRUE END as franch, -- есть франч, лишнее позже убрать
+
      -- ${dateend}
       to_char(${tabname}.dateopen,  'DD.MM.YYYY') as date_start, to_char(${tabname}.dateclose,  'DD.MM.YYYY') as date_end,
      -- ${tabname}.trademark_id,
      -- trademark.name AS trdemark_name,
      trademark_g.name as trademark_name,
-
+    
       ${tabname}.territory_id,
       -- territory.name AS territory_name,
       territory_g.name AS territory_name,
@@ -52,17 +54,22 @@ export async function load(req, res, tabname, timezone, idOne) {
       to_char(${tabname}.dateclose at time zone $1,  'DD.MM.YYYY') as "dateclose",
       ${tabname}.area,       -- площадь
       ${tabname}.kolbakers,  -- кол-во пекарей
-      ${tabname}.ispack,     -- есть упаковка
-      ${tabname}.own_kagent_id,
-      ownkagent.name AS own_kagent_name,
-      --
+     -- ${tabname}.ispack,     -- есть упаковка
+     packtype.meta -> 'kagent' as ispack,  -- есть упаковка контрагента
+     -- CASE WHEN packtype.name is null THEN FALSE ELSE TRUE END as ispack, -- есть упаковка
+      
+     --  ${tabname}.own_kagent_id,
+     -- ownkagent.name AS own_kagent_name,
+      kagent_own.name as own_kagent_name,
      -- ${tabname}.kagent_tm_id,          -- ID из списка trademark/kagent Торговые сети
      -- tmkagent.name AS tm_kagent_name, -- Имя контрагента Торогоые сети
      -- tmkagent.id AS tm_kagent_id,     -- не нужно? ID контрагента  Торговые сети
      kagent_g.name as tm_kagent_name,
       --
-      ${tabname}.fr_kagent_id,
-      frkagent.name AS fr_kagent_name,
+     -- ${tabname}.fr_kagent_id,
+     -- frkagent.name AS fr_kagent_name,
+      kagent_franch.name as fr_kagent_name,
+      packtype.name as packtype_name,
       ${tabname}.description,
       users.email AS "user_email",
       to_char(${tabname}.user_date at time zone $1,  'DD.MM.YYYY HH12:MI:SS') as "user_date",
@@ -87,6 +94,18 @@ export async function load(req, res, tabname, timezone, idOne) {
       LEFT JOIN LATERAL(select * from kagent_x_bakery_get_last(${tabname}.id) ) 
       as kb  ON kb.child_id = ${tabname}.id
       LEFT JOIN kagent kagent_g ON kagent_g.id = kb.parent_id
+            -- Контрагент собственный
+            LEFT JOIN LATERAL(select * from kagent_x_bakery_own_get_last(${tabname}.id) ) 
+            as kbo  ON kbo.child_id = ${tabname}.id
+            LEFT JOIN kagent kagent_own ON kagent_own.id = kbo.parent_id
+                        -- Контрагент собственный
+            LEFT JOIN LATERAL(select * from kagent_x_bakery_franch_get_last(${tabname}.id) ) 
+            as kbf  ON kbf.child_id = ${tabname}.id
+            LEFT JOIN kagent kagent_franch ON kagent_franch.id = kbf.parent_id
+          -- Упаковка
+         LEFT JOIN LATERAL(select * from packtype_x_bakery_get_last(${tabname}.id) ) 
+         as pack  ON pack.child_id = ${tabname}.id
+         LEFT JOIN packtype packtype ON packtype.id = pack.parent_id            
       --
 
 

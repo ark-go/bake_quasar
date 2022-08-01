@@ -176,6 +176,7 @@ export const usePagesSetupStore = defineStore("PagesSetupStore", {
   },
 });
 function copyObject(o) {
+  // глубокое копиование ?
   if (o === null) return null;
   var output, v, key;
   output = Array.isArray(o) ? [] : {};

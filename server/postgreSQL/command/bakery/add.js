@@ -36,7 +36,7 @@ export async function add(req, res, tabname, timezone) {
       `,
     values: [
       req.body?.name,
-      req.body?.franch,
+      null, //req.body?.franch,
       req.body?.trademark_id,
       req.body?.territory_id,
       req.body?.region_id,

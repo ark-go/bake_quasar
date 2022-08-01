@@ -56,6 +56,11 @@ const routes = [
         meta: { title: "Справочник" },
       },
       {
+        path: "price",
+        component: () => import("components/Price/PagePrice.vue"),
+        meta: { title: "Прайсы" },
+      },
+      {
         path: "kagent",
         component: () => import("components/Kagent/PageKagent.vue"),
         meta: { title: "Контрагенты" },

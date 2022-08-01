@@ -280,7 +280,7 @@ const dataTree = [
       {
         key: 4,
         label: "Контрагенты",
-        helpCode: "TreeHelp-Контрагенты", //! менять коды нельзя.. это ключи в базу данных
+        helpCode: "Контрагенты вкладка", //! менять коды нельзя.. это ключи в базу данных
         // icon: "room_service",
         disabled: false,
         children: [
@@ -334,7 +334,26 @@ const dataTree = [
           { name: "trademarkBakery", label: "Пекарни", icon: "home" },
         ],
       },
-      { key: 38, label: "Города", tableName: "city", tableType: "city" },
+      {
+        key: 38,
+        label: "Упаковка (пекарни)",
+        helpCode: "Упаковка вкладка",
+        tableName: "tabPacktype",
+        tableType: "tabPacktype",
+        component: "TabPacktype", // расширение по умолчанию vue, будет TabTrademark.vue
+        // permiss: "Arkadii@yandex.ru",
+        buttonPanel: [
+          // name - название панели в TabManager.vue
+          { name: "packtypeBakery", label: "Пекарни", icon: "home" },
+        ],
+      },
+      {
+        key: 39,
+        label: "Города",
+        tableName: "city",
+        tableType: "city",
+        helpCode: "Города вкладка",
+      },
     ],
   },
   // {

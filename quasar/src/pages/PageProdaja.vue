@@ -7,7 +7,6 @@
 <script>
 import { defineComponent } from "vue";
 import SelectDateExt from "components/select/SelectDateExt.vue";
-import Partners from "components/Partners.vue";
 export default defineComponent({
   name: "PageProdaja",
   components: {

@@ -15,7 +15,8 @@ export async function load(req, res, tabname, timezone, idOne) {
     text: /*sql*/ `
       SELECT
       ${tabname}.id,
-      concat(${tabname}.u_fam,' ',${tabname}.u_name,' ',${tabname}.u_otch) as name,
+      concat(${tabname}.u_fam,' ',substring(${tabname}.u_name,1,1),' ',substring(${tabname}.u_otch,1,1))  as name,
+     -- concat(${tabname}.u_fam,' ',${tabname}.u_name,' ',${tabname}.u_otch) as name,
       ${tabname}.email as email,
       ${tabname}.u_name as user_name,
       ${tabname}.u_fam as user_fam,

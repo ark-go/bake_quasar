@@ -11,6 +11,15 @@
         <q-card-section
           :class="{ 'bg-red-3': spravStore.historyOn && historyOn }"
         >
+          <q-badge
+            class="cursor-pointer q-mt-sm"
+            style="margin-top: 5px; margin-right: 4px"
+            rounded
+            color="red-3"
+            label="X"
+            floating
+            @click="$router.go(-1)"
+          />
           <div class="row items-center no-wrap">
             <div class="col">
               <div
@@ -142,6 +151,7 @@
 <script>
 // prettier-ignore
 import {ref,watch, onMounted, watchEffect, onUpdated, computed, nextTick, defineAsyncComponent, } from "vue";
+import { useRouter } from "vue-router";
 import PageSetupDialog from "./PageSetupDialog.vue";
 import SplitterSprav from "./SplitterSprav.vue";
 import TabSprav from "./TabSprav.vue";
@@ -173,6 +183,7 @@ export default {
   },
   setup(props, { emit }) {
     const $q = useQuasar();
+    const $router = useRouter();
     const spravStore = useSpravStore();
     const { style, height } = dom;
     const refTopSection = ref();
@@ -310,6 +321,7 @@ export default {
         });
     }
     return {
+      $router,
       //  valueDate,
       //  historyDate,
       historyOn,

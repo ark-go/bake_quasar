@@ -47,8 +47,6 @@
 import { ref } from "vue";
 import PageTabUsers from "pages/PageTabUsers.vue";
 import PageTabBakehouses from "pages/PageTabBakehouses.vue";
-import Nomenclature from "components/Nomenclature.vue";
-//import PageTabNomenclature from "pages/PageTabNomenclature.vue";
 import PageTabPartners from "pages/PageTabPartners.vue";
 import PageTabCatalogs from "pages/PageTabCatalogs.vue";
 import PageTabStore from "pages/PageTabStore.vue";

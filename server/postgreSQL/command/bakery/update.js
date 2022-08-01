@@ -26,7 +26,7 @@ export async function update(req, res, tabname, timezone) {
     values: [
       req.body?.id,
       req.body?.name,
-      req.body?.franch,
+      null, //req.body?.franch,
       req.body?.trademark_id,
       req.body?.territory_id,
       req.body?.region_id,

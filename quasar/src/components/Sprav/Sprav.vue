@@ -174,6 +174,12 @@ export default defineComponent({
               import("./tabTrademark/TablePanel.vue")
             );
             break;
+          case "tabPacktype":
+            console.log("case tree tabPacktype");
+            currentTable.value = defineAsyncComponent(() =>
+              import("./tabPacktype/TablePanel.vue")
+            );
+            break;
           // case "help":
           //   currentTable.value = HelpPanel;
           //   break;
@@ -210,8 +216,8 @@ export default defineComponent({
           console.log("Справка о", spravStore.selectedNode);
           if (spravStore.selectedNode.helpCode)
             helpCode.value = spravStore.selectedNode.helpCode;
-          else if (spravStore.selectedNode.tableName)
-            helpCode.value = spravStore.selectedNode.tableName;
+          else if (spravStore.selectedNode.key)
+            helpCode.value = "treeSprav-" + spravStore.selectedNode.key;
           else {
             helpCode.value = "";
           }

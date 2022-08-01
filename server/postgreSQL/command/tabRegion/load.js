@@ -19,7 +19,8 @@ export async function load(req, res, tabname, timezone, idOne) {
      -- terr.name as territory_name,
      -- ustm.email as territory_manager_name,
      -- reg.name as region_name,
-     concat(usrm.u_fam,' ',usrm.u_name,' ',usrm.u_otch) as region_manager_name,
+     concat(usrm.u_fam,' ',substring(usrm.u_name,1,1),' ',substring(usrm.u_otch,1,1))  as region_manager_name,
+    -- concat(usrm.u_fam,' ',usrm.u_name,' ',usrm.u_otch) as region_manager_name,
     -- usrm.email as region_manager_name,
     -- это было н 25-07-22
     --  NullIf( (select count(*) from territory_x_bakery 

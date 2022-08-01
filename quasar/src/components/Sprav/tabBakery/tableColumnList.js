@@ -1,4 +1,3 @@
-
 export const columns = [
   {
     name: "name",
@@ -15,6 +14,28 @@ export const columns = [
     field: "bakery_manager_name",
     sortable: true,
   },
+  {
+    name: "kagent_name",
+    label: "Контрагент",
+    align: "left",
+    field: "kagent_name",
+    sortable: true,
+  },
+  {
+    name: "kagent_own_name",
+    label: "Свой к-агент",
+    align: "left",
+    field: "kagent_own_name",
+    sortable: true,
+  },
+  {
+    name: "kagent_franch_name",
+    label: "Франчайзи",
+    align: "left",
+    field: "kagent_franch_name",
+    sortable: true,
+  },
+
   {
     name: "region_name",
     label: "Регион",

@@ -35,6 +35,7 @@
     @onBtnDelete="onInfoRow"
     @onBtnEdit="onInfoRow"
     @onRowClick="onRowClick"
+    @onRowDblClick="onRowDblClick"
     @onAdd="onRowClick"
     :currentRow="currentRow"
     noExpandPanel
@@ -106,6 +107,7 @@ export default defineComponent({
         currentRow.value = row;
         store.selectedRow = row;
       },
+      onRowDblClick(row) {},
     };
   },
 });

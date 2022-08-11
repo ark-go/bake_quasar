@@ -16,11 +16,13 @@ export function useArkUtils() {
   async function dataLoad(url, data, logInfo = "") {
     //Dark.set(true);
     const notif = $q.notify({
+      classes: "q-py-none",
+      // iconSize: "10px",
       group: false, // required to be updatable
       timeout: 0, // we want to be in control when it gets dismissed
       spinner: true,
-      message: "Загрузка...",
-      caption: sanitizeDef(logInfo || "Что-то загружаем"),
+      message: "..." + sanitizeDef(logInfo || "Что-то загружаем"),
+      // caption: sanitizeDef(logInfo || "Что-то загружаем"),
       position: "top-right",
       color: "blue-grey-4",
       textColor: "white",
@@ -56,8 +58,7 @@ export function useArkUtils() {
       notif({
         icon: "done", // we add an icon
         spinner: false, // we reset the spinner setting so the icon can be displayed
-        message: "Готово!",
-        caption: sanitizeDef(logInfo || "Загрузили"),
+        message: sanitizeDef(logInfo || "Загрузили"),
         timeout: 2500, // we will timeout it in 2.5s
         progress: true,
         html: true,
@@ -95,7 +96,7 @@ export function useArkUtils() {
         ),
         progress: true,
         multiLine: true,
-        timeout: 1000 * 30, // we will timeout it in 2.5s
+        timeout: 1000 * 30, // we will timeout it i
         color: "deep-orange",
         html: true,
         // textColor: "white",

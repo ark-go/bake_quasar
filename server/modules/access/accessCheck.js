@@ -42,6 +42,9 @@ export async function accessCheck(req, res, next) {
     case "/photo":
     case "/specstore":
     case "/tables/users":
+    // case "/price":
+    //   itog = req.session.user.email == "Arkadii@yandex.ru";
+    //   break;
     case "/tables":
       itog = checkRole(req, ["MODERATOR"]);
       break;

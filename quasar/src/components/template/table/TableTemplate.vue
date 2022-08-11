@@ -15,6 +15,9 @@
       :rows="rows"
       :columns="columns"
       :visible-columns="visibleColumns"
+      :selected="selected"
+      @update:selected="$emit('update:selected', $event)"
+      :selection="selection"
     >
       <template v-if="titlePanel || extendPanel" v-slot:top>
         <table-top>
@@ -46,9 +49,13 @@
           :yesBtnEdit="yesBtnEdit"
           :yesBtnDelete="yesBtnDelete"
           :noEditTable="noEditTable"
+          :selection="selection"
         >
         </table-header>
       </template>
+      <!-- <template v-slot:body-selection="scope">
+        <q-toggle v-model="scope.selected" />
+      </template> -->
       <template v-slot:body="props">
         <table-body
           :propsV="props"
@@ -58,12 +65,14 @@
           @onBtnDelete="$emit('onBtnDelete', $event)"
           @onBtnEdit="$emit('onBtnEdit', $event)"
           @onRowClick="$emit('onRowClick', $event)"
+          @onRowDblClick="$emit('onRowDblClick', $event)"
           :yesBtnEdit="yesBtnEdit"
           :yesBtnDelete="yesBtnDelete"
           :iconBtnEdit="iconBtnEdit"
           :iconBtnDelete="iconBtnEdit"
           :noEditTable="noEditTable"
           :currentRow="currentRow"
+          :selection="selection"
         >
           <template #contextMenu="dataSlot">
             <slot name="contextMenu" v-bind="dataSlot"></slot>
@@ -168,6 +177,8 @@ export default defineComponent({
       type: Boolean,
       default: false,
     },
+    selection: String,
+    selected: Array,
   },
   emits: [""],
   setup(props) {
@@ -200,6 +211,7 @@ export default defineComponent({
       filter,
       extendPanel,
       titlePanel,
+      //  selected: ref([]),
     };
   },
 });

@@ -14,11 +14,12 @@ import { Dark } from "quasar";
 export async function dataLoad(url, data, logInfo = "") {
   //Dark.set(true);
   const notif = Notify.create({
+    classes: "q-py-none no-min-height",
     group: false, // required to be updatable
     timeout: 0, // we want to be in control when it gets dismissed
     spinner: true,
-    message: "Загрузка...",
-    caption: logInfo || "Что-то загружаем",
+    message: "..." + (logInfo || "Что-то загружаем"),
+    //  caption: logInfo || "Что-то загружаем",
     position: "top-right",
     color: "blue-grey-4",
     textColor: "white",
@@ -52,9 +53,9 @@ export async function dataLoad(url, data, logInfo = "") {
 
     notif({
       icon: "done", // we add an icon
+      classes: "q-py-none no-min-height",
       spinner: false, // we reset the spinner setting so the icon can be displayed
-      message: "Готово!",
-      caption: logInfo || "Загрузили",
+      message: logInfo || "Загрузили",
       timeout: 2500, // we will timeout it in 2.5s
       progress: true,
     });

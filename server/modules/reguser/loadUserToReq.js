@@ -45,13 +45,15 @@ export async function loadUserToReq(req, email) {
   try {
     let result = await pool.query(sqlP);
     result = result.rowCount > 0 ? result.rows[0] : null; // берем саму строку
+
     if (result) {
+      if (!Array.isArray(result.roles)) result.roles = []; // если там пусто
       result.roles = [...new Set([...result.roles, ...["USER"]])];
       console.log("Загрузка пользователя", result.email);
     }
     return result;
   } catch (err) {
-    console.log("Ошибка загрузки пользователя", idUser || email);
+    console.log("Ошибка загрузки пользователя", idUser || email, err);
     return null;
   }
 }

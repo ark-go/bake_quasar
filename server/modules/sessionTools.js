@@ -1,6 +1,6 @@
 //https://luin.github.io/ioredis/classes/Redis.html#getex
 import Redis from "ioredis";
-import moment from "moment-timezone";
+//import moment from "moment-timezone";
 const redis = new Redis();
 // const redis = new Redis({
 //   port: process.env.Redis_host, // Redis port
@@ -11,8 +11,8 @@ const redis = new Redis();
 // });
 //process.argv  2 нужен
 
-let mom = moment.tz(Date.now(), "Asia/Yekaterinburg");
-console.log("moment", mom, Math.round(mom.valueOf() / 1000));
+//let mom = moment.tz(Date.now(), "Asia/Yekaterinburg");
+//console.log("moment", mom, Math.round(mom.valueOf() / 1000));
 
 let keys = await redis.keys("*");
 console.log(keys);

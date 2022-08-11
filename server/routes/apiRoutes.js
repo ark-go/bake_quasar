@@ -80,11 +80,14 @@ import { tabTrademark } from "../postgreSQL/command/tabTrademark/tabTrademark.js
 import { trademarkBakery } from "../postgreSQL/command/trademarkBakery/trademarkBakery.js";
 import { tabPacktype } from "../postgreSQL/command/tabPacktype/tabPacktype.js";
 import { packtypeBakery } from "../postgreSQL/command/packtypeBakery/packtypeBakery.js";
+import { tabPrice } from "../postgreSQL/command/tabPrice/tabPrice.js";
 
 import { products } from "../postgreSQL/command/products/products.js";
 import { docprice } from "../postgreSQL/command/docprice/docprice.js";
 import { departments } from "../postgreSQL/command/departments/departments.js";
 import { userroletree } from "../postgreSQL/command/userroletree/userroletree.js";
+
+import { exportPriceExcel } from "../modules/excel/exportPriceExcel/exportPriceExcel.js";
 //import { pdfmain } from "../modules/PDF/pdfmain.js";
 //import { pdfMainLoad } from "../modules/PDF/pdfMainLoad.js";
 import { pdf } from "../modules/PDF/pdf.js";
@@ -203,7 +206,10 @@ export async function apiRoutes() {
     console.log("/pdf");
     await pdf(req, res);
   });
-
+  router.post("/exportPriceExcel", async (req, res) => {
+    console.log("/exportPriceExcel");
+    await exportPriceExcel(req, res);
+  });
   // router.post("/pdfmain", async (req, res) => {
   //   console.log("/pdfmain");
   //   res.json(await pdfmain(req));
@@ -535,6 +541,10 @@ export async function apiRoutes() {
   router.post("/tabHelpPanels", async (req, res) => {
     console.log("/tabHelpPanels", req.body?.cmd);
     res.json(await tabHelpPanels(req, res));
+  });
+  router.post("/tabPrice", async (req, res) => {
+    console.log("/tabPrice", req.body?.cmd);
+    res.json(await tabPrice(req, res));
   });
 
   router.post("/products", async (req, res) => {

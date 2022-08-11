@@ -27,6 +27,7 @@ Props:
     @onBtnEdit - кнопка едит в строке
     @onRowClick - по строке
     @onAdd - кнопка плюс в заголовке
+    @onRowDblClick
     :iconBtnEdit="" - иконка для редактирования
     :iconBtnDelete="" - иконка для удаления
     :rowsPerPage - кол-во строк таблице - странице

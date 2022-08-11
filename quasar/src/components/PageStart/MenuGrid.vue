@@ -82,11 +82,10 @@
       @click="router.push({ path: '/departments' })"
     >
       <div class="absolute-bottom text-subtitle1 text-center cursor-pointer">
-        Дерево строим
+        Пользователи (управляющие)
       </div>
     </q-img>
     <q-img
-      v-if="userStore.userInfo.email == 'Arkadii@yandex.ru'"
       src="/images/1.jpg"
       loading="lazy"
       spinner-color="white"

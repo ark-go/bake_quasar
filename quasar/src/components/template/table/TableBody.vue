@@ -5,7 +5,19 @@
     :class="{ 'text-red': currentRow?.id == propsV.row?.id }"
     @click.exact="$emit('onRowClick', propsV.row)"
     @click.right.exact="$emit('onRowClick', propsV.row)"
+    @dblclick.exact="$emit('onRowDblClick', propsV.row)"
   >
+    <q-td v-if="['multiple', 'single'].includes(selection)">
+      <!-- eslint-disable vue/no-mutating-props  -->
+      <q-checkbox
+        dense
+        v-model="propsV.selected"
+        checked-icon="star"
+        unchecked-icon="star_border"
+        indeterminate-icon="star_half"
+      />
+      <!-- <q-checkbox dense v-model="propsV.selected" /> -->
+    </q-td>
     <slot name="contextMenu" :row="propsV.row"></slot>
     <template v-if="!isLeft">
       <q-td
@@ -106,6 +118,7 @@ export default {
       type: Boolean,
       default: false,
     },
+    selection: String,
   },
 
   emit: ["onBtnEdit", "onBtnDelete"],

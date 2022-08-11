@@ -28,7 +28,7 @@ export default boot(({ app }) => {
       position: "top",
       // icon: "done", // we add an icon
       spinner: false, // we reset the spinner setting so the icon can be displayed
-      message: caption ? "Ошибка интернета!" : "Ошибка 1243",
+      message: caption ? "Ошибка интернета!" : "Ошибка программы: 1243",
       caption: caption ? caption : captionErr,
       progress: true,
       multiLine: true,

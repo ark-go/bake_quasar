@@ -1,4 +1,7 @@
 // app global css in SCSS form
+.no-min-height {
+  min-height: unset;
+}
 // В менюшке по правой мышке, вверху метка из строки таблицы
 .labelContextMenu {
   text-align: center;

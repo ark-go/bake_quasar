@@ -1,6 +1,22 @@
 <template>
   <q-tr :props="props">
     <q-th
+      v-if="['multiple', 'single'].includes(selection)"
+      style="text-align: left"
+    >
+      <!-- eslint-disable-next-line vue/no-mutating-props  -->
+      <!-- eslint-disable vue/no-mutating-props  -->
+      <q-checkbox
+        v-if="selection == 'multiple'"
+        dense
+        v-model="props.selected"
+        checked-icon="star"
+        unchecked-icon="star_border"
+        indeterminate-icon="star_half"
+      />
+      <!-- <q-checkbox dense v-model="props.selected" /> -->
+    </q-th>
+    <q-th
       v-for="col in props.cols"
       :key="col.name"
       :props="props"
@@ -30,6 +46,7 @@ export default {
     yesBtnEdit: Boolean,
     yesBtnDelete: Boolean,
     noEditTable: Boolean,
+    selection: String,
   },
 
   emit: ["onBtnEdit", "onBtnDelete"],
@@ -37,6 +54,7 @@ export default {
     const infoBtn = ref(!props.noInfoBtn);
 
     return {
+      emit,
       infoBtn,
     };
   },

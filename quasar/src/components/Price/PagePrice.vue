@@ -4,18 +4,18 @@
     class="flex flex-center"
     style="min-width: 360px"
   >
-    <!-- <sprav :pageMaxHeight="pageMaxHeight"></sprav> -->
+    <Price :pageMaxHeight="pageMaxHeight"></Price>
   </q-page>
 </template>
 
 <script>
 import { defineComponent, ref, toRefs } from "vue";
-//import Sprav from "components/Sprav/Sprav.vue";
+import Price from "./Price.vue";
 import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 export default defineComponent({
   name: "PagePrice",
   components: {
-    //  Sprav,
+    Price,
   },
   setup() {
     const pageSetup = usePagesSetupStore();

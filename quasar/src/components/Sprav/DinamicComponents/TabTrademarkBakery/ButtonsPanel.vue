@@ -8,7 +8,7 @@
       dense-toggle
       v-model="territoryExpand"
       :label="spravStore.selectedRow.name"
-      caption="печник Алина"
+      caption="печник Вася"
       header-style="padding-right:1px"
     >
       <!-- <template v-slot:header>
@@ -17,12 +17,7 @@
         }}</span>
       </template> -->
       <q-card>
-        <q-card-section>
-          Это группа печек, собрана в честь самого лучшего повара на земле, эти
-          печки отбирал он сам лично, в них пекутся самые лучшие лепешки. В этой
-          группе регион не будет совпадать с тем что указан в печке, потому что
-          в печке он указан по другому
-        </q-card-section>
+        <q-card-section> Информация </q-card-section>
       </q-card>
     </q-expansion-item>
     <q-item>

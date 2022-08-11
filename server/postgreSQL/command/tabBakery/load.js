@@ -37,6 +37,7 @@ export async function load(req, res, tabname, timezone, idOne) {
     --  ,0) as bakery_count
 
       from ${tabname}
+      
       LEFT JOIN LATERAL(select * from users_x_bakery_manager_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
               as ubm  ON ubm.child_id = ${tabname}.id
       LEFT JOIN users us ON us.id = ubm.parent_id
@@ -68,7 +69,7 @@ export async function load(req, res, tabname, timezone, idOne) {
        LEFT JOIN LATERAL(select * from users_x_region_manager_get_last(rt.parent_id,$1 AT TIME ZONE $2) ) 
                as urm  ON urm.child_id = rt.parent_id
        LEFT JOIN users usrm ON usrm.id = urm.parent_id
-
+     
 
        -- --
       -- LEFT JOIN (select * from users_x_territory_manager where  is_last = true ) 

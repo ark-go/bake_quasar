@@ -26,7 +26,7 @@ export default defineComponent({
   name: "priceValue",
   components: { TabPanelSplit, TablePanel, SideDoc, FormDoc },
   setup() {
-    const { selectedRowPrice } = storeToRefs(usePriceStore());
+    const { selectedRowPrice, tabModel } = storeToRefs(usePriceStore());
     const tableFunc = useTableFunc("tabPrice");
     const showDialog = ref(false);
     const checkSave = ref(false);
@@ -41,10 +41,18 @@ export default defineComponent({
       checkSave.value = !checkSave.value;
     }
     async function onDelete() {
-      let res = await tableFunc.deletePriceValue(selectedRowPrice.value.id);
+      let res = await tableFunc.deletePriceValue(selectedRowPrice.value);
       if (res > 0) checkSave.value = !checkSave.value;
     }
-    return { showDialog, onClickEdit, onClickNew, onSave, checkSave, onDelete };
+    return {
+      showDialog,
+      onClickEdit,
+      onClickNew,
+      onSave,
+      checkSave,
+      onDelete,
+      tabModel,
+    };
   },
 });
 </script>

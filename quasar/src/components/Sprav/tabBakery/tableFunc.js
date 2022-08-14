@@ -1,13 +1,14 @@
 import { ref } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { date } from "quasar";
 export function useTableFunc(nameTable) {
+  const arkUtils = useArkUtils();
   const dateFormat = ref("DD.MM.YYYY");
   async function loadTable(historyDate, command = { cmd: "load" }) {
     command.historyDate = historyDate;
     let mess = "Загрузка пекарен";
     let url = "/api/" + nameTable;
-    let res = await dataLoad(url, command, mess);
+    let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
       return res.result;
     } else {

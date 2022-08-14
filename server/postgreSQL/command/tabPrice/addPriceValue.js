@@ -21,7 +21,7 @@ export async function addPriceValue(req, res, tabname, timezone) {
       `,
     values: [
       req.body.price_id,
-      req.body.article,
+      req.body.article && req.body.article.trim(),
       req.body.price_name,
       req.body.productvid_id,
       req.body.cena,

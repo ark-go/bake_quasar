@@ -4,8 +4,14 @@
 //   // max-width: 250px;
 // }
 .card-body {
-  padding: 6px;
-  width: 250px;
+  padding: 2px;
+  width: 300px;
+  max-width: 400px;
+  min-width: 300px;
+  @media (max-width: 600px) {
+    max-width: 95vw;
+    min-width: 94vw;
+  }
 }
 </style>
 <template>
@@ -15,7 +21,7 @@
     @before-show="onBeforeShowDialog"
     :persistent="true"
   >
-    <q-card class="card">
+    <q-card class="card card-body">
       <q-card-section class="bg-primary text-white">
         <div class="text-h6">
           {{ selectedRowPrice?.article ? "Изменить позицию" : "Новый товар" }}
@@ -29,8 +35,9 @@
         </div>
       </q-card-section>
       <div class="row" style="justify-content: center">
-        <div class="column card-body">
+        <div class="column" style="padding: 4px; width: 100%">
           <form-input
+            @blur="onBlur"
             dense
             v-model="currentRow.article"
             hide-hint
@@ -38,13 +45,23 @@
             label="Артикул"
           />
           <form-input
+            v-if="false"
             dense
             v-model="currentRow.price_name"
             hide-hint
             hide-bottom-space
             label="Название товара"
           />
-
+          <select-tovar
+            :tovar_name="currentRow.price_name"
+            @update:tovar_name="(val) => (currentRow.price_name = val)"
+            v-model:sprav="rowsTovarSelect"
+            @productvid_id="(val) => (currentRow.productvid_id = val)"
+            label="Название товара!"
+            use-input
+            @onMounted="onBlur"
+            loading="loadingToavar"
+          />
           <FieldSelect-Product-Vid
             label="Продукт"
             :sprav="allSprav.productvid"
@@ -105,14 +122,16 @@ import {
 } from "vue";
 import { useQuasar } from "quasar";
 import FormInput from "./FormInput.vue";
+import SelectTovar from "./SelectTovar.vue";
 import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import FieldSelectProductVid from "./FieldSelectProductVid.vue";
 import { usePriceStore, storeToRefs } from "stores/priceStore";
 import { useTableFunc } from "./tableFunc";
+import { useUserStore } from "stores/userStore.js";
 
 export default defineComponent({
   name: "FormDoc",
-  components: { FormInput, FieldSelectProductVid },
+  components: { FormInput, FieldSelectProductVid, SelectTovar },
   props: {
     showDialog: Boolean,
     //allSprav: Object,
@@ -124,6 +143,7 @@ export default defineComponent({
   emits: ["update:showDialog"],
   setup(props, { emit }) {
     const $q = useQuasar();
+    const userStore = useUserStore();
     const arkUtils = useArkUtils();
     const { selectedRowPrice, selectedRowDoc } = storeToRefs(usePriceStore());
     const tableFunc = useTableFunc("tabPrice");
@@ -136,6 +156,9 @@ export default defineComponent({
       datestart: null,
       trademark_id: null,
     });
+    const loadingToavar = ref(false);
+    const tovarSelect = ref();
+    const rowsTovarSelect = ref([]);
     onMounted(async () => {
       console.log("МОУНТЕД price form");
       await loadProductVid();
@@ -187,7 +210,24 @@ export default defineComponent({
         throw new Error("Укажите продукт из списка");
       }
     }
+    watch(
+      () => tovarSelect.value,
+      () => {
+        console.log("Выбор селект ", tovarSelect.value);
+      }
+    );
+    async function onBlur(evt) {
+      loadingToavar.value = true;
+      let dat = await tableFunc.loadPriceValueSelectArticle(
+        currentRow.value.article,
+        selectedRowDoc.value.kagent_id
+      );
+      rowsTovarSelect.value = dat;
+      loadingToavar.value = false;
+      console.log("История артикулов", currentRow.value.article, dat);
+    }
     return {
+      onBlur,
       allSprav,
       emit,
       onBeforeShowDialog,
@@ -195,6 +235,10 @@ export default defineComponent({
       onSave,
       loadingProductVid,
       selectedRowPrice,
+      rowsTovarSelect,
+      tovarSelect,
+      userStore,
+      loadingToavar,
     };
   },
 });

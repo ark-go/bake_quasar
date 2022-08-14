@@ -11,6 +11,7 @@
 <script>
 import { defineComponent, ref, toRefs } from "vue";
 import Price from "./Price.vue";
+import { useQuasar } from "quasar";
 import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 export default defineComponent({
   name: "PagePrice",
@@ -18,16 +19,32 @@ export default defineComponent({
     Price,
   },
   setup() {
+    const $q = useQuasar();
     const pageSetup = usePagesSetupStore();
     pageSetup.currentPage = "price";
     const { cardMain } = storeToRefs(usePagesSetupStore());
     // const {fontSize} = toRefs(state)
     const pageMaxHeight = ref();
+
     function panelFnHeight(offset, height2) {
-      let height = `calc(100vh - ${offset}px)`;
-      let heightChild = `calc(100vh - ${offset}px - 60px)`;
-      pageMaxHeight.value = { minHeight: heightChild, maxHeight: heightChild };
-      return { minHeight: height, maxHeight: height };
+      if (!$q.fullscreen.isActive) {
+        console.log("Обычный Экран!");
+        let marg = $q.platform.is.mobile ? 16 : 60; // Отступы окна
+        let height = `calc(100vh - ${offset}px)`;
+        let heightChild = `calc(100vh - ${offset}px - ${marg}px)`;
+        pageMaxHeight.value = {
+          minHeight: heightChild,
+          maxHeight: heightChild,
+        };
+        return { minHeight: height, maxHeight: height };
+      } else {
+        console.log("Полный Экран!");
+        pageMaxHeight.value = {
+          minHeight: "100vh",
+          maxHeight: "100vh",
+        };
+        return {};
+      }
     }
     function clickHelp() {}
     return {

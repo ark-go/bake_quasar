@@ -1,8 +1,9 @@
 import { ref } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { useSpravStore } from "stores/spravStore";
 import { date } from "quasar";
 export function useTableFunc(rows, nameTable) {
+  const arkUtils = useArkUtils();
   const spravStore = useSpravStore();
   const dateFormat = ref("DD.MM.YYYY");
   async function loadTable() {
@@ -10,7 +11,7 @@ export function useTableFunc(rows, nameTable) {
     command.historyDate = dateToDateUnix(spravStore.historyDate);
     let mess = "Загрузка";
     let url = "/api/" + nameTable;
-    let res = await dataLoad(url, command, mess);
+    let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
       rows.value = res.result;
     } else {
@@ -25,7 +26,7 @@ export function useTableFunc(rows, nameTable) {
       command.historyDate = dateToDateUnix(spravStore.historyDate);
       let mess = "Обновление";
       let url = "/api/" + nameTable;
-      let res = await dataLoad(url, command, mess);
+      let res = await arkUtils.dataLoad(url, command, mess);
       if (res.result) {
         await loadTable();
       }
@@ -35,7 +36,7 @@ export function useTableFunc(rows, nameTable) {
       command.historyDate = dateToDateUnix(spravStore.historyDate);
       let mess = "Добавление";
       let url = "/api/" + nameTable;
-      let res = await dataLoad(url, command, mess);
+      let res = await arkUtils.dataLoad(url, command, mess);
       if (res.result) {
         await loadTable();
       }
@@ -47,7 +48,7 @@ export function useTableFunc(rows, nameTable) {
     command.historyDate = dateToDateUnix(spravStore.historyDate);
     let mess = "Удаление";
     let url = "/api/" + nameTable;
-    let res = await dataLoad(url, command, mess);
+    let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
       await loadTable();
     }

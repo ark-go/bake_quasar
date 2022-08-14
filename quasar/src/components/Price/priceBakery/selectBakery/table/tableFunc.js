@@ -44,6 +44,11 @@ export function useTableFunc(nameTable) {
     }
   }
   async function deleteBakeryFromPrice(bakeryArray) {
+    let dial = await arkUtils.confirmDelete(
+      "Вы хотите удалить пекарни из прайса?",
+      `Количество: ${bakeryArray.length} прайс № ${selectedRowDoc.value.docnum}`
+    );
+    if (!dial) return;
     console.log("Удаляем печки из прайса", selectedRowDoc.value, bakeryArray);
     let command = {
       cmd: "deleteBakeryFromPrice",

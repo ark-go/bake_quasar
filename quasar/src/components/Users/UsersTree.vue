@@ -212,7 +212,7 @@ import {
   nextTick,
   onUnmounted,
 } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 //import { useQuasar } from "quasar";
 import { emitter } from "boot/axios.js";
 import { useRouter } from "vue-router";
@@ -224,6 +224,7 @@ export default defineComponent({
   name: "UsersTree",
   components: {},
   setup() {
+    const arkUtils = useArkUtils();
     //  const $q = useQuasar();
     const $router = useRouter();
     const ioSocket = useIoSocket();
@@ -294,7 +295,7 @@ export default defineComponent({
       });
     }
     async function treeCommand(cmd, dat) {
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/userroletree",
         { ...dat, ...{ cmd: cmd } },
         "Дерево"
@@ -381,7 +382,7 @@ export default defineComponent({
       console.log("Update", res);
     }
     async function loadDepartments(dat) {
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/userroletree",
         { ...{ cmd: "load" }, ...dat },
         "Чтение дерева"
@@ -392,7 +393,7 @@ export default defineComponent({
       return res?.result; //! TODO: обрабатывать ошибку
     }
     async function updateNode(cmd, dat) {
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/userroletree",
         { ...dat, ...{ cmd: cmd } },
         "Обновление дерева"

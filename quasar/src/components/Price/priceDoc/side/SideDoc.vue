@@ -17,7 +17,7 @@
         }}</span>
       </template> -->
       <q-card>
-        <q-card-section> Информация </q-card-section>
+        <q-card-section> Поиск / фильтр !! </q-card-section>
       </q-card>
       <q-item
         clickable

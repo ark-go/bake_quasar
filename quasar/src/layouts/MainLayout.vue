@@ -80,7 +80,7 @@
         </transition>
       </router-view>
     </q-page-container>
-    <q-footer ref="footer" id="footer">
+    <q-footer ref="footer" id="footer" v-if="!platform.is.mobile">
       <q-toolbar>
         <q-btn
           flat
@@ -196,7 +196,7 @@ import { emitter } from "boot/axios";
 import FormLogin from "components/Registration/FormLogin.vue";
 import pdfDialog from "components/PDF/PdfDialog.vue";
 //import { arkVuex } from "src/utils/arkVuex"; // const { pdfWindow } = createArkVuex();
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import {
   onBeforeRouteLeave,
   onBeforeRouteUpdate,
@@ -223,9 +223,9 @@ export default defineComponent({
   },
 
   setup() {
-    //const store = useTest();
+    const arkUtils = useArkUtils();
     const titleBrand = ref("");
-    onMounted(() => {
+    onMounted(async () => {
       titleBrand.value = platform.is.mobile ? "ХиТ" : "Хлеб и Тандыр";
     });
     const { rightDrawerOpen, leftDrawerOpen, modalLoginOpen } = storeToRefs(
@@ -341,10 +341,14 @@ export default defineComponent({
     //! Здесь будем проверять доступ
     console.log("route", route.path);
     async function checkAccess(path, title) {
-      let check = await dataLoad("/api/accessCheck", { path: path }, title);
+      let check = await arkUtils.dataLoad(
+        "/api/accessCheck",
+        { path: path },
+        title
+      );
       console.log("check:", check.toString());
       if (check.error) {
-        // выдали ошибку? она выдается в dataLoad
+        // выдали ошибку? она выдается в arkUtils.dataLoad
         console.log("запрет accessCheck :", path, check.error);
         return false; //router.push("/");
       }
@@ -370,7 +374,7 @@ export default defineComponent({
     //   // Вроде не используем нигде
     //   onBeforeRouteLeave(async (to, from, next) => {
     //     console.log("onBeforeRouteLeave mainLayout.vue", to);
-    //     let check = await dataLoad("/api/accessCheck", { path: to.path }, "");
+    //     let check = await arkUtils.dataLoad("/api/accessCheck", { path: to.path }, "");
     //     if (check.error) {
     //       // выдали ошибку
     //       console.log("запрет accessCheck :", to.path, check.error);
@@ -394,7 +398,7 @@ export default defineComponent({
     //     return next(true);
     //   }
 
-    //   let check = await dataLoad("/api/accessCheck", { path: to.path }, "");
+    //   let check = await arkUtils.dataLoad("/api/accessCheck", { path: to.path }, "");
     //   if (check.error) {
     //     console.log("запрет accessCheck :", to.path);
     //     return next(false);

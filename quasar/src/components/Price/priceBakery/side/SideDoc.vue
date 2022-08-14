@@ -43,6 +43,9 @@
     <q-item clickable v-ripple @click="onShowSelectBakery">
       <q-item-section>Добавить пекарни</q-item-section>
     </q-item>
+    <q-item>
+      <q-item-section id="bakeryTeleport"></q-item-section>
+    </q-item>
   </q-list>
 </template>
 <script>
@@ -56,9 +59,8 @@ export default defineComponent({
   emits: ["update:filter"],
   setup(props, { emit }) {
     //  const priceStore = useSpravStore();
-    const { selectedRowBakery, selectBakeryShow, selectedBakeryPrice } = storeToRefs(
-      usePriceStore()
-    );
+    const { selectedRowBakery, selectBakeryShow, selectedBakeryPrice } =
+      storeToRefs(usePriceStore());
     console.log("Выбрана строка", selectedRowBakery.value);
     function onClickEdit() {
       emit("onClickEdit");

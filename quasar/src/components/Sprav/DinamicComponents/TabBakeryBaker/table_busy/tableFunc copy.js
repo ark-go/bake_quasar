@@ -1,14 +1,15 @@
 import { ref } from "vue";
-import { dataLoad, computed } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { date } from "quasar";
 
 export function useTableFunc(nameTable, rows) {
+  const arkUtils = useArkUtils();
   const url = ref("/api/" + nameTable);
   const dateFormat = ref("DD.MM.YYYY");
 
   async function loadTable(command = { cmd: "load", nogroup: true }) {
     let mess = "Загрузка пекарен";
-    let res = await dataLoad(url.value, command, mess);
+    let res = await arkUtils.dataLoad(url.value, command, mess);
     if (res.result) {
       rows.value = res.result;
       return true;
@@ -24,7 +25,7 @@ export function useTableFunc(nameTable, rows) {
     cmdd.cmd = "addToGroup";
     cmdd.transfer = false;
     console.log("Отправляем", cmdd);
-    let res = await dataLoad(url.value, cmdd, mess);
+    let res = await arkUtils.dataLoad(url.value, cmdd, mess);
     if (res.result) {
       return await loadTable();
       // return res.result;

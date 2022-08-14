@@ -1,6 +1,6 @@
 <style lang="scss">
 .modal-bakery {
-  position: absolute;
+  position: v-bind("positionCss");
   z-index: 5000;
   padding: 0;
   min-width: v-bind("widthModal");
@@ -190,6 +190,7 @@ export default defineComponent({
     const menuDialogShow = ref(false);
     const currentTabComponent = ref();
     const maxBodyHeight = ref("");
+    const positionCss = ref("absolute");
     const saveButtonTitle = computed(() => {
       return selectedBakeryModal.value.length > 0
         ? "Сохранить (" + selectedBakeryModal.value.length + ")"
@@ -221,7 +222,21 @@ export default defineComponent({
         );
       }
     );
+    function fullscreenActive() {
+      if ($q.fullscreen.isActive) {
+        positionCss.value = "none";
+      } else {
+        positionCss.value = "absolute";
+      }
+    }
+    watch(
+      () => $q.fullscreen.isActive,
+      () => {
+        fullscreenActive();
+      }
+    );
     onMounted(() => {
+      fullscreenActive();
       console.log("mounted modal");
       selectedBakeryModal.value = [];
       let hi = localStorage.getItem("modalWindowBakery");
@@ -232,8 +247,9 @@ export default defineComponent({
         widthModal.value = hi.widthModal;
         heightModal.value = hi.heightModal;
       }
-      if (x.value + 50 >= $q.screen.width) x.value = 10;
-      if (y.value + 50 >= $q.screen.height) y.value = 10;
+      if (x.value + 50 >= $q.screen.width || x.value < 5) x.value = 10;
+      if (y.value + 50 >= $q.screen.height || y.value < 5) y.value = 10;
+
       console.log("storage load", hi);
     });
     watch(
@@ -279,11 +295,11 @@ export default defineComponent({
           height(refInfoSection.value) +
           height(refBottomSection.value);
         let N = `calc(${maxHeigh.value} - ${topBottom}px)`;
-        console.log(
-          "Новый Body modal",
-          refTopSection.value,
-          refInfoSection.value
-        );
+        // console.log(
+        //   "Новый Body modal",
+        //   refTopSection.value,
+        //   refInfoSection.value
+        // );
         maxBodyHeight.value = N;
       } catch (e) {
         console.log("нет элемента. пропуск", e);
@@ -438,6 +454,7 @@ export default defineComponent({
       emit,
       onClose,
       priceTitleBakeryModal,
+      positionCss,
     };
   },
 });

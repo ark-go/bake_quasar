@@ -20,6 +20,7 @@ import { deletePriceValue } from "./deletePriceValue.js";
 import { loadPriceValueFranch } from "./loadPriceValueFranch.js";
 import { insertFranchCena } from "./insertFranchCena.js";
 import { loadPriceValueSelectArticle } from "./loadPriceValueSelectArticle.js";
+import { loadPriceValueAll } from "./loadPriceValueAll.js";
 //import { add } from "./add.js";
 // import { update } from "./update.js";
 // import { del } from "./delete.js";

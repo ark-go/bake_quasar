@@ -4,6 +4,7 @@ import { getDocuments } from "./getDocuments.js";
 import { getPriceValue } from "./getPriceValue.js";
 import { getPriceValueFranch } from "./getPriceValueFranch.js";
 import { getPriceBakery } from "./getPriceBakery.js";
+import { getPriceValueAll } from "./getPriceValueAll.js";
 export async function exportPriceExcel(req, res) {
   let timezone = req?.headers?.timezone
     ? req.headers.timezone
@@ -74,6 +75,14 @@ exportPriceExcel: {
       sheetDocum.pageSetup.printArea = `A4:E${i}`;
     }
   }
+  //+++++++++++++++++++++++++++++++++++ все что есть
+  const sheetValueAll = workbook.addWorksheet("Все данные", {
+    headerFooter: { firstHeader: "Лепеха Прайс", firstFooter: "Бу-бу-бу" },
+    properties: { tabColor: { argb: "55FF0000" } }, // синий 00FF00 зеленый
+    pageSetup: { printTitlesRow: "1:1" },
+  });
+
+  await getPriceValueAll(req, sheetValueAll);
   //+++++++++++++++++++++++++++++++++++
   const sheetValue = workbook.addWorksheet("Прайс", {
     headerFooter: { firstHeader: "Лепеха Прайс", firstFooter: "Бу-бу-бу" },
@@ -143,6 +152,8 @@ exportPriceExcel: {
     worksheet.pageSetup.paperSize = 9;
     worksheet.pageSetup.orientation = "landscape";
     worksheet.pageSetup.fitToPage = true; // вписать лист при печати
+    worksheet.pageSetup.fitToWidth = 1; // сколько страниц вширину печатать если включен fitToPage  2 - и больше разобъет таблицу
+    worksheet.pageSetup.fitToHeight = 30; // сколько страниц в высоту?  если включен fitToPage 1 - не понятно что смотерт в Екселе yfcnhjqrb
     worksheet.pageSetup.blackAndWhite = true; // печать без цвета
     worksheet.pageSetup.showGridLines = true; // раз без цвета то поставим динии к строкам
     worksheet.pageSetup.horizontalCentered = true; // центрировать по горизонтали
@@ -150,7 +161,10 @@ exportPriceExcel: {
     // worksheet.pageSetup.differentFirst = true // различать колонтитулы первой страница
     worksheet.headerFooter.firstFooter = "A516"; // первой страницы / firstHeader
     // worksheet.headerFooter.differentOddEven = true; // включит раздельные футеры для четных нечетных
-    worksheet.headerFooter.oddHeader = "&L&F&K00ff00";
+    if (worksheet.name == "Все данные")
+      // имя не таблицы !! а листа
+      worksheet.headerFooter.oddHeader = "Все что есть в базе &K00ff00";
+    else worksheet.headerFooter.oddHeader = "&L&F&K00ff00";
     worksheet.headerFooter.oddFooter = "made in &BLepёshka©&B &F&K00ff00 &R&D"; // не четные по умолчию т.е. всегда если не включено раздельное differentOddEven
     worksheet.headerFooter.evenFooter = "made in &Blepёshka© "; // четные
     worksheet.pageSetup.margins = {

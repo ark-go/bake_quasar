@@ -76,6 +76,9 @@ export function useTableFunc(nameTable) {
     }
   }
   async function addDocument(row) {
+    //  arkUtils.confirmDelete("Вы хотите удалить докумен?", () => {
+    //   console.log("Привет вот из диалога Ок");
+    // });
     let command = {
       cmd: "addDocument",
     };
@@ -91,10 +94,15 @@ export function useTableFunc(nameTable) {
       return null;
     }
   }
-  async function deleteDocument(id) {
+  async function deleteDocument(row) {
+    let dial = await arkUtils.confirmDelete(
+      "Вы хотите удалить документ?",
+      `Документ № ${row.docnum} от ${row.datestart}`
+    );
+    if (!dial) return;
     let command = {
       cmd: "deleteDocument",
-      document_id: id,
+      document_id: row.id,
     };
     let mess = "Удаление";
     let url = "/api/tabPrice";

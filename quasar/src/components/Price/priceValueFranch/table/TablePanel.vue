@@ -111,7 +111,9 @@ export default defineComponent({
       if (selectedFranchPrice.value.length == 1) {
         return "Прайс пекарни: " + selectedFranchPrice.value[0].bakery_name;
       } else {
-        return "Общий прайс";
+        return selectedFranchPrice.value.length == 0
+          ? "Общий прайс"
+          : `Общий прайс для ${selectedFranchPrice.value.length} пек.`;
       }
     });
     async function onSave() {

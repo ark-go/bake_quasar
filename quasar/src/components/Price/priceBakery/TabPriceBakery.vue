@@ -9,7 +9,7 @@
       <Table-Panel :checkSave="checkSave"></Table-Panel>
     </template>
   </Tab-Panel-Split>
-  <teleport to="body" v-if="selectBakeryShow">
+  <teleport :to="targetTeleport" v-if="selectBakeryShow">
     <Select-Bakery pageMaxHeight="300px" @onSave="onSaveBakeryArray">
       <!-- перечитаем таблицу с печками modal -->
       <Select-Bakery-Table
@@ -21,7 +21,14 @@
   <!-- <form-doc v-model:showDialog="showDialog" @onSave="onSave"> </form-doc> -->
 </template>
 <script>
-import { ref, defineComponent, watch } from "vue";
+import {
+  ref,
+  defineComponent,
+  watch,
+  watchEffect,
+  nextTick,
+  onMounted,
+} from "vue";
 import TabPanelSplit from "../TabPanelSplit.vue";
 import TablePanel from "./table/TablePanel.vue";
 //import FormDoc from "./FormDoc.vue";
@@ -30,6 +37,8 @@ import SelectBakery from "./selectBakery/ArkCard.vue";
 import SelectBakeryTable from "./selectBakery/table/TablePanel.vue";
 import { usePriceStore, storeToRefs } from "stores/priceStore";
 import { useTableFunc as useTableFuncSelectBakery } from "./selectBakery/table/tableFunc.js";
+import { useQuasar } from "quasar";
+
 export default defineComponent({
   name: "priceBakery",
   components: {
@@ -42,18 +51,43 @@ export default defineComponent({
   },
   setup() {
     const {
-      selectedRowBakery,
+      tabModel,
       selectBakeryShow,
       selectedBakeryPrice,
       selectedBakeryModal,
     } = storeToRefs(usePriceStore());
+    const $q = useQuasar();
     // const showDialog = ref(false);
     const checkSave = ref(false);
+    const targetTeleport = ref("body");
     //const selectedBakeryId = ref([]);
     const tableFuncSelectBakery = useTableFuncSelectBakery();
-    // function onClickEdit() {
-    //   showDialog.value = true;
-    // }
+
+    function teleportCheck() {
+      console.log(
+        "VVVVVVVVVVV full",
+        $q.fullscreen.isActive,
+        selectBakeryShow.value
+      );
+      if ($q.fullscreen.isActive) {
+        nextTick(() => {
+          targetTeleport.value = "#bakeryTeleport";
+        });
+      } else {
+        nextTick(() => {
+          targetTeleport.value = "body";
+        });
+      }
+    }
+    onMounted(() => {
+      teleportCheck();
+    });
+    watch(
+      () => $q.fullscreen.isActive,
+      (val) => {
+        teleportCheck();
+      }
+    );
     function onShowSelectBakery() {
       //showDialog.value = true;
     }
@@ -102,6 +136,7 @@ export default defineComponent({
       }
     }
     return {
+      tabModel,
       selectedBakeryModal,
       onClickDelete,
       //  showDialog,
@@ -111,6 +146,7 @@ export default defineComponent({
       onSave,
       checkSave,
       selectBakeryShow,
+      targetTeleport,
     };
   },
 });

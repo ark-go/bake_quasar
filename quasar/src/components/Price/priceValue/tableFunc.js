@@ -1,5 +1,5 @@
 import { ref } from "vue";
-import { useArkUtils } from "src/utils/arkUtils";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { usePriceStore } from "stores/priceStore";
 import { date } from "quasar";
 export function useTableFunc(nameTable) {
@@ -38,10 +38,15 @@ export function useTableFunc(nameTable) {
       return null;
     }
   }
-  async function deletePriceValue(price_id) {
+  async function deletePriceValue(row) {
+    let dial = await arkUtils.confirmDelete(
+      "Вы хотите удалить позицию прайса?",
+      `Артикул № ${row.article} : ${row.price_name}`
+    );
+    if (!dial) return;
     let command = {
       cmd: "deletePriceValue",
-      price_id: price_id,
+      price_id: row.id,
     };
     // command.historyDate = dateToDateUnix(spravStore.historyDate);
     let mess = "Удаление прайса";
@@ -54,16 +59,32 @@ export function useTableFunc(nameTable) {
       return null;
     }
   }
-  async function loadTable() {
-    let command = { cmd: "load" };
+  // async function loadTable() {
+  //   let command = { cmd: "load" };
+  //   // command.historyDate = dateToDateUnix(spravStore.historyDate);
+  //   let mess = "Загрузка";
+  //   let url = "/api/" + nameTable;
+  //   let res = await arkUtils.dataLoad(url, command, mess);
+  //   if (res.result) {
+  //     rows.value = res.result;
+  //   } else {
+  //     rows.value = [];
+  //   }
+  // }
+  async function loadPriceValueSelectArticle(article, kagent_id) {
+    let command = {
+      cmd: "loadPriceValueSelectArticle",
+      article,
+      kagent_id,
+    };
     // command.historyDate = dateToDateUnix(spravStore.historyDate);
-    let mess = "Загрузка";
+    let mess = "История артикулов";
     let url = "/api/" + nameTable;
     let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
-      rows.value = res.result;
+      return res.result;
     } else {
-      rows.value = [];
+      return [];
     }
   }
   // async function saveRowTable(row) {
@@ -90,17 +111,17 @@ export function useTableFunc(nameTable) {
   //     }
   //   }
   // }
-  async function deleteTable(row) {
-    let command = { cmd: "delete" };
-    command.row = row;
-    //   command.historyDate = dateToDateUnix(spravStore.historyDate);
-    let mess = "Обновление";
-    let url = "/api/" + nameTable;
-    let res = await arkUtils.dataLoad(url, command, mess);
-    if (res.result) {
-      await loadTable();
-    }
-  }
+  // async function deleteTable(row) {
+  //   let command = { cmd: "delete" };
+  //   command.row = row;
+  //   //   command.historyDate = dateToDateUnix(spravStore.historyDate);
+  //   let mess = "Обновление";
+  //   let url = "/api/" + nameTable;
+  //   let res = await arkUtils.dataLoad(url, command, mess);
+  //   if (res.result) {
+  //     await loadTable();
+  //   }
+  // }
   function dateToDateUnix(dat) {
     if (!dat) {
       return null;
@@ -114,12 +135,13 @@ export function useTableFunc(nameTable) {
 
   return {
     loadProductVid,
-    loadTable,
+    //loadTable,
     //  saveRowTable,
-    deleteTable,
+    //deleteTable,
     dateToDateUnix,
     dateFormatDate,
     addPriceValue,
     deletePriceValue,
+    loadPriceValueSelectArticle,
   };
 }

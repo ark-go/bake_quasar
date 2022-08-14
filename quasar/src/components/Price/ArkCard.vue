@@ -1,5 +1,5 @@
 <template>
-  <div style="padding: 5px">
+  <div :ref="(el) => (refAllForm = el)" style="padding: 5px">
     <q-card
       bordered
       class="my-card bg-grey-1 shadow-10"
@@ -8,7 +8,7 @@
       @click.right.prevent="$emit('stop')"
     >
       <div :ref="(el) => (refTopSection = el)">
-        <q-card-section>
+        <q-card-section class="q-pb-xs q-pt-xs">
           <q-badge
             class="cursor-pointer q-mt-sm"
             style="margin-top: 5px; margin-right: 4px"
@@ -47,7 +47,7 @@
         </q-card-section>
       </div>
       <div :ref="(el) => (refInfoSection = el)">
-        <q-card-section style="padding-top: 0">
+        <q-card-section class="q-py-xs">
           <Tab-Button></Tab-Button>
         </q-card-section>
       </div>
@@ -82,6 +82,7 @@
         </q-card-actions>
         <div id="tabTeleport"></div>
       </div>
+      <slot name="bottomSlot"> </slot>
     </q-card>
     <Page-Setup-Dialog
       v-model:menuDialogShow="menuDialogShow"
@@ -99,6 +100,7 @@ import TabMobil from "./TabMobil.vue";
 import TabButton from "./TabButton.vue";
 import { useQuasar, dom } from "quasar";
 import { usePriceStore, storeToRefs } from "src/stores/priceStore";
+
 //import { getComponent } from "./selectComponent.js"; //defineComponents
 //import SelectDateExt from "./SelectDateExt.vue";
 
@@ -113,12 +115,14 @@ export default defineComponent({
     buttonArr: [Object, Boolean],
     menuObj: Object,
     pageMaxHeight: Object,
+    fullScreenTr: Boolean,
   },
   components: {
     //   SplitterSprav,
     //   TabMobil,
     TabButton,
     PageSetupDialog,
+
     //   SelectDateExt,
   },
   setup(props, { emit }) {
@@ -131,6 +135,7 @@ export default defineComponent({
     const refBodySection = ref();
     const refInfoSection = ref();
     const refBottomSection = ref();
+    const refAllForm = ref();
     const cardHeight = ref(400);
     const buttonArrProp = ref();
     const splitterModel = ref(30);
@@ -144,6 +149,30 @@ export default defineComponent({
       () => tabModel.value,
       () => {
         console.log("Выбрана вкладка", tabModel.value);
+      }
+    );
+    watch(
+      () => props.fullScreenTr,
+      () => {
+        if (!$q.fullscreen.isActive) {
+          $q.fullscreen
+            .request(refAllForm.value)
+            .then(() => {
+              // success!
+            })
+            .catch((err) => {
+              console.log("fullscreen1", err);
+            });
+        } else {
+          $q.fullscreen
+            .exit()
+            .then(() => {
+              // success!
+            })
+            .catch((err) => {
+              // oh, no!!!
+            });
+        }
       }
     );
     function onClickMenu(nameKey) {
@@ -174,18 +203,27 @@ export default defineComponent({
     // const maxBodyHeight = ref("");
     function reSizeCard() {
       // console.log("maxHeighmaxHeighmaxHeigh", maxHeigh.value);
+      // if (!$q.fullscreen.isActive) {
       try {
         let topBottom =
           height(refTopSection.value) +
           height(refInfoSection.value) +
           height(refBottomSection.value);
-        let N = `calc(${maxHeigh.value.maxHeight} - ${topBottom}px)`;
-        console.log("Новый Body", refTopSection.value, refInfoSection.value);
-        maxBodyHeight.value = N;
+        // if (maxHeigh.value?.maxHeight) {
+        // если есть размер
+        maxBodyHeight.value = `calc(${maxHeigh.value.maxHeight} - ${topBottom}px)`;
+        // } else {
+        //   // если нет, т.е. полный экран
+        //   maxBodyHeight.value = `${topBottom}px`;
+        // }
       } catch (e) {
         console.log("нет элемента. пропуск", e);
         maxBodyHeight.value = maxHeigh.value; //! не правильно
       }
+      // }else{
+
+      // }
+      console.log("test size", maxBodyHeight.value, props.pageMaxHeight);
     }
 
     onUpdated(() => {
@@ -242,6 +280,7 @@ export default defineComponent({
       refBodySection,
       refInfoSection,
       refBottomSection,
+      refAllForm,
       maxBodyHeight,
       maxHeigh,
       splitterModel,

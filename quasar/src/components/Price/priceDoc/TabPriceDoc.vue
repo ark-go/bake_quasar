@@ -7,7 +7,10 @@
       @onClickExcel="onClickExcel"
     ></Side-Doc>
     <template v-slot:after>
-      <Table-Panel :checkSave="checkSave"></Table-Panel>
+      <Table-Panel
+        :checkSave="checkSave"
+        @onRowDblClick="onClickEdit"
+      ></Table-Panel>
     </template>
   </Tab-Panel-Split>
   <form-doc v-model:showDialog="showDialog" @onSave="onSave"></form-doc>
@@ -24,7 +27,7 @@ export default defineComponent({
   name: "priceDoc",
   components: { TabPanelSplit, TablePanel, SideDoc, FormDoc },
   setup() {
-    const { selectedRowDoc } = storeToRefs(usePriceStore());
+    const { selectedRowDoc, tabModel } = storeToRefs(usePriceStore());
     const showDialog = ref(false);
     const checkSave = ref(false);
     const tableFunc = useTableFunc("tabPrice");
@@ -40,7 +43,7 @@ export default defineComponent({
       checkSave.value = !checkSave.value;
     }
     async function onClickDelete() {
-      await tableFunc.deleteDocument(selectedRowDoc.value.id);
+      await tableFunc.deleteDocument(selectedRowDoc.value);
       checkSave.value = !checkSave.value;
     }
     async function onClickExcel() {
@@ -84,6 +87,7 @@ export default defineComponent({
       return blob;
     };
     return {
+      tabModel,
       showDialog,
       onClickEdit,
       onClickNew,

@@ -31,10 +31,11 @@
     :columns="columns"
     :tableBodyMenu="tableBodyMenu"
     :tableFunc="tableFunc"
-    @onInfoRow="onInfoRow"
+    @onInfoRow="$emit('onRowDblClick')"
     @onBtnDelete="onInfoRow"
     @onBtnEdit="onInfoRow"
     @onRowClick="onRowClick"
+    @onRowDblClick="$emit('onRowDblClick')"
     @onAdd="onRowClick"
     :currentRow="selectedRowDoc"
     noExpandPanel

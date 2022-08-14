@@ -3,9 +3,13 @@ import { date } from "quasar";
 import { useQuasar } from "quasar";
 import { axios } from "boot/axios";
 import { sanitizeDef } from "./sanitize.js";
+import { useRouter, useRoute } from "vue-router";
+import { useConfirmDelete } from "./confirmDelete.js";
 
 export function useArkUtils() {
   const $q = useQuasar();
+  const router = useRouter();
+  const { confirmDelete } = useConfirmDelete();
   /**
    *
    * @param {string} url Адрес
@@ -49,7 +53,7 @@ export function useArkUtils() {
           )
         ) {
           //  await axios.post("/api/unLogin", {});
-
+          router.push({ path: "/" });
           logInfo += " запрещено.";
         }
         throw respData.error;
@@ -57,6 +61,7 @@ export function useArkUtils() {
 
       notif({
         icon: "done", // we add an icon
+        classes: "q-py-none no-min-height",
         spinner: false, // we reset the spinner setting so the icon can be displayed
         message: sanitizeDef(logInfo || "Загрузили"),
         timeout: 2500, // we will timeout it in 2.5s
@@ -67,13 +72,21 @@ export function useArkUtils() {
       return respData;
     } catch (err) {
       $q.loading.hide();
+      notif(); // для закрытия того что не загрузилось.
+
       console.log("dataLoad.js ERROR:", err.toString());
       let captionErr = "";
-      let caption = ["NoAccess", "noautorizate", "WaitManualConfirm"].includes(
-        err.toString()
-      )
-        ? "У вас нет доступа!"
-        : logInfo + " :<br>" + err.toString();
+      let caption = "";
+      let noAccessErr = [
+        "NoAccess",
+        "noautorizate",
+        "WaitManualConfirm",
+      ].includes(err.toString());
+      if (noAccessErr) {
+        caption = "У вас нет доступа!";
+      } else {
+        caption = logInfo + " :<br>" + err.toString();
+      }
       if (["WaitManualConfirm"].includes(err.toString())) {
         caption = caption + "<br>Ожидайте подтверждения регистрации";
       }
@@ -84,7 +97,6 @@ export function useArkUtils() {
         captionErr = err.toString();
       }
 
-      notif(); // для закрытия того что не загрузилось.
       $q.notify({
         classes: "notify-error-top",
         position: caption ? "center" : "top",
@@ -113,10 +125,13 @@ export function useArkUtils() {
         ],
       });
       console.log(err);
+      if (noAccessErr) {
+        router.push({ path: "/" });
+      }
       return {
         error: "Ошибка: " + logInfo + " : " + err.toString(),
       };
     }
   }
-  return { dataLoad };
+  return { dataLoad, confirmDelete };
 }

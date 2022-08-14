@@ -157,7 +157,7 @@
 <script>
 import { defineComponent, ref, unref, onMounted, nextTick } from "vue";
 import ArkCard from "components/Card/ArkCard.vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 //import { useQuasar } from "quasar";
 import { useRouter } from "vue-router";
 
@@ -167,6 +167,7 @@ export default defineComponent({
     ArkCard,
   },
   setup() {
+    const arkUtils = useArkUtils();
     //  const $q = useQuasar();
     const $router = useRouter();
     const treeNodes = ref([]);
@@ -267,7 +268,7 @@ export default defineComponent({
       }
     }
     async function treeCommand(cmd, dat) {
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/userroletree",
         { ...dat, ...{ cmd: cmd } },
         "Удаление дерева"
@@ -412,7 +413,7 @@ export default defineComponent({
       console.log("added", res);
     }
     async function loadDepartments(dat) {
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/userroletree",
         { ...{ cmd: "load" }, ...dat },
         "Чтение дерева"
@@ -420,7 +421,7 @@ export default defineComponent({
       return res?.result;
     }
     async function depAddDell(cmd, dat) {
-      let res = await dataLoad(
+      let res = await arkUtils.dataLoad(
         "/api/userroletree",
         { ...dat, ...{ cmd: cmd } },
         "Удаление дерева"

@@ -1,9 +1,10 @@
 import { ref } from "vue";
-import { dataLoad } from "src/utils/ark.js";
+import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { useUsersPanelStore, storeToRefs } from "stores/usersPanelStore.js";
 const { userRow: currentRow, treeRow } = storeToRefs(useUsersPanelStore());
 import { useIoBroadcast } from "src/utils/ioBroadcast.js";
 export function useTableFunc(nameTable, rows) {
+  const arkUtils = useArkUtils();
   const io = useIoBroadcast(ioBroadcastUpdate, "Пользователи");
   async function ioBroadcastUpdate(param) {
     if (param.tableName == nameTable) {
@@ -31,9 +32,9 @@ export function useTableFunc(nameTable, rows) {
     };
     console.log("хотим таблицу ", nameTable);
     let mess = "Загрузка пекарен";
-    // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
+    // let res = await arkUtils.dataLoad("/api/bakery", { cmd: "load" }, mess);
     let url = "/api/" + nameTable;
-    let res = await dataLoad(url, command, mess);
+    let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
       rows.value = res.result;
     } else {
@@ -45,9 +46,9 @@ export function useTableFunc(nameTable, rows) {
 
     console.log("user addUpdate ", nameTable, body);
     let mess = "Пользователи " + body.cmd;
-    // let res = await dataLoad("/api/bakery", { cmd: "load" }, mess);
+    // let res = await arkUtils.dataLoad("/api/bakery", { cmd: "load" }, mess);
     let url = "/api/" + nameTable;
-    let res = await dataLoad(url, body, mess);
+    let res = await arkUtils.dataLoad(url, body, mess);
     if (res.result) {
       await loadTable();
       io.sendBroadcast(nameTable);

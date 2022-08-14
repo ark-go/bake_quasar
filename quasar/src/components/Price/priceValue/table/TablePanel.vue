@@ -31,7 +31,7 @@
     :columns="columns"
     :tableBodyMenu="tableBodyMenu"
     :tableFunc="tableFunc"
-    @onInfoRow="onInfoRow"
+    @onInfoRow="$emit('onRowDblClick')"
     @onBtnDelete="onInfoRow"
     @onBtnEdit="onInfoRow"
     @onRowClick="onRowClick"

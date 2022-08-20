@@ -1,14 +1,10 @@
-import { ref, watch } from "vue";
+import { ref, watch, onMounted } from "vue";
 import { useArkUtils } from "src/utils/arkUtils";
 import { date } from "quasar";
 import { usePriceStore, storeToRefs } from "stores/priceStore";
-import { useTableFunc as useTableFuncBakery } from "../../priceBakery/table/tableFunc.js";
-import { useTableFunc as useTableFuncPrice } from "../../priceValue/table/tableFunc.js";
 export function useTableFunc(nameTable) {
   const arkUtils = useArkUtils();
   const dateFormat = ref("DD.MM.YYYY");
-  const tableFuncPriceBakery = useTableFuncBakery();
-  const tableFuncPricePrice = useTableFuncPrice();
   const { RowsDocuments, selectedRowDoc } = storeToRefs(usePriceStore());
   async function loadTable(historyDate, command = { cmd: "load" }) {
     let aId = selectedRowDoc.value?.id; // сохраним строку если была выбрана
@@ -38,13 +34,5 @@ export function useTableFunc(nameTable) {
     // dat - timeStamp
     return date.formatDate(dat, dateFormat.value);
   }
-  watch(
-    () => selectedRowDoc.value.id,
-    async () => {
-      console.log("selectedRowDoc tableFunc", selectedRowDoc.value.id);
-      await tableFuncPricePrice.loadTable(); // чтам прайс
-      await tableFuncPriceBakery.loadTable(); // читаем пекарни из того файла
-    }
-  );
   return { loadTable, dateToDateUnix, dateFormatDate };
 }

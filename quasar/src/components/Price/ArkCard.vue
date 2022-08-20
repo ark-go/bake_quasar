@@ -221,13 +221,15 @@ export default defineComponent({
         maxBodyHeight.value = maxHeigh.value; //! не правильно
       }
       // }else{
+      // if($q.platform.is.electron){
 
+      // }
       // }
       console.log("test size", maxBodyHeight.value, props.pageMaxHeight);
     }
 
     onUpdated(() => {
-      // помоему срабатывает если объект внутри keep-alive
+      // помоему срабатывает если 
       reSizeCard();
     });
     onMounted(() => {

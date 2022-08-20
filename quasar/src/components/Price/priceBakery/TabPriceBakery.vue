@@ -9,7 +9,11 @@
       <Table-Panel :checkSave="checkSave"></Table-Panel>
     </template>
   </Tab-Panel-Split>
-  <teleport :to="targetTeleport" v-if="selectBakeryShow">
+  <teleport
+    :to="targetTeleport"
+    v-if="selectBakeryShow"
+    :disabled="disabledTeleport"
+  >
     <Select-Bakery pageMaxHeight="300px" @onSave="onSaveBakeryArray">
       <!-- перечитаем таблицу с печками modal -->
       <Select-Bakery-Table
@@ -25,9 +29,10 @@ import {
   ref,
   defineComponent,
   watch,
-  watchEffect,
   nextTick,
   onMounted,
+  onDeactivated,
+  onActivated,
 } from "vue";
 import TabPanelSplit from "../TabPanelSplit.vue";
 import TablePanel from "./table/TablePanel.vue";
@@ -60,15 +65,19 @@ export default defineComponent({
     // const showDialog = ref(false);
     const checkSave = ref(false);
     const targetTeleport = ref("body");
+    const disabledTeleport = ref(false);
+    onDeactivated(() => {
+      console.log("Deactivate priceBakery !");
+      selectBakeryShow.value = false;
+      disabledTeleport.value = true;
+    });
+    onActivated(() => {
+      disabledTeleport.value = false;
+    });
     //const selectedBakeryId = ref([]);
     const tableFuncSelectBakery = useTableFuncSelectBakery();
 
     function teleportCheck() {
-      console.log(
-        "VVVVVVVVVVV full",
-        $q.fullscreen.isActive,
-        selectBakeryShow.value
-      );
       if ($q.fullscreen.isActive) {
         nextTick(() => {
           targetTeleport.value = "#bakeryTeleport";
@@ -106,20 +115,6 @@ export default defineComponent({
         checkSave.value = !checkSave.value;
       }
     }
-    // watch(
-    //   () => selectedBakeryModal.value,
-    //   () => {
-    //     selectedBakeryId.value = [];
-    //     selectedBakeryModal.value.forEach((val) => {
-    //       selectedBakeryId.value.push(val.id);
-    //     });
-    //     console.log(
-    //       "Выбрано кучка",
-    //       selectedBakeryId.value,
-    //       selectedBakeryModal.value
-    //     );
-    //   }
-    // );
 
     async function onClickDelete() {
       let selectedBakeryPriceId = [];
@@ -147,6 +142,7 @@ export default defineComponent({
       checkSave,
       selectBakeryShow,
       targetTeleport,
+      disabledTeleport,
     };
   },
 });

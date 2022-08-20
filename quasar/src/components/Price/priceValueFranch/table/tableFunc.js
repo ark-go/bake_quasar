@@ -5,7 +5,9 @@ import { usePriceStore, storeToRefs } from "stores/priceStore.js"; //  const { p
 export function useTableFunc(nameTable) {
   const arkUtils = useArkUtils();
   const dateFormat = ref("DD.MM.YYYY");
-  const { selectedFranchPrice } = storeToRefs(usePriceStore());
+  const { selectedFranchPrice, selectedRowPrice } = storeToRefs(
+    usePriceStore()
+  );
   async function loadTable(price_id) {
     let bakery_id = "";
     if (selectedFranchPrice.value.length == 1) {

@@ -50,8 +50,6 @@ import {
   defineComponent,
   ref,
   defineAsyncComponent,
-  onMounted,
-  watch,
   watchEffect,
   computed,
 } from "vue";
@@ -104,10 +102,6 @@ export default defineComponent({
     // const currentRow = ref({});
     const pagination = ref({
       rowsPerPage: 10,
-    });
-    function reLoadComponent() {}
-    watchEffect(() => {
-      reLoadComponent(props.panelName);
     });
     function onRowClick(row) {
       selectedFranchPrice.value = []; //! single

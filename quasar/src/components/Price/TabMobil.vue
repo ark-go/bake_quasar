@@ -1,10 +1,5 @@
 <template>
-  <q-tab-panels
-    v-model="tabModelBottom"
-    animated
-    keep-alive
-    :swipeable="isMobile"
-  >
+  <q-tab-panels v-model="tabModelBottom" animated :swipeable="isMobile">
     <q-tab-panel
       name="sideTab"
       style="padding: 0"
@@ -81,11 +76,6 @@ export default defineComponent({
       // ошибки ктораньше появляется, телепорт хочет иметь таргет до появления
       // для этого же я использую v-if в телепорте, не знаю как заставить включаться после таргета
       disableTeleport.value = false;
-
-      // watch(() => {
-      // maxBodyHeight.value = `calc(${maxBodyHeight.value} - ${refTabsButton.value.offsetHeight}px)`;
-
-      // });
       nextTick(() => {
         maxBodyHeightResize.value = !maxBodyHeightResize.value;
       });

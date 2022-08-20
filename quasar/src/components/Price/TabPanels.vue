@@ -1,15 +1,20 @@
 <template>
-  <q-tab-panels v-model="tabModel" animated keep-alive class="ark-tab-panel">
-    <q-tab-panel name="main" class="ark-tab-panel">
+  <q-tab-panels
+    v-model="tabModel"
+    animated
+    :keep-alive="keepAlive"
+    class="ark-tab-panel"
+  >
+    <q-tab-panel key="1" name="main" class="ark-tab-panel">
       <Tab-Price-Doc></Tab-Price-Doc>
     </q-tab-panel>
-    <q-tab-panel name="bakery" class="ark-tab-panel">
+    <q-tab-panel key="2" name="bakery" class="ark-tab-panel">
       <Tab-Price-Bakery></Tab-Price-Bakery>
     </q-tab-panel>
-    <q-tab-panel name="priceValue" class="ark-tab-panel">
+    <q-tab-panel key="3" name="priceValue" class="ark-tab-panel">
       <Tab-Price-Value></Tab-Price-Value>
     </q-tab-panel>
-    <q-tab-panel name="priceValueFranch" class="ark-tab-panel">
+    <q-tab-panel key="4" name="priceValueFranch" class="ark-tab-panel">
       <Tab-Price-Value-Franch></Tab-Price-Value-Franch>
     </q-tab-panel>
   </q-tab-panels>
@@ -19,7 +24,7 @@
 /**
  * используем для размещения tabPanel панелей
  */
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, ref, onBeforeUnmount } from "vue";
 
 import TabPriceDoc from "./priceDoc/TabPriceDoc.vue";
 import TabPriceBakery from "./priceBakery/TabPriceBakery.vue";
@@ -36,10 +41,15 @@ export default defineComponent({
   },
   setup() {
     const { tabModel } = storeToRefs(usePriceStore());
+    const keepAlive = ref(true);
     onMounted(() => {
       tabModel.value = "main";
     });
-    return { tabModel };
+    onBeforeUnmount(() => {
+      console.log("keep off");
+      keepAlive.value = false;
+    });
+    return { tabModel, keepAlive };
   },
 });
 </script>

@@ -53,7 +53,6 @@ import {
   defineAsyncComponent,
   onMounted,
   watch,
-  watchEffect,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
 import { columns } from "./tableColumnList.js";
@@ -95,10 +94,7 @@ export default defineComponent({
     const pagination = ref({
       rowsPerPage: 10,
     });
-    // function reLoadComponent() {}
-    // watchEffect(() => {
-    //   reLoadComponent(props.panelName);
-    // });
+
     watch(
       // сигнал на перезагрузку таблицы
       () => props.checkReload,

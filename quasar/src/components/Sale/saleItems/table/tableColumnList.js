@@ -1,0 +1,57 @@
+export const columns = [
+  {
+    name: "article",
+    label: "Артикул",
+    align: "left",
+    field: "article",
+    required: true, // нельзя выключить
+    sortable: true,
+  },
+  {
+    name: "hidden",
+    label: "Скрыто",
+    align: "center",
+    field: "hidden",
+    sortable: true,
+    hidden: true,
+  },
+  {
+    name: "tovar_name",
+    label: "Товар",
+    align: "left",
+    field: "tovar_name",
+    sortable: true,
+  },
+  {
+    name: "productvid_name",
+    label: "Продукт",
+    align: "left",
+    field: "productvid_name",
+    sortable: true,
+    hidden: false,
+  },
+  {
+    name: "bakery_name",
+    label: "Пекарня",
+    align: "left",
+    field: "bakery_name",
+    sortable: true,
+    hidden: true,
+  },
+  {
+    name: "date_start",
+    label: "Дата док.",
+    align: "left",
+    field: "date_start",
+    sortable: true,
+    hidden: true,
+  },
+  {
+    name: "price_docnum",
+    label: "Номер док.",
+    align: "left",
+    field: "price_docnum",
+    sortable: true,
+    hidden: true,
+  },
+];

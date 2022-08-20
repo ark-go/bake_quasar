@@ -2,7 +2,7 @@ import { ref } from "vue";
 import { useArkUtils } from "src/utils/arkUtils";
 import { date } from "quasar";
 import { usePriceStore, storeToRefs } from "stores/priceStore.js";
-export function useTableFunc(nameTable) {
+export function useTableFunc() {
   const arkUtils = useArkUtils();
   const dateFormat = ref("DD.MM.YYYY");
   const { RowsBakeryPrice, selectedRowDoc, bakeryFranchPrice, bakeryCount } =

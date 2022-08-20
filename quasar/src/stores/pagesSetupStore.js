@@ -1,7 +1,8 @@
 import { defineStore } from "pinia";
 export { storeToRefs } from "pinia";
 import merge from "merge";
-import { Notify } from "quasar";
+import { Notify, useQuasar, Platform, Screen } from "quasar";
+//let $q = useQuasar();
 import { nextTick, unref, ref, toRefs } from "vue";
 /**
  * Настройки страницы для пользователя
@@ -131,20 +132,25 @@ export const usePagesSetupStore = defineStore("PagesSetupStore", {
 
   getters: {
     cardMain: (state) => {
+      let page = {};
       switch (state.currentPage) {
         case "docPrice":
-          return state.page.docPrice;
+          page = state.page.docPrice;
+          break;
         case "products":
-          return state.page.products;
+          page = state.page.products;
+          break;
         case "sprav":
-          return state.page.sprav;
+          page = state.page.sprav;
+          break;
         case "usersTree":
           state.page.usersTree = {
             ...copyObject(state.page.defaultPage),
             ...state.page.usersTree,
           };
           console.log("test должно быть про сплит", state.page.usersTree);
-          return state.page.usersTree;
+          page = state.page.usersTree;
+          break;
         default:
           if (state.currentPage) {
             if (!state.page[state.currentPage]) {
@@ -152,14 +158,14 @@ export const usePagesSetupStore = defineStore("PagesSetupStore", {
               state.page[state.currentPage] = {
                 ...copyObject(state.page.defaultPage),
               };
-              return state.page[state.currentPage];
+              page = state.page[state.currentPage];
             } else {
               // есть в памяти, возьмем, возможно новый default. и по верх накатим сохраненное
               state.page[state.currentPage] = {
                 ...copyObject(state.page.defaultPage),
                 ...state.page[state.currentPage],
               };
-              return state.page[state.currentPage];
+              page = state.page[state.currentPage];
             }
           } else {
             // не указана страница, забыли? выкинуть ошибку ?
@@ -167,6 +173,10 @@ export const usePagesSetupStore = defineStore("PagesSetupStore", {
             return;
           }
       }
+      if (Platform.is.electron) {
+        page.width.curr = Screen.width;
+      }
+      return page;
     },
     /**Рабочий размер Height для ArkCard с padding  ( pagePaddingY )*/
     arkCardHeight: (state) => {

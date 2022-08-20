@@ -24,7 +24,7 @@
 </template>
 <script>
 import ArkCard from "./ArkCard.vue";
-import { defineComponent, ref, watchEffect } from "vue";
+import { defineComponent, ref, watchEffect, onUnmounted, nextTick } from "vue";
 import { usePriceStore } from "stores/priceStore";
 import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 // все назначается в tabPanels в подкаталогах
@@ -45,6 +45,13 @@ export default defineComponent({
   },
   setup() {
     const priceStore = usePriceStore();
+    onUnmounted(() => {
+      //  nextTick(() => {
+      console.log("unmounted Price");
+      priceStore.watchStop();
+      priceStore.$reset();
+      //   });
+    });
     const { cardMain } = storeToRefs(usePagesSetupStore());
     const subTitle = ref("");
     const helpCode = ref("");

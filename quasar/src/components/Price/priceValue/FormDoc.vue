@@ -111,15 +111,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  ref,
-  reactive,
-  onMounted,
-  watch,
-  watchEffect,
-  nextTick,
-} from "vue";
+import { defineComponent, ref, reactive, onMounted, watch } from "vue";
 import { useQuasar } from "quasar";
 import FormInput from "./FormInput.vue";
 import SelectTovar from "./SelectTovar.vue";

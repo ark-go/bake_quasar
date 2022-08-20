@@ -252,12 +252,7 @@ export default defineComponent({
 
       console.log("storage load", hi);
     });
-    watch(
-      () => tabModel.value,
-      () => {
-        console.log("Выбрана вкладка", tabModel.value);
-      }
-    );
+
     function onClickMenu(nameKey) {
       emit("menuClick", nameKey);
       if (nameKey == "sizeForm") {
@@ -268,9 +263,7 @@ export default defineComponent({
         });
       }
     }
-    watchEffect(() => {
-      console.log("refTopSection", refTopSection.value);
-    });
+
     watchEffect(() => {
       splitHorizont.value = $q.screen.width < $q.screen.height;
     });

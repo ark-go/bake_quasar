@@ -43,9 +43,9 @@ export async function tabPrice(req, res) {
     ? req.headers.timezone
     : "Europe/Moscow";
 
-  let mess = "Док.прайс, cmd: " + req.body?.cmd;
+  let mess = "tabPrice, cmd: " + req.body?.cmd;
   botSendMessage(mess, req);
-  console.log("tabPrice", req.body);
+  //  console.log("tabPrice", req.body);
   let tabname = "docprice";
   switch (req.body.cmd) {
     case "load":

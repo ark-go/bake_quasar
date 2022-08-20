@@ -63,6 +63,7 @@ export async function dataLoad(url, data, logInfo = "") {
     return respData;
   } catch (err) {
     Loading.hide();
+    captionErr = err.toString();
     console.log("catch dataLoad.js XXXXXXX", err.toString());
     let captionErr = "";
     let caption = ["NoAccess", "noautorizate", "WaitManualConfirm"].includes(
@@ -76,8 +77,9 @@ export async function dataLoad(url, data, logInfo = "") {
 
     if (err.toString().indexOf("Network Error") > 0) {
       captionErr = "Нет интернета ! \r\ng";
-    } else {
-      captionErr = err.toString();
+    }
+    if (err?.response?.status == 429) {
+      captionErr = "Не надо часто делать запросы !!";
     }
 
     notif(); // для закрытия того что не загрузилось.

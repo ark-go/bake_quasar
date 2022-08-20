@@ -16,7 +16,7 @@ import SideDoc from "./side/SideDoc.vue";
 import { usePriceStore, storeToRefs } from "stores/priceStore";
 //import { useTableFunc } from "./tableFunc";
 export default defineComponent({
-  name: "priceValue",
+  name: "valueFranch",
   components: { TabPanelSplit, TablePanel, SideDoc },
   setup() {
     const { selectedRowPrice, tabModel } = storeToRefs(usePriceStore());

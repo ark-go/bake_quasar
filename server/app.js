@@ -16,13 +16,27 @@ import {
   rateLimiterMiddleware,
   rateLimiterMiddlewareLogin,
   rateLimiterMiddlewareRegUser,
+  rateLimiterMiddlewareReq,
 } from "./utils/rateLimiterMiddleware.js";
 botSendMessage("Старт сервера");
 
 let app = express();
+app.use(
+  bodyParser.json({
+    limit: "30mb",
+  })
+); // ,type:'application/json'
+app.use(
+  bodyParser.urlencoded({
+    extended: true,
+    limit: "30mb",
+    parameterLimit: 300,
+  })
+);
 app.set("trust proxy", 1); // ..говорим что доверяем первому прокси и верим что там https
-app.use("/api/reguser/", rateLimiterMiddlewareRegUser);
-app.use("/api/login/", rateLimiterMiddlewareLogin);
+app.use("/api/reguser/", rateLimiterMiddlewareRegUser); // 5 -1 -10
+app.use("/api/login/", rateLimiterMiddlewareLogin); // 2- 1- 10
+//app.use("/api/tabSale/", rateLimiterMiddlewareReq); // 2- 1- 10
 
 app.use("/api/", rateLimiterMiddleware);
 app.use(cookieParser());
@@ -70,18 +84,7 @@ app.use(
 // });
 
 //----------------------- bodyparser
-app.use(
-  bodyParser.json({
-    limit: "30mb",
-  })
-); // ,type:'application/json'
-app.use(
-  bodyParser.urlencoded({
-    extended: true,
-    limit: "30mb",
-    parameterLimit: 300,
-  })
-);
+
 const expSession = configureSession(app);
 
 // изменение Redis? изменения session переписывают redis //
@@ -168,9 +171,9 @@ if (app.get("env") === "development") {
   // без стека
   app.use(function (err, req, res, next) {
     res.status(err.status || 500).json({
-      message: err.message,
-      errorStatus: err.status,
-      error: "Проверьте URL",
+      // message: err.message,
+      // errorStatus: err.status,
+      error: "Сайт отключен, проверьте URL",
     });
     console.log("Ошибка X00:", err.message, "\rstack error:", err.status);
   });

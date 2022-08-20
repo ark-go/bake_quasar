@@ -1,4 +1,3 @@
-import { getFilenameFromContentDispositionHeader } from "app/public/pdfjs/build/pdf";
 import { defineStore } from "pinia";
 export { storeToRefs } from "pinia";
 //import { useQuasar } from "quasar";
@@ -71,10 +70,15 @@ export const usePriceStore = defineStore("PriceStore", {
        * дата для использования истории, временно
        */
       // historyDate: null,
+      watchForStop: [],
       /**
        * выбранная вкладка
        */
       tabModel: "main",
+      /**
+       * keepAlive
+       */
+      keepAlive: false,
       /**
        * размер тела ArkCard
        */
@@ -132,6 +136,22 @@ export const usePriceStore = defineStore("PriceStore", {
           : "";
       }
       return title;
+    },
+  },
+  actions: {
+    watchStore(callback) {
+      let h = callback();
+      console.log("add watch", h);
+      this.watchForStop.push(h);
+    },
+    watchStop() {
+      this.watchForStop.forEach((v, i) => {
+        try {
+          v();
+        } catch (e) {
+          console.log("stop watch - ", i);
+        }
+      });
     },
   },
 });

@@ -53,7 +53,10 @@ import {
   defineAsyncComponent,
   onMounted,
   watch,
-  watchEffect,
+  onUnmounted,
+  onBeforeUnmount,
+  onActivated,
+  onDeactivated,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
 import { columns } from "./tableColumnList.js";
@@ -83,7 +86,10 @@ export default defineComponent({
   },
   emits: [""],
   setup(props, { emit }) {
-    const tableFunc = useTableFunc(props.tableName);
+    const tableFunc = useTableFunc();
+    // onUnmounted(() => {
+    //   tableFunc = null;
+    // });
     const tableBodyMenu = defineAsyncComponent(() => {
       return import("./TableBodyMenu.vue");
     });
@@ -98,21 +104,31 @@ export default defineComponent({
     const pagination = ref({
       rowsPerPage: 10,
     });
-    function reLoadComponent() {}
-    watchEffect(() => {
-      reLoadComponent(props.panelName);
+    onUnmounted(() => {
+      console.log("UN-MOUNT  Пекарни включенные в прайс");
+    });
+    onMounted(async () => {
+      console.log("ON MOUNT  Пекарни включенные в прайс");
+      await tableFunc.loadTable();
+    });
+    onActivated(() => {
+      console.log("ON-onActivated  Пекарни включенные в прайс");
+    });
+    onDeactivated(() => {
+      console.log("UN-onDeactivated  Пекарни включенные в прайс");
+    });
+    console.log("SETUP Пекарни включенные в прайс");
+    priceStore.watchStore(() => {
+      return watch(
+        // сигнал на перезагрузку таблицы //() => props.checkSave,
+        [() => selectedRowDoc.value], // () => selectedRowDoc.value.id], это следим в priceDoc
+        async () => {
+          console.log("WATCH Пекарни включенные в прайс");
+          await tableFunc.loadTable();
+        }
+      );
     });
 
-    watch(
-      // сигнал на перезагрузку таблицы
-      [() => props.checkSave], // () => selectedRowDoc.value.id], это следим в priceDoc
-      async () => {
-        await tableFunc.loadTable();
-      }
-    );
-    // onMounted(async () => {
-    //   await tableFunc.loadTable();
-    // });
     return {
       //    currentRow,
       selectedRowDoc,

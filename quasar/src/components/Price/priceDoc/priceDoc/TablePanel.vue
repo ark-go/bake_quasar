@@ -52,17 +52,17 @@ import {
   defineAsyncComponent,
   onMounted,
   watch,
-  watchEffect,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
 import { columns } from "./tableColumnList.js";
 import { usePriceStore, storeToRefs } from "stores/priceStore.js";
+
 export default defineComponent({
   name: "TablePanel",
   components: {
-    TableTemplate: defineAsyncComponent(() => {
-      return import("src/components/template/table/TableTemplate.vue");
-    }),
+    TableTemplate: defineAsyncComponent(() =>
+      import("src/components/template/table/TableTemplate.vue")
+    ),
   },
   props: {
     modeBody: {
@@ -91,21 +91,10 @@ export default defineComponent({
     const pagination = ref({
       rowsPerPage: 10,
     });
-    function reLoadComponent() {}
-    watchEffect(() => {
-      reLoadComponent(props.panelName);
-    });
     async function loadTable() {
       // при обновлениитаблицы будем пеерчитывать выбранную строку
-      // let aId = selectedRowDoc.value?.id;
       await tableFunc.loadTable();
-      // if (aId) {
-      //   // если пропало то ставим пустой объект
-      //   selectedRowDoc.value =
-      //     RowsDocuments.value.find((val) => val.id == aId) || {};
-      // }
     }
-
     watch(
       // сигнал на перезагрузку таблицы
       () => props.checkSave,

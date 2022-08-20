@@ -52,18 +52,14 @@ import {
   defineAsyncComponent,
   onMounted,
   watch,
-  watchEffect,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
 import { columns } from "./tableColumnList.js";
 import { usePriceStore, storeToRefs } from "stores/priceStore.js";
+import TableTemplate from "src/components/template/table/TableTemplate.vue";
 export default defineComponent({
   name: "TablePanel",
-  components: {
-    TableTemplate: defineAsyncComponent(() => {
-      return import("src/components/template/table/TableTemplate.vue");
-    }),
-  },
+  components: { TableTemplate },
   props: {
     modeBody: {
       type: String,
@@ -98,18 +94,9 @@ export default defineComponent({
     const pagination = ref({
       rowsPerPage: 10,
     });
-
-    // async function loadTable() {
-    // при обновлениитаблицы будем пеерчитывать выбранную чтроку
-    // let aId = selectedRowPrice.value?.id;
-    // RowsPriceValue.value = await tableFunc.loadTable(selectedRowDoc.value.id);
-    // priceValueCount.value = RowsPriceValue.value.length;
-    // if (aId) {
-    //   // если пропало то ставим пустой объект
-    //   selectedRowPrice.value =
-    //     RowsPriceValue.value.find((val) => val.id == aId) || {};
-    // }
-    // }
+    onMounted(async () => {
+      await tableFunc.loadTable();
+    });
     watch(
       // сигнал на перезагрузку таблицы
       [() => props.checkSave], // () => selectedRowDoc.value.id], строку документа ловим в priceDoc
@@ -118,9 +105,7 @@ export default defineComponent({
         await tableFunc.loadTable();
       }
     );
-    // onMounted(async () => {
-    //   await tableFunc.loadTable();
-    // });
+
     function onRowClick(row) {
       console.log("Нажали по строке");
       selectedRowPrice.value = row;

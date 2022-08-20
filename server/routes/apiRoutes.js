@@ -86,6 +86,7 @@ import { products } from "../postgreSQL/command/products/products.js";
 import { docprice } from "../postgreSQL/command/docprice/docprice.js";
 import { departments } from "../postgreSQL/command/departments/departments.js";
 import { userroletree } from "../postgreSQL/command/userroletree/userroletree.js";
+import { tabSale } from "../postgreSQL/command/tabSale/tabSale.js";
 
 import { exportPriceExcel } from "../modules/excel/exportPriceExcel/exportPriceExcel.js";
 //import { pdfmain } from "../modules/PDF/pdfmain.js";
@@ -545,6 +546,10 @@ export async function apiRoutes() {
   router.post("/tabPrice", async (req, res) => {
     console.log("/tabPrice", req.body?.cmd);
     res.json(await tabPrice(req, res));
+  });
+  router.post("/tabSale", async (req, res) => {
+    console.log("/tabSale", req.body?.cmd);
+    res.json(await tabSale(req, res));
   });
 
   router.post("/products", async (req, res) => {

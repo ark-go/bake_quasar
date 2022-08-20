@@ -37,7 +37,10 @@ export function useArkUtils() {
         delay: 400, // ms
       });
       let resp = await axios.post(url, data);
-      console.dir("resp", resp);
+      console.log("resp >", resp);
+      // if (resp.status == 429) {
+      //   throw new Error("Не надо часто делать запросы ! бан.");
+      // }
       let respData = resp.data;
       let keyRes = Object.keys(respData);
       if (!keyRes.includes("result") && !keyRes.includes("error")) {
@@ -74,8 +77,8 @@ export function useArkUtils() {
       $q.loading.hide();
       notif(); // для закрытия того что не загрузилось.
 
-      console.log("dataLoad.js ERROR:", err.toString());
-      let captionErr = "";
+      console.log("arkUtils dataLoad ERROR:", err);
+      let captionErr = err.toString();
       let caption = "";
       let noAccessErr = [
         "NoAccess",
@@ -93,22 +96,27 @@ export function useArkUtils() {
 
       if (err.toString().indexOf("Network Error") > 0) {
         captionErr = "Нет интернета !";
-      } else {
-        captionErr = err.toString();
       }
-
-      $q.notify({
+      let timeOut = false;
+      if (err?.response?.status == 429) {
+        // captionErr = "Не надо часто делать запросы ! бан.";
+        captionErr = err.response.data?.text;
+        timeOut = err.response.data?.timeOut;
+        //if (g) g();
+      }
+      var g = $q.notify({
         classes: "notify-error-top",
         position: caption ? "center" : "top",
         // icon: "done", // we add an icon
         spinner: false, // we reset the spinner setting so the icon can be displayed
-        message: caption ? "Нет доступа." : "Ошибка зарузки!",
+        message: captionErr ? "Ошибка зарузки!" : "Нет доступа.",
         caption: sanitizeDef(
-          (caption ? caption : captionErr) + "<br>" + logInfo
+          captionErr ? captionErr : caption // + "<br>" + logInfo
         ),
         progress: true,
+        group: "message",
         multiLine: true,
-        timeout: 1000 * 30, // we will timeout it i
+        timeout: timeOut ? timeOut : 1000 * 30, // we will timeout it i
         color: "deep-orange",
         html: true,
         // textColor: "white",

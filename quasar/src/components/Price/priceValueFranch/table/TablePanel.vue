@@ -58,14 +58,13 @@ import {
   onMounted,
   watch,
   computed,
-  watchEffect,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
 import { columns } from "./tableColumnList.js";
 import { usePriceStore, storeToRefs } from "stores/priceStore.js";
 import FormCena from "./FormCena.vue";
 export default defineComponent({
-  name: "TablePanel",
+  name: "tabFranch",
   components: {
     TableTemplate: defineAsyncComponent(() => {
       return import("src/components/template/table/TableTemplate.vue");
@@ -124,8 +123,13 @@ export default defineComponent({
     }
     //  function reLoadComponent() {}
     watch(
-      () => selectedFranchPrice.value,
+      [
+        () => selectedFranchPrice.value,
+        () => selectedRowPrice.value.id,
+        () => props.checkSave,
+      ],
       async () => {
+        console.log("Читаем Прайс франчайзи");
         await loadTable();
       }
     );
@@ -139,13 +143,6 @@ export default defineComponent({
           RowsPriceValue.value.find((val) => val.id == aId) || {};
       }
     }
-    watch(
-      // сигнал на перезагрузку таблицы
-      [() => props.checkSave], // () => selectedRowDoc.value.id],
-      async () => {
-        await loadTable();
-      }
-    );
     onMounted(async () => {
       await loadTable();
     });

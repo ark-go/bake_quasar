@@ -67,10 +67,10 @@
       spinner-color="white"
       img-class="img-menu cursor-pointer"
       :img-style="{ cursor: 'pointer' }"
-      @click="router.push({ path: '/bakeryttk' })"
+      @click="router.push({ path: '/sale' })"
     >
       <div class="absolute-bottom text-subtitle1 text-center cursor-pointer">
-        Продукты / Пекарни
+        Продажи
       </div>
     </q-img>
     <q-img

@@ -53,7 +53,7 @@ import { defineComponent, ref } from "vue";
 import { usePriceStore, storeToRefs } from "stores/priceStore";
 //import TabsTables from "./TabsTables.vue";
 export default defineComponent({
-  name: "SideDoc",
+  name: "SideDoc5",
   components: {},
   props: ["refTable", "activeTab"],
   emits: ["update:filter"],

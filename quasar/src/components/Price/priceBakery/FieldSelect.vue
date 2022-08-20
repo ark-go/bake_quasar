@@ -70,19 +70,6 @@ export default {
         }
       });
     }
-    // const computedModel = ref([]);
-    // watchEffect(
-    //   () => props.sprav,
-    //   () => {
-    //     if (Array.isArray(props.sprav) && props.sprav.length == 0) {
-    //       // нет данных
-    //       emit("update:selectId", null);
-    //       computedModel.value = [];
-    //     } else {
-    //       computedModel.value = props.sprav.find((x) => x.id == props.selectId);
-    //     }
-    //   }
-    // );
     //?const allArray = ref({});
     const computedModel = computed({
       get: () => {
@@ -120,7 +107,6 @@ export default {
     onMounted(() => {
       setfilter();
     });
-    // watch(props, getProps);
 
     // ------------------------  автоподстановка  оно переоткрывает список----------------------------------
     function filterFn(val, update, abort) {

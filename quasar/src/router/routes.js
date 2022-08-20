@@ -55,10 +55,15 @@ const routes = [
         component: () => import("components/Sprav/PageSprav.vue"),
         meta: { title: "Справочник" },
       },
+      // {
+      //   path: "price",
+      //   component: () => import("components/Price/PagePrice.vue"),
+      //   meta: { title: "Прайсы" },
+      // },
       {
-        path: "price",
-        component: () => import("components/Price/PagePrice.vue"),
-        meta: { title: "Прайсы" },
+        path: "sale",
+        component: () => import("components/Sale/PageSale.vue"),
+        meta: { title: "Продажи" },
       },
       {
         path: "kagent",
@@ -91,7 +96,17 @@ const routes = [
       },
     ],
   },
-
+  {
+    path: "/price",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("components/Price/PagePrice.vue"),
+        meta: { title: "Прайсы" },
+      },
+    ],
+  },
   {
     path: "/tables",
     component: () => import("layouts/MainLayout.vue"),

@@ -43,13 +43,21 @@ export const usePriceStore = defineStore("PriceStore", {
        */
       selectedBakeryPrice: [],
       /**
+       *  Прайс вместе с франчами
+       */
+      RowsPriceValueFranch: [],
+      /**
+       *
+       */
+      selectedPriceValueFranch: {},
+      /**
        * Показывает всплывающее окно, для выбора печек
        */
       selectBakeryShow: false,
       /**
-       *  прайс ценники, таблица price_Value
+       * пекарни в модальном окне
        */
-      //  дубль RowsPriceValue: [],
+      RowsModalBakery: [],
       /**
        * Выбранная строка прайса с ценами
        */
@@ -59,9 +67,9 @@ export const usePriceStore = defineStore("PriceStore", {
        */
       priceValueCount: 0,
       /**
-       * текущие пекарни всех вранчайзи из прайса
+       * текущие пекарни всех вранчайзи из прайса в Side
        */
-      bakeryFranchPrice: [],
+      RowsBakeryPriceFranch: [],
       /**
        * Выбраные печки франчайзи, для изменения цен
        */
@@ -148,8 +156,9 @@ export const usePriceStore = defineStore("PriceStore", {
       this.watchForStop.forEach((v, i) => {
         try {
           v();
+          console.log("watch delete price - ", i);
         } catch (e) {
-          console.log("stop watch - ", i);
+          console.log("stop watch price - ", i);
         }
       });
     },

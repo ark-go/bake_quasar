@@ -2,7 +2,7 @@
   <Tab-Panel-Split>
     <Side-Doc></Side-Doc>
     <template v-slot:after>
-      <Table-Panel :checkSave="checkSave"></Table-Panel>
+      <Table-Panel></Table-Panel>
     </template>
   </Tab-Panel-Split>
   <!-- <form-doc v-model:showDialog="showDialog" @onSave="onSave"></form-doc> -->

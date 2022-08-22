@@ -45,6 +45,7 @@ export default defineComponent({
   setup() {
     const saleStore = useSaleStore();
     onUnmounted(() => {
+      saleStore.watchStop();
       saleStore.$reset();
     });
     const { cardMain } = storeToRefs(usePagesSetupStore());

@@ -2,7 +2,13 @@ import { pool } from "../../initPostgreSQL.js";
 import { botSendMessage } from "../../../tg/startTgBot.js";
 import escape from "pg-escape";
 
-export async function loadBakeryArticle(req, res, tabname, timezone, idOne) {
+export async function loadBakeryArticleOneDay(
+  req,
+  res,
+  tabname,
+  timezone,
+  idOne
+) {
   let wher = "";
   //! table - bakery
   let sqlP = {
@@ -15,12 +21,22 @@ export async function loadBakeryArticle(req, res, tabname, timezone, idOne) {
 	---prv.id as price_id,
 	concat(ptype.prefix,' ',assort.name,' ',pvid.name,' ',pvid.nameext,' ',unit.name) AS productvid_name,
 	pvid.id as productvid_id,
-	bakery.name as bakery_name,
-	bakery.id as bakery_id,
+  	bakery.name as bakery_name,
+  	bakery.id as bakery_id,
     price.docnum as price_docnum,
-    to_char(price.datestart at time zone $1,  'DD.MM.YYYY') as date_start
---	price.id as price_id
-	
+    to_char(price.datestart at time zone $1,  'DD.MM.YYYY') as date_start,
+  
+    price.id as price_id,
+    -- price.trademark_id as trademark_id,
+    trademark.id as trademark_id,
+    trademark.name as trademark_name,
+    kagent.name as kagent_name,	
+    kagent.id as kagent_id,	
+    kagentown.name as kagent_own_name,
+    kagentown.id as kagent_own_id,
+    kagentfranch.name as kagent_franch_name,
+    kagentfranch.id as kagent_franch_id
+
 from bakery
 RIGHT JOIN price_bakery prb ON prb.bakery_id = bakery.id  -- все номера прайсов у печки
 RIGHT JOIN price ON price.id = prb.price_id AND price.trademark_id = $3  -- все прайсы у печки, по торговой сети
@@ -33,17 +49,33 @@ RIGHT JOIN price_value prv ON prv.price_id = price.id -- все артикулы
     LEFT JOIN unit on unit.id = pvid.unit_id
     LEFT JOIN producttype as ptype on ptype.id = assort.producttype_id
 	--
+        LEFT JOIN LATERAL (select * from kagent_x_bakery_get_last(prb.bakery_id, $4 at time zone $1,true )) as kag
+            ON kag.child_id = prb.bakery_id
+        LEFT JOIN kagent ON kagent.id = kag.parent_id
+--
+        LEFT JOIN LATERAL (select * from kagent_x_bakery_own_get_last(prb.bakery_id, $4 at time zone $1,true )) as kagown
+        ON kagown.child_id = prb.bakery_id
+        LEFT JOIN kagent as kagentown ON kagentown.id = kagown.parent_id
+--
+        LEFT JOIN LATERAL (select * from kagent_x_bakery_franch_get_last(prb.bakery_id, $4 at time zone $1,true )) as kagfranch
+        ON kagfranch.child_id = prb.bakery_id
+        LEFT JOIN kagent as kagentfranch ON kagentfranch.id = kagfranch.parent_id
+--
+       LEFT JOIN LATERAL (select * from trademark_x_bakery_get_last(prb.bakery_id, $4 at time zone $1,true )) as trdm
+       ON trdm.child_id = prb.bakery_id
+       LEFT JOIN trademark  ON trademark.id = trdm.parent_id
+
 
   where bakery.id = $2 AND price.datestart <= $4 at time zone $1
   ${req.body.showHiddenArticle ? "" : "AND NOT hidden IS TRUE"}
   order by article, price.datestart DESC
 `,
     values: [
-      timezone,
-      req.body.bakery_id,
-      req.body.trademark_id,
+      timezone, //1
+      req.body.bakery_id, //2
+      req.body.trademark_id, // 3
       // req.body.dateBetween.from,
-      req.body.dateBetween?.to ||
+      req.body.dateBetween?.to || // 4
         new Date(
           new Date().setFullYear(new Date().getFullYear() + 5)
         ).toISOString(),
@@ -61,7 +93,7 @@ RIGHT JOIN price_value prv ON prv.price_id = price.id -- все артикулы
       result: result,
     };
   } catch (err) {
-    console.log("Ошибка чтения loadBakeryArticle", err.toString());
+    console.log("Ошибка чтения loadBakeryArticleOneDay", err.toString());
     return {
       error: err.toString(),
     };

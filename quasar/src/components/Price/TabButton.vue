@@ -24,8 +24,8 @@
     />
     <q-tab
       name="priceValueFranch"
-      v-if="bakeryFranchPrice.length > 0"
-      :label="`франчайзи (${bakeryFranchPrice.length})`"
+      v-if="RowsBakeryPriceFranch.length > 0"
+      :label="`франчайзи (${RowsBakeryPriceFranch.length})`"
     />
   </q-tabs>
   <q-separator />
@@ -41,6 +41,7 @@ export default defineComponent({
   props: {},
   emits: ["update:tabModel"],
   setup(props) {
+    const priceStore = usePriceStore();
     const {
       selectedRowDoc,
       tabModel,
@@ -48,32 +49,36 @@ export default defineComponent({
       selectedRowBakery,
       selectedBakeryModal,
       selectedBakeryPrice,
-      bakeryFranchPrice,
+      RowsBakeryPriceFranch,
       bakeryCount,
       priceValueCount,
     } = storeToRefs(usePriceStore());
-    watch(
-      () => selectedRowDoc.value.id,
-      () => {
-        if (!selectedRowDoc.value.id) {
-          // сняли выбор документа
-          tabModel.value = "main";
+    priceStore.watchStore(() => {
+      return watch(
+        () => selectedRowDoc.value.id,
+        () => {
+          if (!selectedRowDoc.value.id) {
+            // сняли выбор документа
+            tabModel.value = "main";
+          }
         }
-      }
-    );
-    watch(
-      () => tabModel.value,
-      () => {
-        selectedBakeryModal.value = [];
-        selectedBakeryPrice.value = [];
-        selectedRowBakery.value = {};
-        if (tabModel.value != "bakery") selectBakeryShow.value = false;
-      }
-    );
+      );
+    });
+    priceStore.watchStore(() => {
+      return watch(
+        () => tabModel.value,
+        () => {
+          selectedBakeryModal.value = [];
+          selectedBakeryPrice.value = [];
+          selectedRowBakery.value = {};
+          if (tabModel.value != "bakery") selectBakeryShow.value = false;
+        }
+      );
+    });
     return {
       selectedRowDoc,
       tabModel,
-      bakeryFranchPrice,
+      RowsBakeryPriceFranch,
       bakeryCount,
       priceValueCount,
     };

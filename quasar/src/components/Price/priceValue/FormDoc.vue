@@ -8,6 +8,7 @@
   width: 300px;
   max-width: 400px;
   min-width: 300px;
+  max-height: 99vh;
   @media (max-width: 600px) {
     max-width: 95vw;
     min-width: 94vw;
@@ -136,7 +137,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const $q = useQuasar();
     const userStore = useUserStore();
-    const arkUtils = useArkUtils();
+    const priceStore = usePriceStore();
     const { selectedRowPrice, selectedRowDoc } = storeToRefs(usePriceStore());
     const tableFunc = useTableFunc("tabPrice");
     const loadingProductVid = ref(false);
@@ -169,13 +170,15 @@ export default defineComponent({
       // включаем отслеживание
       watchStop.value = false;
     }
-    watch(
-      () => currentRow.value.datestart,
-      async () => {
-        if (watchStop.value) return;
-        // поменяли дату, перечитаем торговые сети
-      }
-    );
+    priceStore.watchStore(() => {
+      return watch(
+        () => currentRow.value.datestart,
+        async () => {
+          if (watchStop.value) return;
+          // поменяли дату, перечитаем торговые сети
+        }
+      );
+    });
 
     async function loadProductVid() {
       loadingProductVid.value = true;
@@ -202,12 +205,7 @@ export default defineComponent({
         throw new Error("Укажите продукт из списка");
       }
     }
-    watch(
-      () => tovarSelect.value,
-      () => {
-        console.log("Выбор селект ", tovarSelect.value);
-      }
-    );
+
     async function onBlur(evt) {
       loadingToavar.value = true;
       let dat = await tableFunc.loadPriceValueSelectArticle(

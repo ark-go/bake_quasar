@@ -27,7 +27,7 @@
     v-if="tableName"
     :title="title"
     :tableName="tableName"
-    :rows="bakeryFranchPrice"
+    :rows="RowsBakeryPriceFranch"
     :columns="columns"
     :tableBodyMenu="tableBodyMenu"
     :tableFunc="tableFunc"
@@ -50,8 +50,10 @@ import {
   defineComponent,
   ref,
   defineAsyncComponent,
+  watch,
   watchEffect,
   computed,
+  onActivated,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
 import { columns } from "./tableColumnList.js";
@@ -88,15 +90,28 @@ export default defineComponent({
       selectedRowDoc,
       selectedFranchPrice,
       selectedBakeryPrice,
-      bakeryFranchPrice,
+      RowsBakeryPriceFranch,
     } = storeToRefs(usePriceStore());
-    watchEffect(() => {
-      let count = bakeryFranchPrice.value.length;
-      selectedFranchPrice.value = [];
+    // onActivated(() => {
+    //   console.log("onactivate       d++++++++++++++++++");
+    //   selectedFranchPrice.value = [];
+    // });
+    //TODO:  ,,,????
+    priceStore.watchStore(() => {
+      return watch(
+        () => RowsBakeryPriceFranch.value.length,
+        () => {
+          selectedFranchPrice.value = [];
+        }
+      );
+      //  return watchEffect(() => {
+      //     let count = RowsBakeryPriceFranch.value.length;
+      //     selectedFranchPrice.value = [];
+      //   });
     });
     const title = computed(() => {
       if (selectedFranchPrice.value.length)
-        return `Пекарни франчайзи - ${selectedFranchPrice.value.length} / ${bakeryFranchPrice.value.length}.`;
+        return `Пекарни франчайзи - ${selectedFranchPrice.value.length} / ${RowsBakeryPriceFranch.value.length}.`;
       else return "Пекарни франчайзи:";
     });
     // const currentRow = ref({});
@@ -104,8 +119,7 @@ export default defineComponent({
       rowsPerPage: 10,
     });
     function onRowClick(row) {
-      selectedFranchPrice.value = []; //! single
-      //console.log("Нажали по строке");
+      console.log("Нажали по строке 1");
       let i = selectedFranchPrice.value.findIndex((val) => {
         if (val.id == row.id) return true;
       });
@@ -118,7 +132,7 @@ export default defineComponent({
       //console.log("Выбрано чтото", selectedFranchPrice.value);
     }
     return {
-      bakeryFranchPrice,
+      RowsBakeryPriceFranch,
       selectedRowDoc,
       selectedBakeryPrice,
       selectedFranchPrice,

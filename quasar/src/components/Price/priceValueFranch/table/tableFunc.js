@@ -1,34 +1,40 @@
 import { ref } from "vue";
 import { useArkUtils } from "src/utils/arkUtils";
 import { date } from "quasar";
+import { useLoadPriceValueFranch } from "../../loadPriceValueFranch";
 import { usePriceStore, storeToRefs } from "stores/priceStore.js"; //  const { priceValueCount } = storeToRefs(usePriceStore());
 export function useTableFunc(nameTable) {
   const arkUtils = useArkUtils();
+  const loadPriceValueFranch = useLoadPriceValueFranch();
   const dateFormat = ref("DD.MM.YYYY");
-  const { selectedFranchPrice, selectedRowPrice } = storeToRefs(
-    usePriceStore()
-  );
-  async function loadTable(price_id) {
-    let bakery_id = "";
-    if (selectedFranchPrice.value.length == 1) {
-      console.log("пекарни все все франчи", selectedFranchPrice.value);
-      bakery_id = selectedFranchPrice.value[0].price_bakery_id;
-    }
-    //! Важно, bakery_id если пусто ??  , и если не пусто то одна печка
-    let command = {
-      cmd: "loadPriceValueFranch", //loadPriceValue",
-      price_id: price_id,
-      bakery_id: bakery_id,
-    };
-    let mess = "Прайс франчайзи";
-    let url = "/api/tabPrice";
-    let res = await arkUtils.dataLoad(url, command, mess);
-    if (res.result) {
-      return res.result;
-    } else {
-      return [];
-    }
-  }
+  const {
+    selectedFranchPrice,
+    RowsPriceValueFranch,
+    selectedRowPrice,
+    tabModel,
+  } = storeToRefs(usePriceStore());
+  // async function loadTable(price_id) {
+  //   // if (tabModel.value != "priceValueFranch") return []; // тоько на таблице франча
+  //   let bakery_id = "";
+  //   if (selectedFranchPrice.value.length == 1) {
+  //     console.log("пекарни все все франчи", selectedFranchPrice.value);
+  //     bakery_id = selectedFranchPrice.value[0].price_bakery_id;
+  //   }
+  //   //! Важно, bakery_id если пусто ??  , и если не пусто то одна печка
+  //   let command = {
+  //     cmd: "loadPriceValueFranch", //loadPriceValue",
+  //     price_id: price_id,
+  //     bakery_id: bakery_id,
+  //   };
+  //   let mess = "Прайс франчайзи";
+  //   let url = "/api/tabPrice";
+  //   let res = await arkUtils.dataLoad(url, command, mess);
+  //   if (res.result) {
+  //     return res.result;
+  //   } else {
+  //     return [];
+  //   }
+  // }
   async function insertFranchCena(row, price_bakery_id_array, CenaR) {
     // if (price_bakery_id_array.length != 1) throw new Error("Нужно одну печку");
     console.log("Поступило в отправку", CenaR, row, price_bakery_id_array);
@@ -54,8 +60,10 @@ export function useTableFunc(nameTable) {
     let url = "/api/tabPrice";
     let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
+      await loadPriceValueFranch.loadTable();
       return res.result;
     } else {
+      await loadPriceValueFranch.loadTable();
       return [];
     }
   }
@@ -71,5 +79,5 @@ export function useTableFunc(nameTable) {
     return date.formatDate(dat, dateFormat.value);
   }
 
-  return { loadTable, dateToDateUnix, dateFormatDate, insertFranchCena };
+  return { dateToDateUnix, dateFormatDate, insertFranchCena };
 }

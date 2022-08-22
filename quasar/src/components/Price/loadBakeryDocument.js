@@ -1,21 +1,26 @@
-import { ref } from "vue";
+import { ref, watch } from "vue";
 import { useArkUtils } from "src/utils/arkUtils";
 import { date } from "quasar";
 import { usePriceStore, storeToRefs } from "stores/priceStore.js";
-export function useTableFunc(nameTable) {
+export function useLoadBakeryDocument() {
+  console.log("functionale useLoadBakeryDocument load");
   const arkUtils = useArkUtils();
   const dateFormat = ref("DD.MM.YYYY");
-  const { selectedRowDoc, RowsBakeryPriceFranch, bakeryCount } = storeToRefs(
-    usePriceStore()
-  );
+
+  const {
+    RowsBakeryPrice,
+    selectedRowDoc,
+    RowsBakeryPriceFranch,
+    bakeryCount,
+  } = storeToRefs(usePriceStore());
   async function loadTable() {
     let command = {
       cmd: "loadBakeryDocument",
       datestart: dateToDateUnix(selectedRowDoc.value.datestart),
       price_id: selectedRowDoc.value.id,
     };
-    console.log("Загрузка пекарен прайса", command);
-    let mess = "Загрузка пекарен прайса franch side";
+    console.log("Загрузка пекарен прайса public", command);
+    let mess = "Пекарни включенные в прайс";
     let url = "/api/tabPrice";
     let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
@@ -24,9 +29,9 @@ export function useTableFunc(nameTable) {
       res.result.forEach((value) => {
         if (value.kagent_franch_id) RowsBakeryPriceFranch.value.push(value);
       });
-      return res.result;
+      RowsBakeryPrice.value = res.result;
     } else {
-      return [];
+      RowsBakeryPrice.value = [];
     }
   }
   function dateToDateUnix(dat) {

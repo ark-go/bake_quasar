@@ -5,9 +5,9 @@ import { usePriceStore, storeToRefs } from "stores/priceStore.js";
 export function useTableFunc(nameTable) {
   const arkUtils = useArkUtils();
   const dateFormat = ref("DD.MM.YYYY");
-  const { selectedRowDoc } = storeToRefs(usePriceStore());
+  const { selectedRowDoc, RowsModalBakery } = storeToRefs(usePriceStore());
   async function loadTable() {
-    console.log("Load bakery from row", selectedRowDoc.value);
+    console.log("loadBakeryTrademarkKagent from row", selectedRowDoc.value);
     let command = {
       cmd: "loadBakeryTrademarkKagent",
       datestart: selectedRowDoc.value.datestart,
@@ -21,9 +21,9 @@ export function useTableFunc(nameTable) {
     let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
       console.log("Печки получились", res.result);
-      return res.result;
+      RowsModalBakery.value = res.result;
     } else {
-      return [];
+      RowsModalBakery.value = [];
     }
   }
   async function addBakeryToPrice(bakeryArray) {
@@ -38,6 +38,7 @@ export function useTableFunc(nameTable) {
     let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
       console.log("Печки получились", res.result);
+      await loadTable();
       return res.result; // кол-во добавленных
     } else {
       return 0;
@@ -60,6 +61,7 @@ export function useTableFunc(nameTable) {
     let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
       console.log("Печки удалились?", res.result);
+      await loadTable();
       return res.result; // кол-во удаленных
     } else {
       return 0;

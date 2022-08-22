@@ -1,4 +1,4 @@
-import { ref, watch, onMounted } from "vue";
+import { ref } from "vue";
 import { useArkUtils } from "src/utils/arkUtils";
 import { date } from "quasar";
 import { usePriceStore, storeToRefs } from "stores/priceStore";

@@ -6,6 +6,7 @@
 .card-body {
   padding: 6px;
   width: 250px;
+  max-height: 99vh;
 }
 </style>
 <template>
@@ -115,6 +116,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const $q = useQuasar();
     const arkUtils = useArkUtils();
+    const priceStore = usePriceStore();
     const { selectedRowDoc } = storeToRefs(usePriceStore());
     const tableFunc = useTableFunc("tabPrice");
     const loadingTrademark = ref(false);
@@ -150,14 +152,16 @@ export default defineComponent({
       // включаем отслеживание
       watchStop.value = false;
     }
-    watch(
-      () => currentRow.value.datestart,
-      async () => {
-        if (watchStop.value) return;
-        // поменяли дату, перечитаем торговые сети
-        await loadTrademarkWatch();
-      }
-    );
+    priceStore.watchStore(() => {
+      return watch(
+        () => currentRow.value.datestart,
+        async () => {
+          if (watchStop.value) return;
+          // поменяли дату, перечитаем торговые сети
+          await loadTrademarkWatch();
+        }
+      );
+    });
     async function loadTrademarkWatch() {
       loadingTrademark.value = true;
       allSprav.trademark = await tableFunc.loadTrademark(
@@ -185,14 +189,16 @@ export default defineComponent({
         allSprav.trademark
       );
     }
-    watch(
-      () => currentRow.value.trademark_id,
-      async () => {
-        if (watchStop.value) return;
-        // если поменяли торговую сеть, перечитаем контрагентов
-        await loadKontragents();
-      }
-    );
+    priceStore.watchStore(() => {
+      return watch(
+        () => currentRow.value.trademark_id,
+        async () => {
+          if (watchStop.value) return;
+          // если поменяли торговую сеть, перечитаем контрагентов
+          await loadKontragents();
+        }
+      );
+    });
     async function loadKontragents() {
       loadingKagent.value = true;
       allSprav.kagent = await tableFunc.loadKagent(

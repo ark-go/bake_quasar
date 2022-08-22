@@ -1,32 +1,8 @@
-<!--
-    :tableName="tableName" - имя таблицы для обслуживания
-    :rows="rows" - [] строки таблицы
-    :columns="columns" [] - колонки 
-     :tableBodyMenu="tableBodyMenu" - null - компонент, обработки меню правой мыши
-    :tableFunc - Function  функция, ее подключаем по месту
-    noExpandPanel  - скрыть расширение заголовка для управления
-    noTitlePanel  -  скрыть заголовок таблицы
-    noTopBtn  - не показывать кнопку с плюсом
-    noTopFind - не показывать поле поиска
-    noTopColumnSelect - не показывать выбор колонок
-    noInfoBtn - убрать кнопку Info из строки
-    yesBtnEdit - показывать кнопку редактирования
-    yesBtnDelete - показывать кнопку удаления
-    noEditTable - удаляет кнопки Edit и Delete и кнопку плюс в Top
-    @onInfoRow - по кнопке Инфо
-    @onBtnDelete - кнопка удалить в строке
-    @onBtnEdit - кнопка едит в строке
-    @onRowClick - по строке
-    @onAdd - кнопка плюс в заголовке
-    :iconBtnEdit="" - иконка для редактирования
-    :iconBtnDelete="" - иконка для удаления
-    :rowsPerPage  - кол-во строк таблице - странице
--->
 <template>
   <Table-Template
     v-if="tableName"
     :title="title"
-    :rows="rows"
+    :rows="RowsModalBakery"
     :columns="columns"
     :tableFunc="tableFunc"
     @onInfoRow="onInfoRow"
@@ -84,30 +60,21 @@ export default defineComponent({
   emits: [""],
   setup(props, { emit }) {
     const tableFunc = useTableFunc(props.tableName);
-    // const tableBodyMenu = defineAsyncComponent(() => {
-    //   return import("./TableBodyMenu.vue");
-    // });
-    const { selectedBakeryModal } = storeToRefs(usePriceStore());
-    const rows = ref([]);
+    const priceStore = usePriceStore();
+    const { selectedBakeryModal, RowsModalBakery } = storeToRefs(
+      usePriceStore()
+    );
 
     // const currentRow = ref({});
     const pagination = ref({
       rowsPerPage: 10,
     });
-
-    watch(
-      // сигнал на перезагрузку таблицы
-      () => props.checkReload,
-      async () => {
-        rows.value = await tableFunc.loadTable();
-      }
-    );
     onMounted(async () => {
-      rows.value = await tableFunc.loadTable();
+      await tableFunc.loadTable();
     });
     return {
       pagination,
-      rows,
+      RowsModalBakery,
       columns,
       tableFunc,
       onInfoRow(row) {

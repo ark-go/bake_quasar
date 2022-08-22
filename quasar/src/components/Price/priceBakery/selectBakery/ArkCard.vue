@@ -140,7 +140,7 @@
 
 <script>
 // prettier-ignore
-import {ref,watch, onMounted, watchEffect, onUpdated, computed, nextTick, defineAsyncComponent, defineComponent, onBeforeUnmount  } from "vue";
+import {ref,watch, onMounted, onUnmounted, watchEffect, onUpdated, computed, nextTick, defineAsyncComponent, defineComponent, onBeforeUnmount  } from "vue";
 import { useRouter } from "vue-router";
 import PageSetupDialog from "./PageSetupDialog.vue";
 import { useQuasar, dom } from "quasar";
@@ -151,7 +151,7 @@ import { usePriceStore, storeToRefs } from "src/stores/priceStore";
 // menuObj объект для меню ключ/знчение  значение - показано в меню
 // menuClick вернет событие с именем ключа из объекта menuObj
 export default defineComponent({
-  // props: ["title", "subTitle", "menuObj"],
+  name: "ModalBakery",
   props: {
     title: String,
     styleFn: Object,
@@ -203,25 +203,27 @@ export default defineComponent({
       selectedBakeryModal,
       priceTitleBakeryModal,
     } = storeToRefs(usePriceStore());
-    watch(
-      [
-        () => x.value,
-        () => y.value,
-        () => widthModal.value,
-        () => heightModal.value,
-      ],
-      () => {
-        localStorage.setItem(
-          "modalWindowBakery",
-          JSON.stringify({
-            x: x.value,
-            y: y.value,
-            widthModal: widthModal.value,
-            heightModal: heightModal.value,
-          })
-        );
-      }
-    );
+    priceStore.watchStore(() => {
+      return watch(
+        [
+          () => x.value,
+          () => y.value,
+          () => widthModal.value,
+          () => heightModal.value,
+        ],
+        () => {
+          localStorage.setItem(
+            "modalWindowBakery",
+            JSON.stringify({
+              x: x.value,
+              y: y.value,
+              widthModal: widthModal.value,
+              heightModal: heightModal.value,
+            })
+          );
+        }
+      );
+    });
     function fullscreenActive() {
       if ($q.fullscreen.isActive) {
         positionCss.value = "none";
@@ -229,15 +231,19 @@ export default defineComponent({
         positionCss.value = "absolute";
       }
     }
-    watch(
-      () => $q.fullscreen.isActive,
-      () => {
-        fullscreenActive();
-      }
-    );
+    priceStore.watchStore(() => {
+      return watch(
+        () => $q.fullscreen.isActive,
+        () => {
+          fullscreenActive();
+        }
+      );
+    });
     onMounted(() => {
-      fullscreenActive();
       console.log("mounted modal");
+      reSizeCard();
+      buttonArrProp.value = props.buttonArr; // кнопки пришли
+      fullscreenActive();
       selectedBakeryModal.value = [];
       let hi = localStorage.getItem("modalWindowBakery");
       if (hi) {
@@ -252,7 +258,9 @@ export default defineComponent({
 
       console.log("storage load", hi);
     });
-
+    onUnmounted(() => {
+      console.log("Unmounted mobile");
+    });
     function onClickMenu(nameKey) {
       emit("menuClick", nameKey);
       if (nameKey == "sizeForm") {
@@ -264,15 +272,19 @@ export default defineComponent({
       }
     }
 
-    watchEffect(() => {
-      splitHorizont.value = $q.screen.width < $q.screen.height;
+    priceStore.watchStore(() => {
+      return watchEffect(() => {
+        splitHorizont.value = $q.screen.width < $q.screen.height;
+      });
     });
-    watch(
-      [() => priceStore.selectedRowDoc.name, () => maxBodyHeightResize.value],
-      () => {
-        reSizeCard();
-      }
-    );
+    priceStore.watchStore(() => {
+      return watch(
+        [() => priceStore.selectedRowDoc.name, () => maxBodyHeightResize.value],
+        () => {
+          reSizeCard();
+        }
+      );
+    });
     const maxHeigh = computed(() => {
       return heightModal.value;
       // if (refDrag.value?.clientHeight) {
@@ -304,11 +316,7 @@ export default defineComponent({
       // помоему срабатывает если объект внутри keep-alive
       reSizeCard();
     });
-    onMounted(() => {
-      reSizeCard();
-      console.log("Чтото тут", props?.buttonArr);
-      buttonArrProp.value = props.buttonArr; // кнопки пришли
-    });
+
     function mousemoveListener(e) {
       if (dragging.value) {
         const diffX = e.clientX - mouseX.value;
@@ -384,9 +392,11 @@ export default defineComponent({
         refDrag.value.offsetTop
       );
     }
-    watch(props, () => {
-      buttonArrProp.value = props.buttonArr;
-      console.log("Кнопки:", buttonArrProp.value);
+    priceStore.watchStore(() => {
+      return watch(props, () => {
+        buttonArrProp.value = props.buttonArr;
+        console.log("Кнопки:", buttonArrProp.value);
+      });
     });
     function clickSelectButton() {
       $q.dialog({

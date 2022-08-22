@@ -66,8 +66,9 @@
 </template>
 
 <script>
-import { ref, onMounted, watchEffect, watch, computed } from "vue";
+import { ref, onMounted, watch, computed } from "vue";
 import { date } from "quasar";
+import { usePriceStore, storeToRefs } from "src/stores/priceStore";
 export default {
   name: "SelectDateExt",
   props: {
@@ -82,6 +83,7 @@ export default {
     //  const dateValue = ref("2019/02/01"); // чтобы тут написать?
     const dateFormat = ref("DD.MM.YYYY");
     const isProxyShow = ref(false);
+    const priceStore = usePriceStore();
     function options(checkdate) {
       if (props.minDate) {
         let calDate = date.extractDate(checkdate, "YYYY/MM/DD");
@@ -170,9 +172,11 @@ export default {
     onMounted(() => {
       console.log("Mounted calendar", props.valueDate);
     });
-    watch(qdateValue, () => {
-      isProxyShow.value = false;
-      emit("update:valueDate", qdateValue.value);
+    priceStore.watchStore(() => {
+      return watch(qdateValue, () => {
+        isProxyShow.value = false;
+        emit("update:valueDate", qdateValue.value);
+      });
     });
     return {
       isProxyShow,

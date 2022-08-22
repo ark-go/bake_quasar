@@ -27,7 +27,7 @@
     v-if="tableName"
     :title="title"
     :tableName="tableName"
-    :rows="RowsPriceValue"
+    :rows="RowsPriceValueFranch"
     :columns="columns"
     :tableBodyMenu="tableBodyMenu"
     :tableFunc="tableFunc"
@@ -37,18 +37,14 @@
     @onRowClick="onRowClick"
     @onRowDblClick="onInfoRow"
     @onAdd="onRowClick"
-    :currentRow="selectedRowPrice"
+    :currentRow="selectedPriceValueFranch"
     noExpandPanel
     noEditTable
     :rowsPerPage="0"
   >
   </Table-Template>
   <div v-else>не указана таблица</div>
-  <Form-Cena
-    v-model:showDialog="showDialog"
-    @onSave="onSave"
-    @onReset="onReset"
-  ></Form-Cena>
+  <Form-Cena v-model:showDialog="showDialog"></Form-Cena>
 </template>
 <script>
 import {
@@ -58,8 +54,11 @@ import {
   onMounted,
   watch,
   computed,
+  onActivated,
+  onDeactivated,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
+import { useLoadPriceValueFranch } from "../../loadPriceValueFranch.js";
 import { columns } from "./tableColumnList.js";
 import { usePriceStore, storeToRefs } from "stores/priceStore.js";
 import FormCena from "./FormCena.vue";
@@ -84,7 +83,7 @@ export default defineComponent({
     //   type: String,
     //   default: "Документы",
     // },
-    checkSave: Boolean,
+
     panelName: String,
   },
   emits: [""],
@@ -95,10 +94,13 @@ export default defineComponent({
       return import("./TableBodyMenu.vue");
     });
     const priceStore = usePriceStore();
+    const loadPriceValueFranch = useLoadPriceValueFranch();
     const {
       selectedRowDoc,
       selectedRowPrice,
-      RowsPriceValue,
+      selectedPriceValueFranch,
+      RowsPriceValueFranch,
+      RowsBakeryPriceFranch,
       selectedFranchPrice,
     } = storeToRefs(usePriceStore());
     //const rows = ref([]);
@@ -115,40 +117,76 @@ export default defineComponent({
           : `Общий прайс для ${selectedFranchPrice.value.length} пек.`;
       }
     });
-    async function onSave() {
-      await loadTable();
-    }
-    async function onReset() {
-      await loadTable();
-    }
-    //  function reLoadComponent() {}
-    watch(
-      [
-        () => selectedFranchPrice.value,
-        () => selectedRowPrice.value.id,
-        () => props.checkSave,
-      ],
-      async () => {
-        console.log("Читаем Прайс франчайзи");
-        await loadTable();
-      }
-    );
-    async function loadTable() {
-      // при обновлениитаблицы будем пеерчитывать выбранную чтроку
-      let aId = selectedRowPrice.value?.id;
-      RowsPriceValue.value = await tableFunc.loadTable(selectedRowDoc.value.id);
-      if (aId) {
-        // если пропало то ставим пустой объект
-        selectedRowPrice.value =
-          RowsPriceValue.value.find((val) => val.id == aId) || {};
-      }
-    }
-    onMounted(async () => {
-      await loadTable();
+    // async function onSave() {
+    //   console.log("onSave");
+    //   await loadPriceValueFranch.loadTable();
+    // }
+    // async function onReset() {
+    //   console.log("onReset");
+    //   await loadPriceValueFranch.loadTable();
+    // }
+    let watchCancel = null;
+    let watchCancel2 = null;
+    onMounted(() => {
+      console.log("mounted franch panel");
+      selectedFranchPrice.value = [];
     });
+    onActivated(async () => {
+      console.log("acivate franch panel");
+      selectedFranchPrice.value = [];
+      watchCancel = watch(
+        [() => RowsBakeryPriceFranch.value.length], // изменения в сайдбар слева выбора пекарни
+        () => {
+          selectedFranchPrice.value = [];
+        }
+      );
+      watchCancel2 = watch(
+        [() => selectedFranchPrice.value.length], // изменения в сайдбар слева выбора пекарни
+        async () => {
+          console.log("Читаем Прайс франчайзи check SideBar");
+          await loadPriceValueFranch.loadTable();
+        }
+      );
+      await loadPriceValueFranch.loadTable();
+    });
+    onDeactivated(() => {
+      if (watchCancel) {
+        console.log("стоп ватчер франч");
+        watchCancel();
+      }
+      if (watchCancel2) watchCancel2();
+    });
+    //  function reLoadComponent() {}
+    // priceStore.watchStore(() => {
+    //   return watch(
+    //     [
+    //       // () => selectedFranchPrice.value, /// изменения в сайдк слева выбора пекарни
+    //       //  () => selectedRowPrice.value.id,
+    //       () => props.checkSave,
+    //     ],
+    //     async () => {
+    //       console.log("Читаем Прайс франчайзи");
+    //       await loadPriceValueFranch.loadTable();
+    //     }
+    //   );
+    // });
+    // async function loadTable() {
+    //   // при обновлениитаблицы будем пеерчитывать выбранную чтроку
+    //   let aId = selectedPriceValueFranch.value?.id;
+    //   RowsPriceValueFranch.value = await tableFunc.loadTable(
+    //     selectedRowDoc.value.id
+    //   );
+    //   if (aId) {
+    //     // если пропало то ставим пустой объект
+    //     selectedPriceValueFranch.value =
+    //       RowsPriceValueFranch.value.find((val) => val.id == aId) || {};
+    //   }
+    // }
+
     function onRowClick(row) {
       console.log("Нажали по строке");
-      selectedRowPrice.value = row;
+      selectedPriceValueFranch.value = row;
+      // selectedRowPrice.value = row;
       //    priceStore.selectedRowPrice = row;
       //  emit("selectedRow", row); //! необходимо отдать для Sprav ? да и ваще полезно
     }
@@ -156,14 +194,13 @@ export default defineComponent({
       title,
       showDialog,
       selectedRowPrice,
+      selectedPriceValueFranch,
       priceStore,
       pagination,
-      RowsPriceValue,
+      RowsPriceValueFranch,
       columns,
       tableBodyMenu,
       tableFunc,
-      onSave,
-      onReset,
       onInfoRow(row) {
         showDialog.value = true;
         console.log("info butt", row);

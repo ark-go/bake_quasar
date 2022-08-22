@@ -67,7 +67,7 @@ export default defineComponent({
     }
     function onShowSelectBakery() {
       selectBakeryShow.value = true;
-      emit("onShowSelectBakery");
+      // emit("onShowSelectBakery");
     }
     return {
       selectedRowBakery,

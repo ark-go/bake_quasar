@@ -2,7 +2,17 @@ import { pool } from "../../initPostgreSQL.js";
 import { botSendMessage } from "../../../tg/startTgBot.js";
 import escape from "pg-escape";
 
-export async function loadBakeryArticle(req, res, tabname, timezone, idOne) {
+export async function addBakeryArticleOneDay(
+  req,
+  res,
+  tabname,
+  timezone,
+  idOne
+) {
+  console.log("ВАХ", req.body);
+  return {
+    result: 1,
+  };
   let wher = "";
   //! table - bakery
   let sqlP = {
@@ -61,7 +71,7 @@ RIGHT JOIN price_value prv ON prv.price_id = price.id -- все артикулы
       result: result,
     };
   } catch (err) {
-    console.log("Ошибка чтения loadBakeryArticle", err.toString());
+    console.log("Ошибка чтения loadBakeryArticleOneDay", err.toString());
     return {
       error: err.toString(),
     };

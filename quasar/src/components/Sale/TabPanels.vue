@@ -1,5 +1,10 @@
 <template>
-  <q-tab-panels v-model="tabModel" animated keep-alive class="ark-tab-panel">
+  <q-tab-panels
+    v-model="tabModel"
+    animated
+    :keep-alive="keepAlive"
+    class="ark-tab-panel"
+  >
     <q-tab-panel name="main" class="ark-tab-panel">
       <Tab-Sale-Bakery></Tab-Sale-Bakery>
     </q-tab-panel>
@@ -13,7 +18,7 @@
 /**
  * используем для размещения tabPanel панелей
  */
-import { defineComponent, onMounted } from "vue";
+import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue";
 
 import TabSaleBakery from "./saleBakery/TabSaleBakery.vue";
 import TabSaleItems from "./saleItems/TabSaleItems.vue";
@@ -27,10 +32,15 @@ export default defineComponent({
   },
   setup() {
     const { tabModel } = storeToRefs(useSaleStore());
+    const keepAlive = ref(false);
     onMounted(() => {
       tabModel.value = "main";
     });
-    return { tabModel };
+    onBeforeUnmount(() => {
+      console.log("keep off Sale");
+      keepAlive.value = false;
+    });
+    return { tabModel, keepAlive };
   },
 });
 </script>

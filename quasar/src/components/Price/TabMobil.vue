@@ -40,15 +40,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  ref,
-  onMounted,
-  computed,
-  watchEffect,
-  watch,
-  nextTick,
-} from "vue";
+import { defineComponent, ref, onMounted, watch, nextTick } from "vue";
 import { usePriceStore, storeToRefs } from "src/stores/priceStore";
 import { useQuasar } from "quasar";
 export default defineComponent({
@@ -58,6 +50,7 @@ export default defineComponent({
   setup(props) {
     const refTabsButton = ref();
     const $q = useQuasar();
+    const priceStore = usePriceStore();
     //const teleTarget =
     const { maxBodyHeight, maxBodyHeightResize, tabModel } = storeToRefs(
       usePriceStore()
@@ -67,9 +60,14 @@ export default defineComponent({
     const disableTeleport = ref(true);
     const tabModelBottom = ref("sideTab");
     const isMobile = ref($q.platform.is.mobile);
-    watch([() => maxBodyHeightResize.value, $q.platform.is.mobile], () => {
-      isMobile.value = $q.platform.is.mobile;
-      console.log("Переключаем мобилу:", isMobile.value);
+    priceStore.watchStore(() => {
+      return watch(
+        [() => maxBodyHeightResize.value, $q.platform.is.mobile],
+        () => {
+          isMobile.value = $q.platform.is.mobile;
+          console.log("Переключаем мобилу:", isMobile.value);
+        }
+      );
     });
     onMounted(() => {
       isMobile.value = $q.platform.is.mobile;

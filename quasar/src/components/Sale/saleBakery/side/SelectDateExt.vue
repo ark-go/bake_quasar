@@ -5,6 +5,7 @@
     :dense="!nodense"
     :readonly="true"
     :label="label"
+    @click="isProxyShow = true"
   >
     <template v-slot:append>
       <q-icon name="event" class="cursor-pointer">

@@ -17,14 +17,19 @@ export function useTableFunc(tabUrl) {
   const arkUtils = useArkUtils();
 
   async function loadBakeryArticle() {
+    let isGetCount = false;
     let aId = selectedArticleBakeryRow.value?.id; // запомним если было выбрано
     let dateTo = dateToDateUnix(selectedDateBetweenBakery.value.to); // до этой даты из диапазона
+    // if (isGetCount) {
+    // если запрашиваем по одному дню
     if (checkDateSale.value && currentDateSale.value) {
       // если есть галка по дате, и выбрана дата
       dateTo = dateToDateUnix(currentDateSale.value); // берем единичную дату
+      isGetCount = true;
     }
+    //}
     let command = {
-      cmd: "loadBakeryArticle",
+      cmd: isGetCount ? "loadBakeryArticleOneDay" : "loadBakeryArticle",
       bakery_id: bakerySelectedRow.value.id,
       trademark_id: trademarkId.value,
       showHiddenArticle: showHiddenArticle.value,
@@ -49,6 +54,52 @@ export function useTableFunc(tabUrl) {
         articleBakeryRows.value.find((val) => val.id == aId) || {};
     }
   }
+  async function addBakeryArticleOneDay(countsale) {
+    if (!checkDateSale.value || !currentDateSale.value) {
+      throw new Error("Нужна дата!");
+    }
+    if (!selectedArticleBakeryRow.value?.id) {
+      throw new Error("Нужно выбрать артикул!");
+    }
+    if (
+      bakerySelectedRow.value.id != selectedArticleBakeryRow.value.bakery_id
+    ) {
+      throw new Error(
+        "Внимание ошибка программы! 7735<br>пекарня не совпадает с имеющейся в базе"
+      ); // как это?
+    }
+    if (trademarkId.value != selectedArticleBakeryRow.value.trademark_id) {
+      throw new Error(
+        "Внимание ошибка программы! 7735<br>Торговая сеть не совпадает с имеющейся в базе"
+      ); // как это?
+    }
+    // если есть галка по дате, и выбрана дата
+    let dateTo = dateToDateUnix(currentDateSale.value); // берем единичную дату
+    let command = {
+      cmd: "addBakeryArticleOneDay",
+      datesale: dateTo,
+      bakery_id: selectedArticleBakeryRow.value.bakery_id,
+      price_value: selectedArticleBakeryRow.value.id,
+      trademark_id: trademarkId.value,
+      kagent_id: selectedArticleBakeryRow.value.kagent_id,
+      kagent_own_id: selectedArticleBakeryRow.value.kagent_own_id,
+      kagent_franch_id: selectedArticleBakeryRow.value.kagent_franch_id,
+      filename: "",
+      countsale: countsale,
+      price_id: selectedArticleBakeryRow.value.price_id,
+    };
+    // command.historyDate = dateToDateUnix(spravStore.historyDate);
+    let mess = "Артикул на запись";
+    let url = `/api/${tabUrl}`;
+    let res = await arkUtils.dataLoad(url, command, mess);
+    console.log("Артикулы", url, res);
+    if (res.result) {
+      return res.result;
+    } else {
+      return null;
+    }
+  }
+
   async function toggleHiddenArticle(id, hidden, dateBetween) {
     let command = {
       cmd: "toggleHiddenArticle",
@@ -83,5 +134,6 @@ export function useTableFunc(tabUrl) {
     dateFormatDate,
     loadBakeryArticle,
     toggleHiddenArticle,
+    addBakeryArticleOneDay,
   };
 }

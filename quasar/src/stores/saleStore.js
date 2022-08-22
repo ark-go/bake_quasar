@@ -60,9 +60,17 @@ export const useSaleStore = defineStore("SaleStore", {
        */
       checkDateSale: false,
       /**
-       *
+       * не даем часто нажимать на кнопку
        */
       debonceArticleOn: true,
+      debonceAddCountOn: true,
+      /**
+       * собираем Watch-еры, для остановки
+       */
+      watchForStop: [],
+      /**
+       *
+       */
       tabModel: "main",
       /**
        * размер тела ArkCard
@@ -128,6 +136,30 @@ export const useSaleStore = defineStore("SaleStore", {
         }, 1500);
       }
       this.debonceArticleOn = false;
+    },
+    debonceAddCount(calback) {
+      if (this.debonceAddCountOn) {
+        calback();
+        setTimeout(() => {
+          this.debonceAddCountOn = true;
+        }, 1500);
+      }
+      this.debonceAddCountOn = false;
+    },
+    watchStore(callback) {
+      let h = callback();
+      console.log("add watch", h);
+      this.watchForStop.push(h);
+    },
+    watchStop() {
+      this.watchForStop.forEach((v, i) => {
+        try {
+          v();
+          console.log("watch delete price - ", i);
+        } catch (e) {
+          console.log("stop watch price - ", i);
+        }
+      });
     },
   },
 });

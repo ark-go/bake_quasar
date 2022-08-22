@@ -34,10 +34,13 @@ export default defineComponent({
   },
   setup() {
     const $q = useQuasar();
+    const priceStore = usePriceStore();
     const { maxBodyHeight, tabModel } = storeToRefs(usePriceStore());
     const splitHorizont = ref(null);
-    watchEffect(() => {
-      splitHorizont.value = $q.screen.width < $q.screen.height;
+    priceStore.watchStore(() => {
+      return watchEffect(() => {
+        splitHorizont.value = $q.screen.width < $q.screen.height;
+      });
     });
     return { maxBodyHeight, splitHorizont, tabModel };
   },

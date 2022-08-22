@@ -86,15 +86,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  ref,
-  reactive,
-  onMounted,
-  watch,
-  watchEffect,
-  nextTick,
-} from "vue";
+import { defineComponent, ref, reactive, onMounted, watch } from "vue";
 import { useQuasar } from "quasar";
 import FormInput from "./FormInput.vue";
 import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
@@ -114,6 +106,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const $q = useQuasar();
     const arkUtils = useArkUtils();
+    const priceStore = usePriceStore();
     const { selectedRowPrice, selectedRowDoc } = storeToRefs(usePriceStore());
     const tableFunc = useTableFunc("tabPrice");
     const loadingProductVid = ref(false);
@@ -143,13 +136,15 @@ export default defineComponent({
       // включаем отслеживание
       watchStop.value = false;
     }
-    watch(
-      () => currentRow.value.datestart,
-      async () => {
-        if (watchStop.value) return;
-        // поменяли дату, перечитаем торговые сети
-      }
-    );
+    priceStore.watchStore(() => {
+      return watch(
+        () => currentRow.value.datestart,
+        async () => {
+          if (watchStop.value) return;
+          // поменяли дату, перечитаем торговые сети
+        }
+      );
+    });
 
     async function loadProductVid() {
       loadingProductVid.value = true;

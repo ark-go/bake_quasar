@@ -55,6 +55,7 @@ import {
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
 import { columns } from "./tableColumnList.js";
+
 import { usePriceStore, storeToRefs } from "stores/priceStore.js";
 
 export default defineComponent({
@@ -95,13 +96,15 @@ export default defineComponent({
       // при обновлениитаблицы будем пеерчитывать выбранную строку
       await tableFunc.loadTable();
     }
-    watch(
-      // сигнал на перезагрузку таблицы
-      () => props.checkSave,
-      async () => {
-        await loadTable();
-      }
-    );
+    priceStore.watchStore(() => {
+      return watch(
+        // сигнал на перезагрузку таблицы
+        () => props.checkSave,
+        async () => {
+          await loadTable();
+        }
+      );
+    });
     onMounted(async () => {
       await loadTable();
     });

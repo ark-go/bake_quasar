@@ -17,7 +17,9 @@
   >
     <q-card class="card">
       <q-card-section class="bg-primary text-white q-py-sm">
-        <div class="text-h9">Артикул: {{ selectedRowPrice.article }}</div>
+        <div class="text-h9">
+          Артикул: {{ selectedPriceValueFranch.article }}
+        </div>
       </q-card-section>
       <q-card-section
         class="bg-primary text-white scroll-y q-px-sm"
@@ -104,10 +106,7 @@
 </template>
 
 <script>
-import {
-  defineComponent,
-  ref,
-} from "vue";
+import { defineComponent, ref } from "vue";
 import { useQuasar } from "quasar";
 import FormInput from "./FormInput.vue";
 import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
@@ -125,7 +124,7 @@ export default defineComponent({
   setup(props, { emit }) {
     const $q = useQuasar();
     const arkUtils = useArkUtils();
-    const { selectedRowPrice, selectedFranchPrice } = storeToRefs(
+    const { selectedFranchPrice, selectedPriceValueFranch } = storeToRefs(
       usePriceStore()
     );
     const tableFunc = useTableFunc("tabPrice");
@@ -133,15 +132,15 @@ export default defineComponent({
     const watchStop = ref(false);
     const currentRow = ref({});
     async function onBeforeShowDialog() {
-      console.log("Показываем окно raz: ", selectedRowPrice.value);
+      console.log("Показываем окно raz: ", selectedPriceValueFranch.value);
 
       //блокируем перехватчики
       watchStop.value = true;
       // сбрасывем форму
       currentRow.value = {};
       // если данные есть о строке, запускаем считывание данных
-      if (selectedRowPrice.value.id) {
-        currentRow.value = { ...selectedRowPrice.value };
+      if (selectedPriceValueFranch.value.id) {
+        currentRow.value = { ...selectedPriceValueFranch.value };
       }
       // включаем отслеживание
       watchStop.value = false;
@@ -163,7 +162,6 @@ export default defineComponent({
 
       if (dat) {
         emit("update:showDialog", false);
-        emit("onSave");
       }
     }
     async function onReset() {
@@ -177,7 +175,7 @@ export default defineComponent({
       onReset,
       loadingProductVid,
       selectedFranchPrice,
-      selectedRowPrice,
+      selectedPriceValueFranch,
     };
   },
 });

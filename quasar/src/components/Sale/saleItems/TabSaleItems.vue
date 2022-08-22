@@ -5,6 +5,9 @@
       @onClickNew="onClickNew"
       @onDelete="onDelete"
       v-model:trademarkId="trademarkId"
+      @onAddDay="(val) => onAddDay(val)"
+      @onKeyEnterCount="onKeyEnterCount"
+      @refSelectCard="setRefSelectCard"
     ></Side-Doc>
     <template v-slot:after>
       <Table-Panel
@@ -25,10 +28,12 @@ import FormDoc from "./FormDoc.vue";
 import SideDoc from "./side/SideDoc.vue";
 import { useSaleStore, storeToRefs } from "stores/saleStore";
 import { useTableFunc } from "./tableFunc";
+import { date } from "quasar";
 export default defineComponent({
   name: "TabSaleItems",
   components: { TabPanelSplit, TablePanel, SideDoc, FormDoc },
   setup() {
+    const saleStore = useSaleStore();
     const {
       bakerySelectedRow,
       showHiddenArticle,
@@ -36,10 +41,13 @@ export default defineComponent({
       trademarkId,
       checkDateSale,
       currentDateSale,
+      selectedDateBetweenBakery,
     } = storeToRefs(useSaleStore());
+    const dateFormat = ref("DD.MM.YYYY");
     const tableFunc = useTableFunc("tabSale");
     const showDialog = ref(false);
     const checkSave = ref(false);
+    const refSelectCard = ref(null);
     // const trademarkId = ref(null);
     onMounted(async () => {
       await tableFunc.loadBakeryArticle();
@@ -79,6 +87,44 @@ export default defineComponent({
     function onSave() {
       checkSave.value = !checkSave.value;
     }
+    function onAddDay(countDays) {
+      console.log("onAddDay", countDays);
+      saleStore.debonceArticle(() => {
+        let minimumDate = date.extractDate(
+          selectedDateBetweenBakery.value.from,
+          dateFormat.value
+        );
+        let maximumDate = date.extractDate(
+          selectedDateBetweenBakery.value.to,
+          dateFormat.value
+        );
+        let currentDate = date.extractDate(
+          currentDateSale.value,
+          dateFormat.value
+        );
+        currentDate = date.addToDate(currentDate, { days: countDays });
+        if (currentDate <= maximumDate && currentDate >= minimumDate) {
+          currentDateSale.value = date.formatDate(
+            currentDate,
+            dateFormat.value
+          );
+        }
+      });
+    }
+    function setRefSelectCard(val) {
+      // передан ребенком ref на компонент
+      refSelectCard.value = val;
+    }
+    async function onKeyEnterCount(val) {
+      console.log("Кол-во:", val);
+      saleStore.debonceAddCount(async () => {
+        let count = await tableFunc.addBakeryArticleOneDay(val);
+        if (count == 1) {
+          await tableFunc.loadBakeryArticle();
+          refSelectCard.value.onClickRowMove(false);
+        }
+      });
+    }
     return {
       showDialog,
       onClickEdit,
@@ -89,6 +135,9 @@ export default defineComponent({
       trademarkId,
       onHideArticle,
       onShowArticle,
+      onAddDay,
+      onKeyEnterCount,
+      setRefSelectCard,
     };
   },
 });

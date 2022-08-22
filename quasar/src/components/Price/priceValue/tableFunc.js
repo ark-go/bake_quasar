@@ -1,9 +1,10 @@
 import { ref } from "vue";
 import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
-import { usePriceStore } from "stores/priceStore";
 import { date } from "quasar";
+import { useLoadPriceValue } from "../loadPriceValue";
 export function useTableFunc(nameTable) {
   // const spravStore = useSpravStore();
+  const loadPriceValue = useLoadPriceValue();
   const dateFormat = ref("DD.MM.YYYY");
   const arkUtils = useArkUtils();
   async function loadProductVid() {
@@ -33,6 +34,7 @@ export function useTableFunc(nameTable) {
     let res = await arkUtils.dataLoad(url, command, mess);
     console.log("addPriceValue", res);
     if (res.result) {
+      await loadPriceValue.loadTable();
       return res.result;
     } else {
       return null;
@@ -54,6 +56,7 @@ export function useTableFunc(nameTable) {
     let res = await arkUtils.dataLoad(url, command, mess);
     console.log("deletePriceValue", res);
     if (res.result) {
+      await loadPriceValue.loadTable();
       return res.result;
     } else {
       return null;

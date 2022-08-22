@@ -30,15 +30,8 @@
   </q-select>
 </template>
 <script>
-import {
-  ref,
-  onMounted,
-  nextTick,
-  unref,
-  computed,
-  watch,
-  watchEffect,
-} from "vue";
+import { ref, onMounted, watch } from "vue";
+import { usePriceStore, storeToRefs } from "src/stores/priceStore";
 export default {
   name: "SelectTovar",
   props: {
@@ -50,6 +43,7 @@ export default {
     },
   },
   setup(props, { emit }) {
+    const priceStore = usePriceStore();
     const vmodel = ref(null);
     const modelStat = ref("");
     const spravFilter = ref({});
@@ -57,20 +51,22 @@ export default {
       vmodel.value = props.tovar_name; // при открытиии вписывем что было в таблице
       emit("onMounted");
     });
-    watch(
-      () => vmodel.value,
-      () => {
-        console.log("change str  ", vmodel.value);
-        if (typeof vmodel.value === "object") {
-          // если из списка
-          emit("update:tovar_name", vmodel.value?.price_name || null);
-          emit("productvid_id", vmodel.value?.productvid_id || 0);
-        } else {
-          // если вручную
-          emit("update:tovar_name", vmodel.value);
+    priceStore.watchStore(() => {
+      return watch(
+        () => vmodel.value,
+        () => {
+          console.log("change str  ", vmodel.value);
+          if (typeof vmodel.value === "object") {
+            // если из списка
+            emit("update:tovar_name", vmodel.value?.price_name || null);
+            emit("productvid_id", vmodel.value?.productvid_id || 0);
+          } else {
+            // если вручную
+            emit("update:tovar_name", vmodel.value);
+          }
         }
-      }
-    );
+      );
+    });
     // function findValue() {
     //   return props.sprav.filter(
     //     (v) => v.price_name.toLowerCase().indexOf(needle) > -1

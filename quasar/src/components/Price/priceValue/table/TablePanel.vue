@@ -30,7 +30,6 @@
     :rows="RowsPriceValue"
     :columns="columns"
     :tableBodyMenu="tableBodyMenu"
-    :tableFunc="tableFunc"
     @onInfoRow="$emit('onRowDblClick')"
     @onBtnDelete="onInfoRow"
     @onBtnEdit="onInfoRow"
@@ -53,10 +52,10 @@ import {
   onMounted,
   watch,
 } from "vue";
-import { useTableFunc } from "./tableFunc.js";
 import { columns } from "./tableColumnList.js";
 import { usePriceStore, storeToRefs } from "stores/priceStore.js";
 import TableTemplate from "src/components/template/table/TableTemplate.vue";
+//import { useLoadPriceValue } from "../../loadPriceValue.js";
 export default defineComponent({
   name: "TablePanel",
   components: { TableTemplate },
@@ -78,7 +77,7 @@ export default defineComponent({
   },
   emits: [""],
   setup(props, { emit }) {
-    const tableFunc = useTableFunc(props.tableName);
+    //   const loadPriceValue = useLoadPriceValue();
     const tableBodyMenu = defineAsyncComponent(() => {
       return import("./TableBodyMenu.vue");
     });
@@ -94,18 +93,19 @@ export default defineComponent({
     const pagination = ref({
       rowsPerPage: 10,
     });
-    onMounted(async () => {
-      await tableFunc.loadTable();
-    });
-    watch(
-      // сигнал на перезагрузку таблицы
-      [() => props.checkSave], // () => selectedRowDoc.value.id], строку документа ловим в priceDoc
-      async () => {
-        // await loadTable();
-        await tableFunc.loadTable();
-      }
-    );
-
+    // onMounted(async () => {
+    //   await tableFunc.loadTable();
+    // });
+    // priceStore.watchStore(() => {
+    //   return watch(
+    //     // сигнал на перезагрузку таблицы
+    //     [() => props.checkSave], // () => selectedRowDoc.value.id], строку документа ловим в priceDoc
+    //     async () => {
+    //       // await loadTable();
+    //       await loadPriceValue.loadTable();
+    //     }
+    //   );
+    // });
     function onRowClick(row) {
       console.log("Нажали по строке");
       selectedRowPrice.value = row;
@@ -120,7 +120,6 @@ export default defineComponent({
       RowsPriceValue,
       columns,
       tableBodyMenu,
-      tableFunc,
       onInfoRow(row) {
         console.log("info butt", row);
       },

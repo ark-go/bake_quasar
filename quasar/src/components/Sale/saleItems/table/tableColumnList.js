@@ -36,7 +36,7 @@ export const columns = [
     align: "left",
     field: "bakery_name",
     sortable: true,
-    hidden: true,
+    hidden: false,
   },
   {
     name: "date_start",
@@ -53,5 +53,38 @@ export const columns = [
     field: "price_docnum",
     sortable: true,
     hidden: true,
+  },
+  /////
+  {
+    name: "kagent_name",
+    label: "Контрагент",
+    align: "left",
+    field: "kagent_name",
+    sortable: true,
+    hidden: false,
+  },
+  {
+    name: "kagent_own_name",
+    label: "Кагент свой",
+    align: "left",
+    field: "kagent_own_name",
+    sortable: true,
+    hidden: false,
+  },
+  {
+    name: "kagent_franch_name",
+    label: "франчайзи",
+    align: "left",
+    field: "kagent_franch_name",
+    sortable: true,
+    hidden: false,
+  },
+  {
+    name: "trademark_name",
+    label: "Сеть",
+    align: "left",
+    field: "trademark_name",
+    sortable: true,
+    hidden: false,
   },
 ];

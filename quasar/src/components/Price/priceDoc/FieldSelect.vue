@@ -33,6 +33,7 @@
 </template>
 <script>
 import { ref, computed, onMounted, watch, watchEffect } from "vue";
+import { usePriceStore, storeToRefs } from "src/stores/priceStore";
 export default {
   name: "SelectIdName",
   props: {
@@ -49,6 +50,7 @@ export default {
   },
   emits: ["update:selectId"],
   setup(props, { attrs, slots, emit, expose }) {
+    const priceStore = usePriceStore();
     const selectRef = ref({});
     const options = ref(null);
     const optLabel = ref(null);
@@ -59,15 +61,17 @@ export default {
     // будем показывать наше поле или скрывать, и обнулять его, т.е. selectId
     if (typeof props.showClear !== "undefined") {
       // указан был пропс т.е. он был какой-то пока непроверяем
-      watchEffect(() => {
-        // необходимо, чтоб сразу определить, значение, и отлавливать его
-        // при внешнем изменении зависимости.
-        // показываем или не показываем поле
-        isShow.value = props.showClear;
-        if (props.showClear === false) {
-          // если не показываем поле, то и стираем его не null
-          emit("update:selectId", null);
-        }
+      priceStore.watchStore(() => {
+        return watchEffect(() => {
+          // необходимо, чтоб сразу определить, значение, и отлавливать его
+          // при внешнем изменении зависимости.
+          // показываем или не показываем поле
+          isShow.value = props.showClear;
+          if (props.showClear === false) {
+            // если не показываем поле, то и стираем его не null
+            emit("update:selectId", null);
+          }
+        });
       });
     }
 
@@ -99,12 +103,14 @@ export default {
         spravFilter.value = props.sprav;
       }
     }
-    watch(
-      () => props.sprav,
-      () => {
-        setfilter();
-      }
-    );
+    priceStore.watchStore(() => {
+      return watch(
+        () => props.sprav,
+        () => {
+          setfilter();
+        }
+      );
+    });
     onMounted(() => {
       setfilter();
     });

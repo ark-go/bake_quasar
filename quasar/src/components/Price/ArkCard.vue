@@ -95,8 +95,6 @@
 import {ref,watch, onMounted, watchEffect, onUpdated, computed, nextTick, defineAsyncComponent, defineComponent  } from "vue";
 import { useRouter } from "vue-router";
 import PageSetupDialog from "./PageSetupDialog.vue";
-import SplitterSprav from "./SplitterSprav.vue";
-import TabMobil from "./TabMobil.vue";
 import TabButton from "./TabButton.vue";
 import { useQuasar, dom } from "quasar";
 import { usePriceStore, storeToRefs } from "src/stores/priceStore";
@@ -145,36 +143,40 @@ export default defineComponent({
     const { tabModel, maxBodyHeight, maxBodyHeightResize } = storeToRefs(
       usePriceStore()
     );
-    watch(
-      () => tabModel.value,
-      () => {
-        console.log("Выбрана вкладка", tabModel.value);
-      }
-    );
-    watch(
-      () => props.fullScreenTr,
-      () => {
-        if (!$q.fullscreen.isActive) {
-          $q.fullscreen
-            .request(refAllForm.value)
-            .then(() => {
-              // success!
-            })
-            .catch((err) => {
-              console.log("fullscreen1", err);
-            });
-        } else {
-          $q.fullscreen
-            .exit()
-            .then(() => {
-              // success!
-            })
-            .catch((err) => {
-              // oh, no!!!
-            });
+    priceStore.watchStore(() => {
+      return watch(
+        () => tabModel.value,
+        () => {
+          console.log("Выбрана вкладка", tabModel.value);
         }
-      }
-    );
+      );
+    });
+    priceStore.watchStore(() => {
+      return watch(
+        () => props.fullScreenTr,
+        () => {
+          if (!$q.fullscreen.isActive) {
+            $q.fullscreen
+              .request(refAllForm.value)
+              .then(() => {
+                // success!
+              })
+              .catch((err) => {
+                console.log("fullscreen1", err);
+              });
+          } else {
+            $q.fullscreen
+              .exit()
+              .then(() => {
+                // success!
+              })
+              .catch((err) => {
+                // oh, no!!!
+              });
+          }
+        }
+      );
+    });
     function onClickMenu(nameKey) {
       emit("menuClick", nameKey);
       if (nameKey == "sizeForm") {
@@ -185,18 +187,19 @@ export default defineComponent({
         });
       }
     }
-    watchEffect(() => {
-      console.log("refTopSection", refTopSection.value);
+    priceStore.watchStore(() => {
+      return watchEffect(() => {
+        splitHorizont.value = $q.screen.width < $q.screen.height;
+      });
     });
-    watchEffect(() => {
-      splitHorizont.value = $q.screen.width < $q.screen.height;
+    priceStore.watchStore(() => {
+      return watch(
+        [() => priceStore.selectedRowDoc.name, () => maxBodyHeightResize.value],
+        () => {
+          reSizeCard();
+        }
+      );
     });
-    watch(
-      [() => priceStore.selectedRowDoc.name, () => maxBodyHeightResize.value],
-      () => {
-        reSizeCard();
-      }
-    );
     const maxHeigh = computed(() => {
       return props.pageMaxHeight;
     });
@@ -229,7 +232,7 @@ export default defineComponent({
     }
 
     onUpdated(() => {
-      // помоему срабатывает если 
+      // помоему срабатывает если
       reSizeCard();
     });
     onMounted(() => {
@@ -242,9 +245,11 @@ export default defineComponent({
       //   buttonArrProp.value = [{ key: "back", name: "Назад" }]; // кнопки забыли
       // }
     });
-    watch(props, () => {
-      buttonArrProp.value = props.buttonArr;
-      console.log("Кнопки:", buttonArrProp.value);
+    priceStore.watchStore(() => {
+      return watch(props, () => {
+        buttonArrProp.value = props.buttonArr;
+        console.log("Кнопки:", buttonArrProp.value);
+      });
     });
     function clickSelectButton() {
       $q.dialog({

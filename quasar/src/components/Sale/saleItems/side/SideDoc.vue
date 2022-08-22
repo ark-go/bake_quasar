@@ -26,12 +26,18 @@
         />
       </q-item-section>
       <q-item-section>
-        <Select-Date-Ext></Select-Date-Ext>
+        <Select-Date-Ext
+          @onAddDay="$emit('onAddDay', $event)"
+        ></Select-Date-Ext>
       </q-item-section>
     </q-item>
     <q-item v-if="checkDateSale">
       <q-item-section>
-        <Form-Select-Card></Form-Select-Card>
+        <Form-Select-Card
+          :ref="(val) => $emit('refSelectCard', val)"
+          @onAddDay="$emit('onAddDay', $event)"
+          @onKeyEnterCount="$emit('onKeyEnterCount', $event)"
+        ></Form-Select-Card>
       </q-item-section>
     </q-item>
     <q-item clickable v-ripple @click="showHiddenArticle = !showHiddenArticle">
@@ -107,6 +113,10 @@ export default defineComponent({
       selectedArticleBakeryRow,
       checkDateSale,
       onCheckDateSale,
+      addCountDays(val) {
+        console.log("countDays-2", val);
+        emit("countDays", val);
+      },
     };
   },
 });

@@ -30,7 +30,6 @@
     :rows="RowsBakeryPrice"
     :columns="columns"
     :tableBodyMenu="tableBodyMenu"
-    :tableFunc="tableFunc"
     @onInfoRow="onInfoRow"
     @onBtnDelete="onInfoRow"
     @onBtnEdit="onInfoRow"
@@ -58,7 +57,8 @@ import {
   onActivated,
   onDeactivated,
 } from "vue";
-import { useTableFunc } from "./tableFunc.js";
+//import { useTableFunc } from "./tableFunc.js";
+import { useLoadBakeryDocument } from "../../loadBakeryDocument.js";
 import { columns } from "./tableColumnList.js";
 import { usePriceStore, storeToRefs } from "stores/priceStore.js";
 export default defineComponent({
@@ -79,17 +79,15 @@ export default defineComponent({
     },
     title: {
       type: String,
-      default: "Пекарни в прайсе",
+      default: "Пекарни в документе",
     },
     checkSave: Boolean,
     panelName: String,
   },
   emits: [""],
   setup(props, { emit }) {
-    const tableFunc = useTableFunc();
-    // onUnmounted(() => {
-    //   tableFunc = null;
-    // });
+    //const tableFunc = useTableFunc();
+    const loadBakeryDocument = useLoadBakeryDocument();
     const tableBodyMenu = defineAsyncComponent(() => {
       return import("./TableBodyMenu.vue");
     });
@@ -109,7 +107,7 @@ export default defineComponent({
     });
     onMounted(async () => {
       console.log("ON MOUNT  Пекарни включенные в прайс");
-      await tableFunc.loadTable();
+      //await loadBakeryDocument.loadTable();
     });
     onActivated(() => {
       console.log("ON-onActivated  Пекарни включенные в прайс");
@@ -121,10 +119,11 @@ export default defineComponent({
     priceStore.watchStore(() => {
       return watch(
         // сигнал на перезагрузку таблицы //() => props.checkSave,
-        [() => selectedRowDoc.value], // () => selectedRowDoc.value.id], это следим в priceDoc
+        [/*() => selectedRowDoc.value,*/ () => props.checkSave], // () => selectedRowDoc.value.id], это следим в priceDoc
         async () => {
           console.log("WATCH Пекарни включенные в прайс");
-          await tableFunc.loadTable();
+          // await tableFunc.loadTable();
+          loadBakeryDocument.loadTable();
         }
       );
     });
@@ -139,7 +138,7 @@ export default defineComponent({
       RowsBakeryPrice,
       columns,
       tableBodyMenu,
-      tableFunc,
+      // tableFunc,
       onInfoRow(row) {
         console.log("info butt", row);
       },

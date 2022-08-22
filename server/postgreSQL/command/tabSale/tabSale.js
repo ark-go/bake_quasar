@@ -3,6 +3,8 @@ import { loadTrademark } from "./loadTrademark.js";
 import { loadBakery } from "./loadBakery.js";
 import { loadBakeryArticle } from "./loadBakeryArticle.js";
 import { toggleHiddenArticle } from "./toggleHiddenArticle.js";
+import { loadBakeryArticleOneDay } from "./loadBakeryArticleOneDay.js";
+import { addBakeryArticleOneDay } from "./addBakeryArticleOneDay.js";
 
 /**
  * Необходимы параметры в запросе cmd,tableName,add,load,update,delete
@@ -28,6 +30,10 @@ export async function tabSale(req, res) {
       return await loadBakeryArticle(req, res, "bakery", timezone);
     case "toggleHiddenArticle":
       return await toggleHiddenArticle(req, res, "bakery", timezone);
+    case "loadBakeryArticleOneDay":
+      return await loadBakeryArticleOneDay(req, res, "bakery", timezone);
+    case "addBakeryArticleOneDay":
+      return await addBakeryArticleOneDay(req, res, "bakery", timezone);
 
     default:
       return {

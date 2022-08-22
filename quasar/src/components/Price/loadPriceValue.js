@@ -1,20 +1,21 @@
 import { ref, watch } from "vue";
 import { useArkUtils } from "src/utils/arkUtils";
 import { date } from "quasar";
-import { usePriceStore, storeToRefs } from "stores/priceStore";
-export function useTableFunc(nameTable) {
+import { usePriceStore, storeToRefs } from "stores/priceStore.js";
+export function useLoadPriceValue() {
+  console.log("functionale loadPriceValue load");
   const arkUtils = useArkUtils();
   const dateFormat = ref("DD.MM.YYYY");
-  const { RowsPriceValue, selectedRowPrice, selectedRowDoc, priceValueCount } =
-    storeToRefs(usePriceStore());
 
+  const { RowsPriceValue, selectedRowDoc, selectedRowPrice, priceValueCount } =
+    storeToRefs(usePriceStore());
   async function loadTable() {
     let aId = selectedRowPrice.value?.id; // запомним если было выбрано
     let command = {
       cmd: "loadPriceValue",
       price_id: selectedRowDoc.value.id, // это было параметром
     };
-    let mess = "Прайс позиции";
+    let mess = "Прайс - позиции";
     let url = "/api/tabPrice";
     let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
@@ -30,12 +31,6 @@ export function useTableFunc(nameTable) {
         RowsPriceValue.value.find((val) => val.id == aId) || {};
     }
   }
-  watch(
-    () => selectedRowDoc.value.id,
-    async () => {
-      await loadTable();
-    }
-  );
   function dateToDateUnix(dat) {
     if (!dat) {
       return null;

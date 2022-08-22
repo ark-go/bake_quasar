@@ -142,27 +142,29 @@ export default {
       }
     );
     function onAddDay(countDays) {
-      saleStore.debonceArticle(() => {
-        let minimumDate = date.extractDate(
-          selectedDateBetweenBakery.value.from,
-          dateFormat.value
-        );
-        let maximumDate = date.extractDate(
-          selectedDateBetweenBakery.value.to,
-          dateFormat.value
-        );
-        let currentDate = date.extractDate(
-          currentDateSale.value,
-          dateFormat.value
-        );
-        currentDate = addToDate(currentDate, { days: countDays });
-        if (currentDate <= maximumDate && currentDate >= minimumDate) {
-          currentDateSale.value = date.formatDate(
-            currentDate,
-            dateFormat.value
-          );
-        }
-      });
+      console.log("onAddDay-1",countDays)
+      emit("onAddDay", countDays);
+      // saleStore.debonceArticle(() => {
+      //   let minimumDate = date.extractDate(
+      //     selectedDateBetweenBakery.value.from,
+      //     dateFormat.value
+      //   );
+      //   let maximumDate = date.extractDate(
+      //     selectedDateBetweenBakery.value.to,
+      //     dateFormat.value
+      //   );
+      //   let currentDate = date.extractDate(
+      //     currentDateSale.value,
+      //     dateFormat.value
+      //   );
+      //   currentDate = addToDate(currentDate, { days: countDays });
+      //   if (currentDate <= maximumDate && currentDate >= minimumDate) {
+      //     currentDateSale.value = date.formatDate(
+      //       currentDate,
+      //       dateFormat.value
+      //     );
+      //   }
+      // });
     }
 
     const localeExt = ref(locale);

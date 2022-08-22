@@ -2,6 +2,10 @@ import { app, BrowserWindow, nativeTheme, Tray, Menu } from "electron";
 import path from "path";
 import os from "os";
 import { setAppMenu } from "./menuApp.js";
+// app.on("window-all-closed", () => {
+//   app.quit();
+// });
+
 const Store = require("electron-store");
 const store = new Store();
 let localSite = "https://bake.x.arkadii.ru/";

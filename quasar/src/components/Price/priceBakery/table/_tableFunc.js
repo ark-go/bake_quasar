@@ -5,8 +5,12 @@ import { usePriceStore, storeToRefs } from "stores/priceStore.js";
 export function useTableFunc() {
   const arkUtils = useArkUtils();
   const dateFormat = ref("DD.MM.YYYY");
-  const { RowsBakeryPrice, selectedRowDoc, bakeryFranchPrice, bakeryCount } =
-    storeToRefs(usePriceStore());
+  const {
+    RowsBakeryPrice,
+    selectedRowDoc,
+    RowsBakeryPriceFranch,
+    bakeryCount,
+  } = storeToRefs(usePriceStore());
   async function loadTable() {
     let command = {
       cmd: "loadBakeryDocument",
@@ -19,9 +23,9 @@ export function useTableFunc() {
     let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
       bakeryCount.value = res.result.length;
-      bakeryFranchPrice.value = [];
+      RowsBakeryPriceFranch.value = [];
       res.result.forEach((value) => {
-        if (value.kagent_franch_id) bakeryFranchPrice.value.push(value);
+        if (value.kagent_franch_id) RowsBakeryPriceFranch.value.push(value);
       });
       RowsBakeryPrice.value = res.result;
     } else {

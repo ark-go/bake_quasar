@@ -1,9 +1,6 @@
 <template>
   <Tab-Panel-Split>
-    <Side-Doc
-      @onClickDelete="onClickDelete"
-      @onShowSelectBakery="onShowSelectBakery"
-    ></Side-Doc>
+    <Side-Doc @onClickDelete="onClickDelete"></Side-Doc>
     <template v-slot:after>
       <!--  таблицу с печками прайса  -->
       <Table-Panel :checkSave="checkSave"></Table-Panel>
@@ -17,7 +14,6 @@
     <Select-Bakery pageMaxHeight="300px" @onSave="onSaveBakeryArray">
       <!-- перечитаем таблицу с печками modal -->
       <Select-Bakery-Table
-        :checkReload="checkSave"
         v-model:selected="selectedBakeryModal"
       ></Select-Bakery-Table>
     </Select-Bakery>
@@ -55,6 +51,7 @@ export default defineComponent({
     SelectBakeryTable,
   },
   setup() {
+    const priceStore = usePriceStore();
     const {
       tabModel,
       selectBakeryShow,
@@ -91,15 +88,14 @@ export default defineComponent({
     onMounted(() => {
       teleportCheck();
     });
-    watch(
-      () => $q.fullscreen.isActive,
-      (val) => {
-        teleportCheck();
-      }
-    );
-    function onShowSelectBakery() {
-      //showDialog.value = true;
-    }
+    priceStore.watchStore(() => {
+      return watch(
+        () => $q.fullscreen.isActive,
+        (val) => {
+          teleportCheck();
+        }
+      );
+    });
     function onSave() {
       checkSave.value = !checkSave.value;
     }
@@ -134,9 +130,6 @@ export default defineComponent({
       tabModel,
       selectedBakeryModal,
       onClickDelete,
-      //  showDialog,
-      //  onClickEdit,
-      onShowSelectBakery,
       onSaveBakeryArray,
       onSave,
       checkSave,

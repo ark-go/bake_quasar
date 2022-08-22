@@ -4,6 +4,7 @@
     animated
     :keep-alive="keepAlive"
     class="ark-tab-panel"
+    :keep-alive-exclude="['ModalBakery']"
   >
     <q-tab-panel key="1" name="main" class="ark-tab-panel">
       <Tab-Price-Doc></Tab-Price-Doc>
@@ -46,7 +47,7 @@ export default defineComponent({
       tabModel.value = "main";
     });
     onBeforeUnmount(() => {
-      console.log("keep off");
+      console.log("keep off Price");
       keepAlive.value = false;
     });
     return { tabModel, keepAlive };

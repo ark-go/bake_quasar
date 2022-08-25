@@ -23,6 +23,14 @@ export const useSaleStore = defineStore("SaleStore", {
        */
       trademarkId: 0,
       /**
+       * список территорий
+       */
+      territoryRows: [],
+      /**
+       * выбранный id territory
+       */
+      territoryId: 0,
+      /**
        * выбранный id bakery пекарни
        */
       bakeryId: 0,
@@ -50,11 +58,19 @@ export const useSaleStore = defineStore("SaleStore", {
        * Показать скрытые артикулы для пекарни
        */
       showHiddenArticle: false,
+      /**
+       * показать повторные артикулы
+       */
+      showDoobleArticle: false,
       // --------------
       /**
        * Выбранная дата продажи
        */
       currentDateSale: "",
+      /**
+       * День недели прописью
+       */
+      currentDateSaleWeek: "",
       /**
        * выбор даты разрешен
        */

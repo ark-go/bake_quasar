@@ -19,7 +19,7 @@ export async function loadBakeryTrademarkKagent(
   //! table - Trademark
   let sqlP = {
     text: /*sql*/ `
-    select 
+    select  distinct  --  distinct установлен только для проверки продаж !!
     bakery.id as id,
     bakery.name as name,
     bakery.address as address,
@@ -30,7 +30,8 @@ export async function loadBakeryTrademarkKagent(
     kgfranch.name as kagent_franch_name,
     terr.name as territory_name,
     reg.name as region_name,
-    trademark.name as trademark_name
+    trademark.name as trademark_name,
+    to_char(sale.datesale at time zone $2,  'DD.MM.YYYY') as date_sale
 
       from (
         -- все печки собств. контрагента, у которых есть и контрагент
@@ -48,6 +49,7 @@ export async function loadBakeryTrademarkKagent(
           ) as bakown
       -- 
       LEFT JOIN bakery ON bakery.id = bakown.child_id 
+      LEFT JOIN sale ON sale.bakery_id = bakery.id AND sale.datesale >= $1 AT TIME ZONE $2  -- проверка на продажи
       LEFT JOIN city ON city.id = bakery.city_id
           -- взято из tabBakery
       -- менеджер пекарни    

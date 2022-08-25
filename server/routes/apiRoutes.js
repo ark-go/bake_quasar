@@ -89,6 +89,8 @@ import { userroletree } from "../postgreSQL/command/userroletree/userroletree.js
 import { tabSale } from "../postgreSQL/command/tabSale/tabSale.js";
 
 import { exportPriceExcel } from "../modules/excel/exportPriceExcel/exportPriceExcel.js";
+import { exportSaleExcel } from "../modules/excel/exportSaleExcel/exportSaleExcel.js";
+import { testParser } from "../modules/excel/testParser/testParser.js";
 //import { pdfmain } from "../modules/PDF/pdfmain.js";
 //import { pdfMainLoad } from "../modules/PDF/pdfMainLoad.js";
 import { pdf } from "../modules/PDF/pdf.js";
@@ -211,6 +213,15 @@ export async function apiRoutes() {
     console.log("/exportPriceExcel");
     await exportPriceExcel(req, res);
   });
+  router.post("/exportSaleExcel", async (req, res) => {
+    console.log("/exportSaleExcel");
+    await exportSaleExcel(req, res);
+  });
+  router.post("/testParser", async (req, res) => {
+    console.log("/testParser");
+    await testParser(req, res);
+  });
+
   // router.post("/pdfmain", async (req, res) => {
   //   console.log("/pdfmain");
   //   res.json(await pdfmain(req));

@@ -18,11 +18,10 @@
     hide-dropdown-icon
     @new-value="newValue"
     @blur="checkNew"
-    transition-show="jump-down"
-    transition-hide="jump-up"
     :clearable="clearable"
     :use-input="true"
     :loading="loading"
+    behavior="menu"
   >
     <template v-slot:no-option>
       <q-item>
@@ -32,7 +31,7 @@
   </q-select>
 </template>
 <script>
-import { ref, computed, onMounted, watch, watchEffect } from "vue";
+import { ref, computed, onMounted, watch, watchEffect, nextTick } from "vue";
 export default {
   name: "SelectIdName",
   props: {
@@ -83,7 +82,7 @@ export default {
     //     }
     //   }
     // );
-    //?const allArray = ref({});
+
     const computedModel = computed({
       get: () => {
         if (Array.isArray(props.sprav)) {
@@ -121,8 +120,7 @@ export default {
       setfilter();
     });
     // watch(props, getProps);
-
-    // ------------------------  автоподстановка  оно переоткрывает список----------------------------------
+    // -------------++++
     function filterFn(val, update, abort) {
       if (val === "") {
         update(() => {
@@ -145,6 +143,28 @@ export default {
         }
       );
     }
+    // ------------------------  автоподстановка  оно переоткрывает список----------------------------------
+    // function filterFn(val, update, abort) {
+    //   abort(); // не используется в это элементе
+    //   // call abort() at any time if you can't retrieve data somehow
+    //   //  setTimeout(() => {
+    //   update(
+    //     () => {},
+    //     //"ref" is the Vue reference to the QSelect
+    //     (ref) => {
+    //       const needle = val.toLowerCase();
+
+    //       let i = props.sprav.some((v, i, x) => {
+    //         if (v["name"].toLowerCase().indexOf(needle) > -1) {
+    //           ref.setOptionIndex(i);
+    //           // ref.moveOptionSelection(i, true);
+    //           return i;
+    //         }
+    //       });
+    //     }
+    //   );
+    //   //  }, 200);
+    // }
     // --------------------------    ^^^^^^  ---------------------------------
     return {
       isShow,

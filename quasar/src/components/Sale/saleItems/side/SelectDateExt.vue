@@ -1,5 +1,6 @@
 <template>
   <q-input
+    class="cursor-pointer non-selectable"
     :model-value="currentDateSale"
     dense
     :readonly="true"
@@ -74,8 +75,12 @@ export default {
   emits: ["update:value-date"],
   setup(props, { emit }) {
     const saleStore = useSaleStore();
-    const { currentDateSale, selectedDateBetweenBakery, checkDateSale } =
-      storeToRefs(useSaleStore());
+    const {
+      currentDateSale,
+      currentDateSaleWeek,
+      selectedDateBetweenBakery,
+      checkDateSale,
+    } = storeToRefs(useSaleStore());
     const { addToDate } = date;
     const dateFormat = ref("DD.MM.YYYY");
     const isProxyShow = ref(false);
@@ -123,9 +128,12 @@ export default {
         currentDateSale.value,
         dateFormat.value
       );
+
       if (currentDate < minimumDate || currentDate > maximumDate) {
         currentDateSale.value = selectedDateBetweenBakery.value.from;
       }
+
+      // ^^^
     }
 
     // при открытии календаря
@@ -139,10 +147,18 @@ export default {
       () => {
         isProxyShow.value = false;
         console.log("date sale", currentDateSale.value);
+        // сюда можно день недели вставить
+        const dateUnix = date.extractDate(
+          currentDateSale.value,
+          dateFormat.value
+        );
+        const dateWeek = date.formatDate(dateUnix, "dddd");
+        currentDateSaleWeek.value = dateWeek;
+        console.log("День недели ", currentDateSaleWeek.value);
       }
     );
     function onAddDay(countDays) {
-      console.log("onAddDay-1",countDays)
+      console.log("onAddDay-1", countDays);
       emit("onAddDay", countDays);
       // saleStore.debonceArticle(() => {
       //   let minimumDate = date.extractDate(

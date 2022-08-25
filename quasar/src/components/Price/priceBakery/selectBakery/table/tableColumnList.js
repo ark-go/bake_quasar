@@ -9,6 +9,14 @@ export const columns = [
     format: (val) => `${val}`,
   },
   {
+    name: "date_sale",
+    label: "X",
+    align: "left",
+    field: "date_sale",
+    required: true, // нельзя выключить
+    sortable: true,
+  },
+  {
     name: "region_name",
     label: "Регион",
     align: "left",

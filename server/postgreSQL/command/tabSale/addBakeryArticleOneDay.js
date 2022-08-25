@@ -1,4 +1,5 @@
 import { pool } from "../../initPostgreSQL.js";
+import { removeBakeryArticleOneDay } from "./removeBakeryArticleOneDay.js";
 import { botSendMessage } from "../../../tg/startTgBot.js";
 import escape from "pg-escape";
 
@@ -10,68 +11,64 @@ export async function addBakeryArticleOneDay(
   idOne
 ) {
   console.log("ВАХ", req.body);
-  return {
-    result: 1,
-  };
+
+  if (!req.body.countsale || req.body.countsale == 0) {
+    return await removeBakeryArticleOneDay(req, res, tabname, timezone, idOne);
+  }
+
   let wher = "";
   //! table - bakery
   let sqlP = {
     text: /*sql*/ `
-    select distinct on (article)
-    prv.id as id, -- id price_value
-    prv.article as article,
-    prv.price_name as tovar_name,
-	prvh.hidden as hidden,
-	---prv.id as price_id,
-	concat(ptype.prefix,' ',assort.name,' ',pvid.name,' ',pvid.nameext,' ',unit.name) AS productvid_name,
-	pvid.id as productvid_id,
-	bakery.name as bakery_name,
-	bakery.id as bakery_id,
-    price.docnum as price_docnum,
-    to_char(price.datestart at time zone $1,  'DD.MM.YYYY') as date_start
---	price.id as price_id
-	
-from bakery
-RIGHT JOIN price_bakery prb ON prb.bakery_id = bakery.id  -- все номера прайсов у печки
-RIGHT JOIN price ON price.id = prb.price_id AND price.trademark_id = $3  -- все прайсы у печки, по торговой сети
-RIGHT JOIN price_value prv ON prv.price_id = price.id -- все артикулы всех прайсов
-    -- теперь получим признак актуальности артикула в конкретной печке, чужих сетей не должно быть
-    LEFT JOIN price_value_hidden prvh ON prvh.price_value_id = prv.id AND prvh.bakery_id = prb.bakery_id
-  	-- название продукта
-    LEFT JOIN productvid as pvid on pvid.id =  prv.productvid_id
-    LEFT JOIN productassortment as assort on assort.id = pvid.productassortment_id
-    LEFT JOIN unit on unit.id = pvid.unit_id
-    LEFT JOIN producttype as ptype on ptype.id = assort.producttype_id
-	--
+    INSERT INTO sale ( datesale, bakery_id, price_value_id, trademark_id, 
+      kagent_id, kagent_own_id, kagent_franch_id,
+      filename, countsale, price_id, description, 
+      meta, user_id, user_date)
+     VALUES (
+     $1 at time zone $14 , $2, $3, $4,
+     $5, $6, $7, 
+     $8, $9, $10, $11, 
+     $12, $13, CURRENT_TIMESTAMP
+     ) 
+     ON CONFLICT (datesale, bakery_id, price_value_id) DO 
+     UPDATE SET
+     countsale = EXCLUDED.countsale,
+     user_id = EXCLUDED.user_id,
+     user_date = CURRENT_TIMESTAMP
+     RETURNING countsale
 
-  where bakery.id = $2 AND price.datestart <= $4 at time zone $1
-  ${req.body.showHiddenArticle ? "" : "AND NOT hidden IS TRUE"}
-  order by article, price.datestart DESC
 `,
     values: [
-      timezone,
-      req.body.bakery_id,
-      req.body.trademark_id,
-      // req.body.dateBetween.from,
-      req.body.dateBetween?.to ||
-        new Date(
-          new Date().setFullYear(new Date().getFullYear() + 5)
-        ).toISOString(),
+      req.body.datesale, //1
+      req.body.bakery_id, //2
+      req.body.price_value_id, //3
+      req.body.trademark_id, //4
+      req.body.kagent_id, //5
+      req.body.kagent_own_id, //6
+      req.body.kagent_franch_id, //7
+      req.body.filename, //8
+      req.body.countsale, //9
+      req.body.price_id, //10
+      "", //11
+      {}, //12
+      req.session.user.id, //13
+      timezone, // 14
     ], // timezone
   };
   //if (idOne) sqlP.values = [timezone, idOne];
   //  console.log("wher", sqlP, req.body);
   try {
     let result = await pool.query(sqlP);
+
+    //console.log("addBakeryArticleOneDay res", result);
     result = result.rowCount > 0 ? result.rows : null;
-    // console.log("region", result);
-    // let mess = `Читаем Пекарни`;
-    // botSendMessage(mess, req);
+    // если добавили чтото - то вернем массив со строкой с одним полем countsale
+    // если не добавили то null
     return {
-      result: result,
+      result: result, // массив с одним объектом
     };
   } catch (err) {
-    console.log("Ошибка чтения loadBakeryArticleOneDay", err.toString());
+    console.log("Ошибка addBakeryArticleOneDay", err.toString());
     return {
       error: err.toString(),
     };

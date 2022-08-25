@@ -24,6 +24,7 @@
 -->
 <template>
   <Table-Template
+    style="width: fit-contentВыкючил"
     @refTable="(val) => (refTableArticle = val)"
     v-if="tableName"
     :title="saleArticleTitle"
@@ -62,6 +63,7 @@ import {
   onMounted,
   watch,
   watchEffect,
+  onUnmounted,
 } from "vue";
 import { useTableFunc } from "./tableFunc.js";
 import { columns } from "./tableColumnList.js";
@@ -94,16 +96,21 @@ export default defineComponent({
   emits: [""],
   setup(props, { emit }) {
     const tableFunc = useTableFunc(props.tableName);
-    const columnsReact = reactive(columns);
+    const columnsReact = ref([]);
     const tableBodyMenu = defineAsyncComponent(() => {
       return import("./TableBodyMenu.vue");
+    });
+    onMounted(() => {
+      columnsReact.value = columns;
     });
     const {
       selectedArticleBakeryRow,
       articleBakeryRows,
       showHiddenArticle,
+      showDoobleArticle,
       saleArticleTitle,
       refTableArticle,
+      checkDateSale,
     } = storeToRefs(useSaleStore());
     const pagination = ref({
       rowsPerPage: 10,
@@ -116,13 +123,45 @@ export default defineComponent({
     watch(
       () => showHiddenArticle.value,
       () => {
-        columnsReact.forEach((val) => {
-          if (val.name == "hidden") {
-            val.hidden = !showHiddenArticle.value;
-          }
+        let i = refTableArticle.value.visibleColumns.findIndex((val) => {
+          return val == "hidden";
         });
+        if (showHiddenArticle.value) {
+          if (i == -1) refTableArticle.value.visibleColumns.push("hidden");
+        } else {
+          if (i != -1) refTableArticle.value.visibleColumns.splice(i, 1);
+        }
       }
     );
+    watch(
+      () => checkDateSale.value,
+      () => {
+        let i = refTableArticle.value.visibleColumns.findIndex((val) => {
+          return val == "count_sale";
+        });
+        if (checkDateSale.value) {
+          if (i == -1) refTableArticle.value.visibleColumns.push("count_sale");
+        } else {
+          if (i != -1) refTableArticle.value.visibleColumns.splice(i, 1);
+        }
+      }
+    );
+    watch(
+      () => showDoobleArticle.value,
+      () => {
+        let i = refTableArticle.value.visibleColumns.findIndex((val) => {
+          return val == "date_start";
+        });
+        if (showDoobleArticle.value) {
+          if (i == -1) refTableArticle.value.visibleColumns.push("date_start");
+        } else {
+          if (i != -1) refTableArticle.value.visibleColumns.splice(i, 1);
+        }
+      }
+    );
+    onUnmounted(() => {
+      console.log("unmount табле Продажи");
+    });
     return {
       articleBakeryRows,
       selectedArticleBakeryRow,

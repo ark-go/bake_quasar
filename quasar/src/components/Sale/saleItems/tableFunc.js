@@ -1,4 +1,4 @@
-import { ref } from "vue";
+import { ref, nextTick } from "vue";
 import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { useSaleStore, storeToRefs } from "stores/saleStore";
 import { date } from "quasar";
@@ -9,6 +9,7 @@ export function useTableFunc(tabUrl) {
     selectedArticleBakeryRow,
     trademarkId,
     showHiddenArticle,
+    showDoobleArticle,
     selectedDateBetweenBakery,
     currentDateSale,
     checkDateSale,
@@ -33,6 +34,7 @@ export function useTableFunc(tabUrl) {
       bakery_id: bakerySelectedRow.value.id,
       trademark_id: trademarkId.value,
       showHiddenArticle: showHiddenArticle.value,
+      showDoobleArticle: showDoobleArticle.value && !checkDateSale.value, // и если дата снята
       dateBetween: {
         from: dateToDateUnix(selectedDateBetweenBakery.value.from),
         to: dateTo,
@@ -52,6 +54,14 @@ export function useTableFunc(tabUrl) {
       // если пропало то ставим пустой объект
       selectedArticleBakeryRow.value =
         articleBakeryRows.value.find((val) => val.id == aId) || {};
+    }
+    if (
+      isGetCount &&
+      !selectedArticleBakeryRow.value.id &&
+      articleBakeryRows.value.length > 0
+    ) {
+      // таблица по одному дню, не выбрано ничего, и есть записи, - выбираем первую (а можно первую по сортировке таблицы ??)
+      selectedArticleBakeryRow.value = articleBakeryRows.value[0];
     }
   }
   async function addBakeryArticleOneDay(countsale) {
@@ -79,7 +89,7 @@ export function useTableFunc(tabUrl) {
       cmd: "addBakeryArticleOneDay",
       datesale: dateTo,
       bakery_id: selectedArticleBakeryRow.value.bakery_id,
-      price_value: selectedArticleBakeryRow.value.id,
+      price_value_id: selectedArticleBakeryRow.value.id,
       trademark_id: trademarkId.value,
       kagent_id: selectedArticleBakeryRow.value.kagent_id,
       kagent_own_id: selectedArticleBakeryRow.value.kagent_own_id,

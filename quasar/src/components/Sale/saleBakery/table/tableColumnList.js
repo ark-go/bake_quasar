@@ -22,4 +22,12 @@ export const columns = [
     sortable: true,
     hidden: false,
   },
+  {
+    name: "territory_name",
+    label: "Территория",
+    align: "left",
+    field: "territory_name",
+    sortable: true,
+    hidden: false,
+  },
 ];

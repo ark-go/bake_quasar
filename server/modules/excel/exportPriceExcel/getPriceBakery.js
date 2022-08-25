@@ -1,5 +1,5 @@
 import { loadBakeryDocument } from "../../../postgreSQL/command/tabPrice/loadBakeryDocument.js";
-import { AdjustColumnWidth } from "./util/AdjustColumnWidth.js";
+import { AdjustColumnWidth } from "../util/AdjustColumnWidth.js";
 export async function getPriceBakery(req, sheetValue) {
   let timezone = req?.headers?.timezone
     ? req.headers.timezone

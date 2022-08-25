@@ -3,9 +3,8 @@ import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtil
 import { useSaleStore, storeToRefs } from "stores/saleStore";
 import { date } from "quasar";
 export function useTableFunc(tabUrl) {
-  const { trademarkRows, bakeryRows, articleBakeryRows } = storeToRefs(
-    useSaleStore()
-  );
+  const { trademarkRows, bakeryRows, articleBakeryRows, territoryRows } =
+    storeToRefs(useSaleStore());
   const dateFormat = ref("DD.MM.YYYY");
   const arkUtils = useArkUtils();
   async function loadTrademark() {
@@ -23,7 +22,22 @@ export function useTableFunc(tabUrl) {
       trademarkRows.value = [];
     }
   }
-  async function loadBakery(trademarkId, dateBetween) {
+  async function loadTerritory() {
+    let command = {
+      cmd: "loadTerritory",
+    };
+    // command.historyDate = dateToDateUnix(spravStore.historyDate);
+    let mess = "Территории";
+    let url = `/api/${tabUrl}`;
+    let res = await arkUtils.dataLoad(url, command, mess);
+    console.log("Территории", url, res);
+    if (res.result) {
+      territoryRows.value = res.result;
+    } else {
+      territoryRows.value = [];
+    }
+  }
+  async function loadBakery(trademarkId, dateBetween, territoryId) {
     let command = {
       cmd: "loadBakery",
       trademark_id: trademarkId,
@@ -31,6 +45,7 @@ export function useTableFunc(tabUrl) {
         from: dateToDateUnix(dateBetween.from),
         to: dateToDateUnix(dateBetween.to),
       },
+      territoryId: territoryId,
     };
     // command.historyDate = dateToDateUnix(spravStore.historyDate);
     let mess = "Пекарни";
@@ -60,5 +75,6 @@ export function useTableFunc(tabUrl) {
     dateFormatDate,
     loadTrademark,
     loadBakery,
+    loadTerritory,
   };
 }

@@ -11,7 +11,7 @@
     inline-label
   >
     <q-tab name="main" label="Сеть" />
-    <q-tab name="bakeryItems" label="Пекарня" />
+    <q-tab name="bakeryItems" label="Продажи" />
   </q-tabs>
   <q-separator />
 </template>
@@ -36,12 +36,7 @@ export default defineComponent({
         }
       }
     );
-    // watch(
-    //   () => tabModel.value,
-    //   () => {
-    //     if (tabModel.value != "bakery") selectBakeryShow.value = false;
-    //   }
-    // );
+
     return { tabModel };
   },
 });

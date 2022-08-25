@@ -18,10 +18,8 @@
     hide-dropdown-icon
     @new-value="newValue"
     @blur="checkNew"
-    transition-show="slide-up"
-    transition-hide="slide-down"
     :clearable="clearable"
-    :use-input="false"
+    :use-input="true"
     :loading="loading"
   >
     <template v-slot:no-option>
@@ -121,28 +119,49 @@ export default {
       setfilter();
     });
     // watch(props, getProps);
-
-    // ------------------------  автоподстановка  оно переоткрывает список----------------------------------
     function filterFn(val, update, abort) {
-      abort(); // не используется в это элементе
-      // call abort() at any time if you can't retrieve data somehow
-      //  setTimeout(() => {
+      if (val === "") {
+        update(() => {
+          spravFilter.value = props.sprav;
+        });
+        return;
+      }
       update(
-        () => {},
-        //"ref" is the Vue reference to the QSelect
-        (ref) => {
+        () => {
           const needle = val.toLowerCase();
-          let i = props.sprav.some((v, i, x) => {
-            if (v["name"].toLowerCase().indexOf(needle) > -1) {
-              ref.setOptionIndex(i);
-              // ref.moveOptionSelection(i, true);
-              return i;
-            }
-          });
+          spravFilter.value = props.sprav.filter(
+            (v) => v["name"].toLowerCase().indexOf(needle) > -1
+          );
+        },
+        (ref) => {
+          if (val !== "" && ref.options.length > 0) {
+            ref.setOptionIndex(-1); // reset optionIndex in case there is something selected
+            ref.moveOptionSelection(1, true); // focus the first selectable option and do not update the input-value
+          }
         }
       );
-      //  }, 200);
     }
+    // ------------------------  автоподстановка  оно переоткрывает список----------------------------------
+    // function filterFn(val, update, abort) {
+    //   abort(); // не используется в это элементе
+    //   // call abort() at any time if you can't retrieve data somehow
+    //   //  setTimeout(() => {
+    //   update(
+    //     () => {},
+    //     //"ref" is the Vue reference to the QSelect
+    //     (ref) => {
+    //       const needle = val.toLowerCase();
+    //       let i = props.sprav.some((v, i, x) => {
+    //         if (v["name"].toLowerCase().indexOf(needle) > -1) {
+    //           ref.setOptionIndex(i);
+    //           // ref.moveOptionSelection(i, true);
+    //           return i;
+    //         }
+    //       });
+    //     }
+    //   );
+    //   //  }, 200);
+    // }
     // --------------------------    ^^^^^^  ---------------------------------
     return {
       isShow,

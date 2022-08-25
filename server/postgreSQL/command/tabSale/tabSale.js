@@ -5,7 +5,7 @@ import { loadBakeryArticle } from "./loadBakeryArticle.js";
 import { toggleHiddenArticle } from "./toggleHiddenArticle.js";
 import { loadBakeryArticleOneDay } from "./loadBakeryArticleOneDay.js";
 import { addBakeryArticleOneDay } from "./addBakeryArticleOneDay.js";
-
+import { loadTerritory } from "./loadTerritory.js";
 /**
  * Необходимы параметры в запросе cmd,tableName,add,load,update,delete
  * @param {} req
@@ -18,7 +18,7 @@ export async function tabSale(req, res) {
     : "Europe/Moscow";
 
   let mess = "Продажи, cmd: " + req.body?.cmd;
-  botSendMessage(mess, req);
+  if (req.body.cmd != "addBakeryArticleOneDay") botSendMessage(mess, req);
   console.log("tabSale", req.body);
   let tabname = "docprice";
   switch (req.body.cmd) {
@@ -34,6 +34,8 @@ export async function tabSale(req, res) {
       return await loadBakeryArticleOneDay(req, res, "bakery", timezone);
     case "addBakeryArticleOneDay":
       return await addBakeryArticleOneDay(req, res, "bakery", timezone);
+    case "loadTerritory":
+      return await loadTerritory(req, res, "bakery", timezone);
 
     default:
       return {

@@ -151,12 +151,6 @@ export default defineComponent({
       saleSubTitle,
     } = storeToRefs(useSaleStore());
     watch(
-      () => tabModel.value,
-      () => {
-        console.log("Выбрана вкладка", tabModel.value);
-      }
-    );
-    watch(
       () => props.fullScreenTr,
       () => {
         if (!$q.fullscreen.isActive) {

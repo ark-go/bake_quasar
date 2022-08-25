@@ -1,5 +1,5 @@
 import { loadPriceValueFranchExcel } from "../../../postgreSQL/command/tabPrice/loadPriceValueFranchExcel.js";
-import { AdjustColumnWidth } from "./util/AdjustColumnWidth.js";
+import { AdjustColumnWidth } from "../util/AdjustColumnWidth.js";
 
 export async function getPriceValueFranch(req, sheetValue, nameTable) {
   let timezone = req?.headers?.timezone

@@ -12,6 +12,7 @@
         ></select-date-ext>
       </q-item-section>
     </q-item>
+
     <q-item>
       <q-item-section>
         <Field-Select
@@ -22,9 +23,15 @@
         ></Field-Select>
       </q-item-section>
     </q-item>
-
-    <q-item clickable v-ripple @click="onClickNew">
-      <q-item-section>ку-ку-ку.</q-item-section>
+    <q-item>
+      <q-item-section>
+        <field-select-territory
+          :sprav="territoryRows"
+          label="Территория"
+          :selectId="territoryId"
+          @update:selectId="$emit('update:territoryId', $event)"
+        ></field-select-territory>
+      </q-item-section>
     </q-item>
   </q-list>
 </template>
@@ -32,16 +39,21 @@
 import { defineComponent, ref } from "vue";
 import { useSaleStore, storeToRefs } from "stores/saleStore";
 import FieldSelect from "./FieldSelect.vue";
+import FieldSelectTerritory from "./FieldSelectTerrytory.vue";
 import SelectDateExt from "./SelectDateExt.vue";
 //import TabsTables from "./TabsTables.vue";
 export default defineComponent({
   name: "SideDoc",
-  components: { FieldSelect, SelectDateExt },
-  props: ["refTable", "activeTab", "trademarkId"],
+  components: { FieldSelect, SelectDateExt, FieldSelectTerritory },
+  props: ["refTable", "activeTab", "trademarkId", "territoryId"],
   emits: ["update:filter"],
   setup(props, { emit }) {
-    const { bakerySelectedRow, trademarkRows, selectedDateBetweenBakery } =
-      storeToRefs(useSaleStore());
+    const {
+      bakerySelectedRow,
+      trademarkRows,
+      selectedDateBetweenBakery,
+      territoryRows,
+    } = storeToRefs(useSaleStore());
     console.log("Выбрана строка", bakerySelectedRow.value);
     function onClickEdit() {
       emit("onClickEdit");
@@ -55,6 +67,7 @@ export default defineComponent({
     return {
       selectedDateBetweenBakery,
       trademarkRows,
+      territoryRows,
       onClickEdit,
       onClickNew,
       onDelete,

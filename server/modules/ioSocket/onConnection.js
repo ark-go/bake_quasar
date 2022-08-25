@@ -116,9 +116,16 @@ export function onConnection(io, socket) {
           tz = tz[1];
         }
       }
+      let usershort = val.data.username;
+      if (usershort) {
+        usershort = usershort.split("@");
+        if (usershort.length > 0) {
+          usershort = usershort[0];
+        }
+      }
       mess +=
         escape(
-          val.data.username +
+          usershort +
             " : " +
             tz +
             " : " +

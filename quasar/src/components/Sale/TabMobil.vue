@@ -82,10 +82,6 @@ export default defineComponent({
       // для этого же я использую v-if в телепорте, не знаю как заставить включаться после таргета
       disableTeleport.value = false;
 
-      // watch(() => {
-      // maxBodyHeight.value = `calc(${maxBodyHeight.value} - ${refTabsButton.value.offsetHeight}px)`;
-
-      // });
       nextTick(() => {
         maxBodyHeightResize.value = !maxBodyHeightResize.value;
       });

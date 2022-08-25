@@ -120,7 +120,6 @@ export default {
     onMounted(() => {
       setfilter();
     });
-    // watch(props, getProps);
 
     // ------------------------  автоподстановка  оно переоткрывает список----------------------------------
     function filterFn(val, update, abort) {

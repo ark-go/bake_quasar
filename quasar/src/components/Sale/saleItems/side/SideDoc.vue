@@ -14,21 +14,34 @@
       </q-item-section>
     </q-item>
 
-    <q-item>
-      <q-item-section avatar>
-        <q-checkbox
+    <q-item tag="label">
+      <q-item-section side>
+        <q-toggle
+          color="green"
+          :model-value="checkDateSale"
+          @update:model-value="onCheckDateSale"
+          val="checkDateSale"
+          dense
+        />
+        <!-- <q-checkbox
           :model-value="checkDateSale"
           @update:model-value="onCheckDateSale"
           checked-icon="star"
           unchecked-icon="star_border"
           indeterminate-icon="help"
           dense
-        />
+        /> -->
       </q-item-section>
-      <q-item-section>
+      <q-item-section v-if="checkDateSale">
         <Select-Date-Ext
           @onAddDay="$emit('onAddDay', $event)"
         ></Select-Date-Ext>
+      </q-item-section>
+      <q-item-section v-else>
+        <q-item-label> Редактировать данные </q-item-label>
+        <q-item-label caption
+          >Выберите элемент для редактирования данных</q-item-label
+        >
       </q-item-section>
     </q-item>
     <q-item v-if="checkDateSale">
@@ -40,16 +53,37 @@
         ></Form-Select-Card>
       </q-item-section>
     </q-item>
-    <q-item clickable v-ripple @click="showHiddenArticle = !showHiddenArticle">
-      <q-item-section avatar>
-        <q-icon name="playlist_add" />
+    <q-item tag="label" clickable v-ripple>
+      <q-item-section side top>
+        <q-toggle
+          color="red"
+          v-model="showHiddenArticle"
+          val="hiddenArticle"
+          dense
+        />
       </q-item-section>
       <q-item-section>
-        {{
-          showHiddenArticle
-            ? "Убрать скрытые артикулы"
-            : "Показать скрытые артикулы"
-        }}
+        <q-item-label> Показывать скрытые артикулы </q-item-label>
+        <q-item-label caption
+          >Артикулы прайса, не используемые в пекарне</q-item-label
+        >
+      </q-item-section>
+    </q-item>
+
+    <q-item tag="label" v-if="!checkDateSale" clickable v-ripple>
+      <q-item-section side top>
+        <q-toggle
+          color="red"
+          v-model="showDoobleArticle"
+          val="doobleArticle"
+          dense
+        />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Показывать все прайсы</q-item-label>
+        <q-item-label caption
+          >Все артикулы из прайсов в выбранном диапазоне дат</q-item-label
+        >
       </q-item-section>
     </q-item>
   </q-list>
@@ -72,6 +106,7 @@ export default defineComponent({
       bakerySelectedRow,
       bakeryRows,
       showHiddenArticle,
+      showDoobleArticle,
       checkDateSale,
       selectedArticleBakeryRow,
     } = storeToRefs(useSaleStore());
@@ -110,6 +145,7 @@ export default defineComponent({
       sideExpand: ref(false),
       selectBakeryId,
       showHiddenArticle,
+      showDoobleArticle,
       selectedArticleBakeryRow,
       checkDateSale,
       onCheckDateSale,

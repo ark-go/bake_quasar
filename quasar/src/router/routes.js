@@ -94,6 +94,10 @@ const routes = [
         path: "xls",
         component: () => import("pages/PageXls.vue"),
       },
+      {
+        path: "parsery",
+        component: () => import("components/testParser/PageParser.vue"),
+      },
     ],
   },
   {

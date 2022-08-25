@@ -1,7 +1,7 @@
 <template>
   <q-splitter
     v-model="splitterModel"
-    :limits="[20, 70]"
+    :limits="[30, 70]"
     :style="{ maxHeight: maxBodyHeight, height: maxBodyHeight }"
   >
     <template v-slot:separator>
@@ -40,7 +40,7 @@ export default defineComponent({
   // emits: ["update:filter"],
   setup(props) {
     const { maxBodyHeight } = storeToRefs(useSaleStore());
-    const splitterModel = ref(30);
+    const splitterModel = ref(40);
     const splitStyleH = {
       background: "rgb(214 214 214)",
       minWidth: "6px",

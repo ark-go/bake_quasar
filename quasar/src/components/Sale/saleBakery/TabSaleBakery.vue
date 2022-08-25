@@ -5,6 +5,7 @@
       @onClickNew="onClickNew"
       @onDelete="onDelete"
       v-model:trademarkId="trademarkId"
+      v-model:territoryId="territoryId"
     ></Side-Doc>
     <template v-slot:after>
       <Table-Panel
@@ -13,62 +14,69 @@
       ></Table-Panel>
     </template>
   </Tab-Panel-Split>
-  <form-doc v-model:showDialog="showDialog" @onSave="onSave"></form-doc>
+  <!-- <form-doc v-model:showDialog="showDialog" @onSave="onSave"></form-doc> -->
 </template>
 <script>
 import { ref, defineComponent, watch, onMounted } from "vue";
 import TabPanelSplit from "../TabPanelSplit.vue";
 import TablePanel from "./table/TablePanel.vue";
-import FormDoc from "./FormDoc.vue";
+///import FormDoc from "./FormDoc.vue";
 import SideDoc from "./side/SideDoc.vue";
 import { useSaleStore, storeToRefs } from "stores/saleStore";
 import { useTableFunc } from "./tableFunc";
 export default defineComponent({
   name: "TabSaleBakery",
-  components: { TabPanelSplit, TablePanel, SideDoc, FormDoc },
+  components: { TabPanelSplit, TablePanel, SideDoc },
   setup() {
     const {
       bakerySelectedRow,
       tabModel,
       trademarkId,
+      territoryId,
       selectedDateBetweenBakery,
+      territoryRows,
     } = storeToRefs(useSaleStore());
     const tableFunc = useTableFunc("tabSale");
     const showDialog = ref(false);
     const checkSave = ref(false);
-    // const trademarkId = ref(null);
     onMounted(async () => {
+      await tableFunc.loadTerritory();
       await tableFunc.loadTrademark();
+      // if (territoryRows.value.length > 0 && !territoryId.value.id) {
+      //   territoryId.value = territoryRows.value[0].id;
+      // }
     });
     watch(
-      [() => trademarkId.value, () => selectedDateBetweenBakery.value],
+      [
+        () => trademarkId.value,
+        () => selectedDateBetweenBakery.value,
+        () => territoryId.value,
+      ],
       async () => {
         bakerySelectedRow.value = {}; // Сброс выбора печки
-        console.log(
-          "trade",
-          trademarkId.value,
-          selectedDateBetweenBakery.value
-        );
+        // console.log(
+        //   "trade",
+        //   trademarkId.value,
+        //   selectedDateBetweenBakery.value
+        // );
         if (
           selectedDateBetweenBakery.value.from &&
           selectedDateBetweenBakery.value.to &&
-          trademarkId.value
+          trademarkId.value &&
+          territoryId.value
         ) {
-          console.log(
-            "load bakery",
-            selectedDateBetweenBakery.value.from,
-            selectedDateBetweenBakery.value.to
-          );
+          // console.log(
+          //   "load bakery",
+          //   selectedDateBetweenBakery.value.from,
+          //   selectedDateBetweenBakery.value.to
+          // );
           await tableFunc.loadBakery(
             trademarkId.value,
-            selectedDateBetweenBakery.value
+            selectedDateBetweenBakery.value,
+            territoryId.value
           );
         }
       }
-    );
-    watch(
-      () => trademarkId.value,
-      () => {}
     );
     function onClickEdit() {
       // showDialog.value = true;
@@ -88,6 +96,7 @@ export default defineComponent({
       checkSave,
       tabModel,
       trademarkId,
+      territoryId,
     };
   },
 });

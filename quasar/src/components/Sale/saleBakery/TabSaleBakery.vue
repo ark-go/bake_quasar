@@ -6,6 +6,7 @@
       @onDelete="onDelete"
       v-model:trademarkId="trademarkId"
       v-model:territoryId="territoryId"
+      @onGetExcel="onGetExcel"
     ></Side-Doc>
     <template v-slot:after>
       <Table-Panel
@@ -42,9 +43,6 @@ export default defineComponent({
     onMounted(async () => {
       await tableFunc.loadTerritory();
       await tableFunc.loadTrademark();
-      // if (territoryRows.value.length > 0 && !territoryId.value.id) {
-      //   territoryId.value = territoryRows.value[0].id;
-      // }
     });
     watch(
       [
@@ -54,11 +52,6 @@ export default defineComponent({
       ],
       async () => {
         bakerySelectedRow.value = {}; // Сброс выбора печки
-        // console.log(
-        //   "trade",
-        //   trademarkId.value,
-        //   selectedDateBetweenBakery.value
-        // );
         if (
           selectedDateBetweenBakery.value.from &&
           selectedDateBetweenBakery.value.to &&
@@ -88,6 +81,9 @@ export default defineComponent({
     function onSave() {
       checkSave.value = !checkSave.value;
     }
+    async function onGetExcel() {
+      await tableFunc.exportPriceExcel();
+    }
     return {
       showDialog,
       onClickEdit,
@@ -97,6 +93,7 @@ export default defineComponent({
       tabModel,
       trademarkId,
       territoryId,
+      onGetExcel,
     };
   },
 });

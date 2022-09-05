@@ -97,6 +97,13 @@
         Прайс Прайс
       </div>
     </q-img>
+    <div></div>
+    <div
+      class="cursor-pointer text-center"
+      @click="router.push({ path: '/charts/1' })"
+    >
+      ку-ку
+    </div>
   </div>
 </template>
 

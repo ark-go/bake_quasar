@@ -1,6 +1,6 @@
 import ExcelJS from "exceljs";
 import moment from "moment-timezone";
-// import { getDocuments } from "./getDocuments.js";
+import { getDocuments } from "./getDocuments.js";
 // import { getPriceValue } from "./getPriceValue.js";
 // import { getPriceValueFranch } from "./getPriceValueFranch.js";
 // import { getPriceBakery } from "./getPriceBakery.js";
@@ -12,7 +12,8 @@ export async function exportSaleExcel(req, res) {
   req.body.datestart_str = moment
     .tz(req.body.datestart, timezone)
     .format("DD.MM.YYYY");
-  console.log("exportPriceExcel: прайс-", req.body.datestart_str);
+  console.log("exportPriceExcel: прайс-", req.body);
+  // ExcelJS.ValueType.String
   /* приходит в запросе
 exportPriceExcel: {
   cmd: 'exportPriceExcel',
@@ -47,8 +48,8 @@ exportPriceExcel: {
       visibility: "visible",
     },
   ];
-  let fileName = "Прайс " + req.body.docnum + " " + req.body.kagent_name;
-  const sheetDocum = workbook.addWorksheet("Список документов", {
+  let fileName = "Продажи " + req.body.excelFrom + "-" + req.body.excelTo;
+  const sheetDocum = workbook.addWorksheet("Продажи", {
     pageSetup: { paperSize: 9, orientation: "portrait" },
     headerFooter: { firstHeader: "Лепеха", firstFooter: "Бу-бу-бу" },
     properties: { tabColor: { argb: "550000FF" } }, // синий 00FF00 зеленый
@@ -66,69 +67,71 @@ exportPriceExcel: {
   let docum = await getDocuments(req, sheetDocum);
   //  let rowCount = sheetDocum.row.cellCount; //lastRow;
   //const rowCount = sheetDocum.lastRow.rowNumber;
+  //console.log("XXXXXXXXXX", docum);
   // -- установим границу печати
   if (docum) {
     let i = docum.length;
     if (i > 4) {
       i = i + 4 + 1; // 4 начало таблицы, 1 - строка Тотал;
-      console.log("кол-воЖ", i);
+      console.log("кол-во", i);
       sheetDocum.pageSetup.printArea = `A4:E${i}`;
     }
   }
   //+++++++++++++++++++++++++++++++++++ все что есть
-  const sheetValueAll = workbook.addWorksheet("Все данные", {
-    headerFooter: { firstHeader: "Лепеха Прайс", firstFooter: "Бу-бу-бу" },
-    properties: { tabColor: { argb: "55FF0000" } }, // синий 00FF00 зеленый
-    pageSetup: { printTitlesRow: "1:1" },
-  });
+  // const sheetValueAll = workbook.addWorksheet("Все данные", {
+  //   headerFooter: { firstHeader: "Лепеха Прайс", firstFooter: "Бу-бу-бу" },
+  //   properties: { tabColor: { argb: "55FF0000" } }, // синий 00FF00 зеленый
+  //   pageSetup: { printTitlesRow: "1:1" },
+  // });
 
-  await getPriceValueAll(req, sheetValueAll);
-  //+++++++++++++++++++++++++++++++++++
-  const sheetValue = workbook.addWorksheet("Прайс", {
-    headerFooter: { firstHeader: "Лепеха Прайс", firstFooter: "Бу-бу-бу" },
-    properties: { tabColor: { argb: "5500FF00" } }, // синий 00FF00 зеленый
-  });
+  // await getPriceValueAll(req, sheetValueAll);
+  // //+++++++++++++++++++++++++++++++++++
+  // const sheetValue = workbook.addWorksheet("Прайс", {
+  //   headerFooter: { firstHeader: "Лепеха Прайс", firstFooter: "Бу-бу-бу" },
+  //   properties: { tabColor: { argb: "5500FF00" } }, // синий 00FF00 зеленый
+  // });
 
-  await getPriceValue(req, sheetValue);
+  // await getPriceValue(req, sheetValue);
 
-  //+++++++++++++++++++++++++
-  const sheetValueFranch = workbook.addWorksheet("франчайзи прайс", {
-    headerFooter: { firstHeader: "Лепеха Прайс", firstFooter: "Бу-бу-бу" },
-  });
+  // //+++++++++++++++++++++++++
+  // const sheetValueFranch = workbook.addWorksheet("франчайзи прайс", {
+  //   headerFooter: { firstHeader: "Лепеха Прайс", firstFooter: "Бу-бу-бу" },
+  // });
 
-  await getPriceValueFranch(req, sheetValueFranch, "ПрайсФранчайзи");
+  // await getPriceValueFranch(req, sheetValueFranch, "ПрайсФранчайзи");
 
-  //+++++++++++++++++
-  const sheetBakery = workbook.addWorksheet("Пекарни франчайзи", {
-    headerFooter: { firstHeader: "Лепеха Прайс", firstFooter: "Бу-бу-бу" },
-  });
-  let bakeryFranchArr = await getPriceBakery(req, sheetBakery);
-  if (bakeryFranchArr) {
-    // AdjustColumnWidth(sheetBakery);
+  // //+++++++++++++++++
+  // const sheetBakery = workbook.addWorksheet("Пекарни франчайзи", {
+  //   headerFooter: { firstHeader: "Лепеха Прайс", firstFooter: "Бу-бу-бу" },
+  // });
+  // let bakeryFranchArr = await getPriceBakery(req, sheetBakery);
+  // if (bakeryFranchArr) {
+  //   // AdjustColumnWidth(sheetBakery);
 
-    for (const bakery of bakeryFranchArr) {
-      req.body.price_bakery_id = bakery.price_bakery_id;
-      req.body.bakery_id = bakery.bakery_id;
-      let sheetPriceBakery = workbook.addWorksheet(
-        bakery.bakery_name.replace(/[ ,\*\?\:\\/\[\]]/g, " "),
-        {
-          headerFooter: {
-            firstHeader: "Лепеха Прайс",
-            firstFooter: "Бу-бу-бу",
-          },
-        }
-      );
-      await getPriceValueFranch(
-        req,
-        sheetPriceBakery,
-        bakery.bakery_name.replace(/[ ,\*\?\:\\/\[\]]/g, "_")
-      );
-    }
-  }
-  //   const table = sheet.getTable("MyTable");
-  //   table.addRow([new Date("2019-08-10"), 10, "End"]);
-  // insert new column (with data) at index 1
-  //   table.addColumn(
+  //   for (const bakery of bakeryFranchArr) {
+  //     req.body.price_bakery_id = bakery.price_bakery_id;
+  //     req.body.bakery_id = bakery.bakery_id;
+  //     let sheetPriceBakery = workbook.addWorksheet(
+  //       bakery.bakery_name.replace(/[ ,\*\?\:\\/\[\]]/g, " "),
+  //       {
+  //         headerFooter: {
+  //           firstHeader: "Лепеха Прайс",
+  //           firstFooter: "Бу-бу-бу",
+  //         },
+  //       }
+  //     );
+  //     await getPriceValueFranch(
+  //       req,
+  //       sheetPriceBakery,
+  //       bakery.bakery_name.replace(/[ ,\*\?\:\\/\[\]]/g, "_")
+  //     );
+  //   }
+  // }
+
+  //11   const table = sheet.getTable("MyTable");
+  // 1  table.addRow([new Date("2019-08-10"), 10, "End"]);
+  // 1insert new column (with data) at index 1
+  // 1  table.addColumn(
   //     // {
   //     //   name: "Letter",
   //     //   totalsRowFunction: "custom",

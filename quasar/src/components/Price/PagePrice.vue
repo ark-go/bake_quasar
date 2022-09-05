@@ -28,7 +28,7 @@ export default defineComponent({
 
     function panelFnHeight(offset, height2) {
       if (!$q.fullscreen.isActive) {
-        console.log("Обычный Экран!");
+        //  console.log("Обычный Экран!");
         let marg = $q.platform.is.mobile ? 16 : 60; // Отступы окна
         if ($q.platform.is.electron) {
           marg = 0;

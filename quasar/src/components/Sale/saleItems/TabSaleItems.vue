@@ -8,6 +8,12 @@
       @onAddDay="(val) => onAddDay(val)"
       @onKeyEnterCount="onKeyEnterCount"
       @refSelectCard="setRefSelectCard"
+      @onSaveManualData="onSaveManualData"
+      @onClipboardError="onClipboardError"
+      @onGetExcel="onGetExcel"
+      v-model:showDialogBuffer="showDialogBuffer"
+      :rows="rowsManualData"
+      :visibleSendSave="visibleSendSave"
     ></Side-Doc>
     <template v-slot:after>
       <Table-Panel
@@ -48,8 +54,11 @@ export default defineComponent({
     const dateFormat = ref("DD.MM.YYYY");
     const tableFunc = useTableFunc("tabSale");
     const showDialog = ref(false);
+    const showDialogBuffer = ref(false);
     const checkSave = ref(false);
     const refSelectCard = ref(null);
+    const rowsManualData = ref([]);
+    const visibleSendSave = ref(false);
     // const trademarkId = ref(null);
     onMounted(async () => {
       await tableFunc.loadBakeryArticle();
@@ -77,10 +86,28 @@ export default defineComponent({
     async function onShowArticle(menuObj) {
       await tableFunc.toggleHiddenArticle(menuObj.row.id, false);
     }
-    // watch(
-    //   () => trademarkId.value,
-    //   () => {}
-    // );
+    function onClipboardError() {
+      rowsManualData.value = [];
+    }
+    async function onSaveManualData(val) {
+      visibleSendSave.value = false;
+      // отсылка данных из буфера кнопка Тест
+      let resMan = await tableFunc.sendTextToTable(val);
+      rowsManualData.value = resMan;
+      if (val?.column && resMan.length > 0) {
+        // columns - после теста
+        visibleSendSave.value = true;
+      }
+    }
+    // async function onSaveData(val) {
+    //   console.log("save date table --", val);
+    //   let resS = await tableFunc.insertBufferToSale(val.rows);
+    //   if (resS) {
+    //     showDialogBuffer.value = false;
+    //     visibleSendSave.value = false;
+    //     await tableFunc.loadBakeryArticle();
+    //   }
+    // }
     function onClickEdit() {
       // showDialog.value = true;
     }
@@ -90,6 +117,9 @@ export default defineComponent({
     }
     function onSave() {
       checkSave.value = !checkSave.value;
+    }
+    async function onGetExcel() {
+      await tableFunc.exportPriceExcel();
     }
     function onAddDay(countDays) {
       console.log("onAddDay", countDays);
@@ -174,6 +204,13 @@ export default defineComponent({
       onAddDay,
       onKeyEnterCount,
       setRefSelectCard,
+      onSaveManualData,
+      onClipboardError,
+      rowsManualData,
+      visibleSendSave,
+      //  onSaveData,
+      onGetExcel,
+      showDialogBuffer,
     };
   },
 });

@@ -1,10 +1,12 @@
 import { ref } from "vue";
 import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { useSaleStore, storeToRefs } from "stores/saleStore";
+import { useTableFunc as useTableFuncParent } from "../tableFunc.js";
 import { date } from "quasar";
 export function useTableFunc(tabUrl) {
   const { trademarkRows, bakeryRows, articleBakeryRows, territoryRows } =
     storeToRefs(useSaleStore());
+  const { exportPriceExcel } = useTableFuncParent();
   const dateFormat = ref("DD.MM.YYYY");
   const arkUtils = useArkUtils();
   async function loadTrademark() {
@@ -76,5 +78,6 @@ export function useTableFunc(tabUrl) {
     loadTrademark,
     loadBakery,
     loadTerritory,
+    exportPriceExcel,
   };
 }

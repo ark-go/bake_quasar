@@ -12,11 +12,10 @@
           <q-badge
             class="cursor-pointer q-mt-sm"
             style="margin-top: 5px; margin-right: 4px"
-            rounded
             color="red-3"
             label="X"
             floating
-            @click="$router.go(-1)"
+            @click="$router.push({ path: '/' })"
           />
           <div class="row items-center no-wrap">
             <div class="col">

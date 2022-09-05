@@ -8,8 +8,11 @@
     <q-tab-panel name="main" class="ark-tab-panel">
       <Tab-Sale-Bakery></Tab-Sale-Bakery>
     </q-tab-panel>
-    <q-tab-panel name="bakeryItems" class="ark-tab-panel">
+    <q-tab-panel name="bakeryItem" class="ark-tab-panel">
       <Tab-Sale-Items></Tab-Sale-Items>
+    </q-tab-panel>
+    <q-tab-panel name="bufferItem" class="ark-tab-panel">
+      <Tab-Sale-Buffer></Tab-Sale-Buffer>
     </q-tab-panel>
   </q-tab-panels>
 </template>
@@ -22,6 +25,7 @@ import { defineComponent, ref, onMounted, onBeforeUnmount } from "vue";
 
 import TabSaleBakery from "./saleBakery/TabSaleBakery.vue";
 import TabSaleItems from "./saleItems/TabSaleItems.vue";
+import TabSaleBuffer from "./saleBuffer/TabSaleBuffer.vue";
 
 import { useSaleStore, storeToRefs } from "src/stores/saleStore";
 export default defineComponent({
@@ -29,6 +33,7 @@ export default defineComponent({
   components: {
     TabSaleBakery,
     TabSaleItems,
+    TabSaleBuffer,
   },
   setup() {
     const { tabModel } = storeToRefs(useSaleStore());

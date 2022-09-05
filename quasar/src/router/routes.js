@@ -25,7 +25,7 @@ const routes = [
         meta: { title: "Регистрация" },
       },
       {
-        path: "charts",
+        path: "chartsold",
         component: () => import("pages/PageCharts.vue"),
       },
       { path: "tables2", component: () => import("pages/Tables.vue") },
@@ -100,6 +100,26 @@ const routes = [
       },
     ],
   },
+
+  {
+    path: "/charts/:id",
+    component: () => import("layouts/MainLayout.vue"),
+    children: [
+      {
+        path: "",
+        component: () => import("components/Chart/PageCharts.vue"),
+      },
+      {
+        path: "chart1",
+        component: () => import("components/Chart/Chart1.vue"),
+      },
+      {
+        path: "chart2",
+        component: () => import("components/Chart/Chart1.vue"),
+      },
+    ],
+  },
+
   {
     path: "/price",
     component: () => import("layouts/MainLayout.vue"),

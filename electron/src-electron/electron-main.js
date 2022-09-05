@@ -1,85 +1,33 @@
-import { app, BrowserWindow, nativeTheme, Tray, Menu } from "electron";
+import { app, BrowserWindow, nativeTheme, session, Tray, Menu } from "electron";
+import { createTray } from "./tray.js";
 import path from "path";
 import os from "os";
 import { setAppMenu } from "./menuApp.js";
-// app.on("window-all-closed", () => {
-//   app.quit();
-// });
+// service worker
+// Get all service workers.
+function swStart() {
+  console.log(session.defaultSession.serviceWorkers.getAllRunning());
 
-const Store = require("electron-store");
-const store = new Store();
-let localSite = "https://bake.x.arkadii.ru/";
-let moskovSite = "https://bake.h-i-t.ru/";
-// ArkWin11
-if (!store.get("currURL")) store.set("currURL", moskovSite);
-const computerName = os.hostname();
-const yesLocal = ["arkwin11", "zina", "alinazen-pc"].includes(
-  computerName.toLowerCase()
-);
-setAppMenu();
-// needed in case process is undefined under Linux
-const platform = process.platform || os.platform();
-//----------
-let isClose = false;
-let tray = null;
-
-// let currentSite = {
-//   sitepath:"https://bake.h-i-t.ru/",
-
-// }
-app.whenReady().then(() => {
-  tray = new Tray(path.resolve(__dirname, "icons/icon.png"));
-  const contextMenu = Menu.buildFromTemplate([
-    {
-      label: "Москва",
-      type: "radio",
-      checked: store.get("currURL") == moskovSite,
-      click: () => {
-        store.set("currURL", moskovSite);
-        mainWindow.loadURL(moskovSite);
-        mainWindow.show();
-      },
-    },
-    {
-      label: "Не лазить",
-      type: "radio",
-      visible: yesLocal,
-      checked: store.get("currURL") == localSite,
-      click: () => {
-        store.set("currURL", localSite);
-        mainWindow.loadURL(localSite);
-        mainWindow.show();
-      },
-    },
-    {
-      type: "separator",
-    },
-    // {
-    //   label: "Показать",
-    //   click: function () {
-    //     mainWindow.show();
-    //   },
-    // },
-    {
-      label: "Закрыть",
-      click: () => {
-        isClose = true;
-        mainWindow.close();
-      },
-    },
-  ]);
-  tray.setToolTip("Лепешки");
-  tray.setTitle("Аркадий");
-  tray.on("click", () => {
-    if (mainWindow.isVisible()) {
-      mainWindow.hide();
-    } else {
-      mainWindow.show();
+  // Handle logs and get service worker info
+  session.defaultSession.serviceWorkers.on(
+    "console-message",
+    (event, messageDetails) => {
+      console.log(
+        "Got service worker message",
+        messageDetails,
+        "from",
+        session.defaultSession.serviceWorkers.getFromVersionID(
+          messageDetails.versionId
+        )
+      );
     }
-  });
-  tray.setContextMenu(contextMenu);
-});
+  );
+}
+// end service worker end
+// Блок  проверки повторного запуска
+let mainWindow = null;
 //------------
+const platform = process.platform || os.platform();
 try {
   if (platform === "win32" && nativeTheme.shouldUseDarkColors === true) {
     require("fs").unlinkSync(
@@ -87,8 +35,54 @@ try {
     );
   }
 } catch (_) {}
+// ---------------
+let isClose = false;
+//let tray = null;
+const Store = require("electron-store");
+const store = new Store();
+// let localSite = "https://bake.x.arkadii.ru/";
+let moskovSite = "https://bake.h-i-t.ru/";
+// ArkWin11
+if (!store.get("currURL")) store.set("currURL", moskovSite);
 
-let mainWindow;
+// --------------
+const additionalData = { myKey: "ArkElectonBake" };
+// пытается захватить ключ если true - получилось, это единственный экземпляр
+const gotTheLock = app.requestSingleInstanceLock(additionalData);
+
+if (!gotTheLock) {
+  app.quit();
+} else {
+  app.on(
+    "second-instance",
+    (event, commandLine, workingDirectory, additionalData) => {
+      // Print out data received from the second instance.
+      console.log(additionalData);
+
+      // Someone tried to run a second instance, we should focus our window.
+      if (mainWindow) {
+        if (!mainWindow.isVisible()) {
+          mainWindow.show();
+        }
+        if (mainWindow.isMinimized()) mainWindow.restore();
+        mainWindow.focus();
+      }
+    }
+  );
+
+  // Create mainWindow, load the rest of the app, etc...
+  app.whenReady().then(() => {
+    createWindow();
+    createTray(mainWindow, () => {
+      isClose = true;
+      mainWindow.close();
+      swStart();
+    });
+  });
+}
+// конец блока с повторным запуском
+setAppMenu();
+// needed in case process is undefined under Linux
 
 function createWindow() {
   /**
@@ -112,13 +106,13 @@ function createWindow() {
   mainWindow.loadURL(store.get("currURL"));
 
   if (process.env.DEBUGGING) {
-    // if on DEV or Production with debug enabled
+    // Если DEBUGGING то сразу открывать
     mainWindow.webContents.openDevTools();
   } else {
-    // we're on production; no access to devtools pls
-    mainWindow.webContents.on("devtools-opened", () => {
-      mainWindow.webContents.closeDevTools();
-    });
+    // Закрывать при попытке открыть DevTools
+    // mainWindow.webContents.on("devtools-opened", () => {
+    //   mainWindow.webContents.closeDevTools();
+    // });
   }
   mainWindow.on("close", (ev) => {
     if (isClose) return;
@@ -130,7 +124,7 @@ function createWindow() {
   });
 }
 
-app.whenReady().then(createWindow);
+//app.whenReady().then(createWindow);
 
 app.on("window-all-closed", () => {
   if (platform !== "darwin") {
@@ -138,8 +132,8 @@ app.on("window-all-closed", () => {
   }
 });
 
-app.on("activate", () => {
-  if (mainWindow === null) {
-    createWindow();
-  }
-});
+// app.on("activate", () => {
+//   if (mainWindow === null) {
+//     createWindow();
+//   }
+// });

@@ -23,7 +23,7 @@ export async function loadBakery(req, res, tabname, timezone, idOne) {
       ) as trd
       LEFT JOIN bakery ON bakery.id = trd.child_id
       -- 24-08
-      LEFT JOIN LATERAL (select * from territory_x_bakery_get_last(child_id, trd.date_start,true)) terrbak ON
+      LEFT JOIN LATERAL (select * from territory_x_bakery_get_last(child_id, trd.date_start,false)) terrbak ON
            terrbak.child_id = trd.child_id
       LEFT JOIN territory ON territory.id = terrbak.parent_id
       --

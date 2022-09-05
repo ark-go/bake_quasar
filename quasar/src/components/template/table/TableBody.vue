@@ -2,7 +2,7 @@
   <q-tr
     :props="propsV"
     class="color-table cursor-pointer non-selectable"
-    :class="{ 'text-red': currentRow?.id == propsV.row?.id }"
+    :class="{ 'text-red': currentRow?.id == propsV.row?.id && currentRow?.id }"
     @click.exact="$emit('onRowClick', propsV.row)"
     @click.right.exact="$emit('onRowClick', propsV.row)"
     @dblclick.exact="$emit('onRowDblClick', propsV.row)"
@@ -28,9 +28,19 @@
           textAlign: typeof col.value == 'boolean' ? 'center' : col.align,
         }"
         style="max-width: 200px; overflow-x: hidden"
+        :class="
+          typeof col.classes === 'function'
+            ? col.classes(propsV.row)
+            : col.classes
+        "
       >
         <q-icon
-          v-if="index == 0 && infoBtn && currentRow?.id == propsV.row?.id"
+          v-if="
+            index == 0 &&
+            infoBtn &&
+            currentRow?.id == propsV.row?.id &&
+            currentRow?.id
+          "
           size="3ex"
           name="help"
           color="teal"

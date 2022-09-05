@@ -142,7 +142,7 @@ export default defineComponent({
 
     async function restartComponent() {
       // необходимо при создании, или вставке :is компонета срабатывает
-      sprav.value.region = await getSprav("region", "Регионы"); // если нужны справочники
+      sprav.value.region = await getSprav("region_kl", "Регионы"); // если нужны справочники
       console.log("region", sprav.value.region);
       tableName.value = props.tableInfo.tableName; // подали название таблицы которая в базе данных
       url.value = url.value + tableName.value;

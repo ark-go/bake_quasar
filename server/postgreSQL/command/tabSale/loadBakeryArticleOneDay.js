@@ -23,9 +23,12 @@ export async function loadBakeryArticleOneDay(
 	pvid.id as productvid_id,
   	bakery.name as bakery_name,
   	bakery.id as bakery_id,
+  --  prb.bakery_id as xx,
     price.docnum as price_docnum,
+  --  prv.price_name as tovar_name,
+ --  concat(ptype.prefix,' ',assort.name,' ',pvid.name,' ',pvid.nameext,' ',unit.name) AS productvid_name,
     to_char(price.datestart at time zone $1,  'DD.MM.YYYY') as date_start,
-    
+  --  sale.datesale at time zone $1 as xxx_sale,
     price.id as price_id,
     -- price.trademark_id as trademark_id,
     trademark.id as trademark_id,
@@ -37,13 +40,13 @@ export async function loadBakeryArticleOneDay(
     --kagentown.name as kagent_own_name,
     --kagentown.id as kagent_own_id,
     --kagentfranch.name as kagent_franch_name,
-    kagentfranch.id as kagent_franch_id,
+    kagfr.parent_id as kagent_franch_id,
 
     sale.countsale as count_sale,
     prv.cena as cena
 
 from bakery
-RIGHT JOIN price_bakery prb ON prb.bakery_id = bakery.id  -- все номера прайсов у печки
+RIGHT JOIN price_bakery prb ON prb.bakery_id =   bakery.id  -- все номера прайсов у печки
 RIGHT JOIN price ON price.id = prb.price_id AND price.trademark_id = $3  -- все прайсы у печки, по торговой сети
 RIGHT JOIN price_value prv ON prv.price_id = price.id -- все артикулы всех прайсов
     -- теперь получим признак актуальности артикула в конкретной печке, чужих сетей не должно быть
@@ -56,26 +59,31 @@ RIGHT JOIN price_value prv ON prv.price_id = price.id -- все артикулы
     LEFT JOIN unit on unit.id = pvid.unit_id
     LEFT JOIN producttype as ptype on ptype.id = assort.producttype_id
 	--
-      --  LEFT JOIN LATERAL (select * from kagent_x_bakery_get_last(prb.bakery_id, $4 at time zone $1,true )) as kag
+      --  LEFT JOIN LATERAL (select * from kagent_x_bakery_get_last(prb.bakery_id, $4 at time zone $1,flase )) as kag
       --      ON kag.child_id = prb.bakery_id
         --  LEFT JOIN kagent ON kagent.id = price.kagent_id -- kag.parent_id
 --
-      --  LEFT JOIN LATERAL (select * from kagent_x_bakery_own_get_last(prb.bakery_id, $4 at time zone $1,true )) as kagown
+      --  LEFT JOIN LATERAL (select * from kagent_x_bakery_own_get_last(prb.bakery_id, $4 at time zone $1,flase )) as kagown
       --  ON kagown.child_id = prb.bakery_id
         --LEFT JOIN kagent as kagentown ON kagentown.id = price.kagent_own_id -- kagown.parent_id
 --
-        --LEFT JOIN LATERAL (select * from kagent_x_bakery_franch_get_last(prb.bakery_id, $4 at time zone $1,true )) as kagfranch
+        --LEFT JOIN LATERAL (select * from kagent_x_bakery_franch_get_last(prb.bakery_id, $4 at time zone $1,flase )) as kagfranch
         --ON kagfranch.child_id = prb.bakery_id
        -- LEFT JOIN kagent as kagentfranch ON kagentfranch.id = kagfranch.parent_id
-       LEFT JOIN price_bakery_franch as pbf on pbf.price_value_id = prv.id AND pbf.price_bakery_id = prb.id 
-       LEFT JOIN kagent as kagentfranch ON kagentfranch.id = pbf.kagent_id
+       -- 01-09
+         -- LEFT JOIN price_bakery_franch as pbf on pbf.price_value_id = prv.id AND pbf.price_bakery_id = prb.id 
+         -- LEFT JOIN kagent as kagentfranch ON kagentfranch.id = pbf.kagent_id
+      --  01-09 
+       LEFT JOIN LATERAL (select * from kagent_x_bakery_franch_get_last(prb.bakery_id, $4 at time zone $1,false)) kagfr
+              ON kagfr.child_id = prb.bakery_id
+      -- LEFT JOIN kagent as kagentfranch ON kagentfranch.id = kagfr.parent_id
 --
-       --LEFT JOIN LATERAL (select * from trademark_x_bakery_get_last(prb.bakery_id, $4 at time zone $1,true )) as trdm
+       --LEFT JOIN LATERAL (select * from trademark_x_bakery_get_last(prb.bakery_id, $4 at time zone $1,flase )) as trdm
        --ON trdm.child_id = prb.bakery_id
          LEFT JOIN trademark  ON trademark.id = price.trademark_id -- trdm.parent_id
 
 
-  where bakery.id = $2 AND price.datestart <= $4 at time zone $1
+  where bakery.id = $2 AND price.datestart <= $4 at time zone $1   -- ,? AND price.trademark_id = 
   ${req.body.showHiddenArticle ? "" : "AND NOT hidden IS TRUE"}
   order by article, price.datestart DESC
 `,

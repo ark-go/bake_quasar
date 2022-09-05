@@ -7,7 +7,7 @@
     input-debounce="0"
     label="Регион"
     option-label="name"
-    :options="hideDrop ? null : sprav"
+    :options="options"
     @filter="filterFn"
     options-dense
     :hide-dropdown-icon="hideDrop"
@@ -73,34 +73,58 @@ export default {
     watch(props, getProps);
 
     // ------------------------  автоподстановка  оно переоткрывает список----------------------------------
+    // function filterFn(val, update, abort) {
+    //   // call abort() at any time if you can't retrieve data somehow
+    //   if (hideDrop.value) {
+    //     abort();
+    //     return;
+    //   }
+    //   //  setTimeout(() => {
+    //   update(
+    //     () => {
+    //       if (val === "") {
+    //         options.value = props.sprav;
+    //       } else {
+    //         const needle = val.toLowerCase();
+    //         options.value = props.sprav.filter(
+    //           (v) => v["name"].toLowerCase().indexOf(needle) > -1
+    //         );
+    //       }
+    //     },
+
+    //     //"ref" is the Vue reference to the QSelect
+    //     (ref) => {
+    //       if (val !== "" && ref.options.length > 0) {
+    //         ref.setOptionIndex(-1); // Сбросить optionIndex, если что-то выбрано
+    //         ref.moveOptionSelection(1, true); // Сфокусируйте первый выбираемый параметр и не обновляйте входное значение
+    //       }
+    //     }
+    //   );
+    //   //  }, 200);
+    // }
     function filterFn(val, update, abort) {
-      // call abort() at any time if you can't retrieve data somehow
-      if (hideDrop.value) {
-        abort();
+      if (val === "") {
+        update(() => {
+          options.value = props.sprav;
+        });
         return;
       }
-      //  setTimeout(() => {
       update(
         () => {
-          if (val === "") {
-            options.value = props.sprav;
-          } else {
-            const needle = val.toLowerCase();
-            options.value = props.sprav.filter(
-              (v) => v["name"].toLowerCase().indexOf(needle) > -1
-            );
-          }
+          const needle = val.toLowerCase();
+          // console.log(">>>>", needle, props.sprav);
+          options.value = props.sprav.filter(
+            (v) => v["name"].toLowerCase().indexOf(needle) > -1
+          );
+          console.log(">>>>", needle, options.value);
         },
-
-        //"ref" is the Vue reference to the QSelect
         (ref) => {
           if (val !== "" && ref.options.length > 0) {
-            ref.setOptionIndex(-1); // Сбросить optionIndex, если что-то выбрано
-            ref.moveOptionSelection(1, true); // Сфокусируйте первый выбираемый параметр и не обновляйте входное значение
+            ref.setOptionIndex(-1); // reset optionIndex in case there is something selected
+            ref.moveOptionSelection(1, true); // focus the first selectable option and do not update the input-value
           }
         }
       );
-      //  }, 200);
     }
     // --------------------------    ^^^^^^  ---------------------------------
     return {

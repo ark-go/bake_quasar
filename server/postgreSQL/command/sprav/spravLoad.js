@@ -49,7 +49,27 @@ export async function spravLoad(req, res) {
   if (tabname == "region") {
     sqlP = regionSQL;
   }
+  //   region_kl
+  let region_klSQL = {
+    text: /*sql*/ `
+      SELECT
+      ${tabname}.id,
+      concat('[',${tabname}.regnum,'] ',${tabname}.name)  AS name,
+      users.email AS "user_email",
+      to_char(${tabname}.user_date at time zone $1,  'DD.MM.YYYY HH12:MI:SS') as "user_date",
+      ${tabname}.meta,
+      (SELECT '${tabname}' AS tab)
+      FROM ${tabname}
+      LEFT JOIN  users ON users.id = ${tabname}.user_id
+      ORDER BY ${tabname}.name
+  `,
+    values: [timezone],
+  };
 
+  if (tabname == "region_kl") {
+    sqlP = region_klSQL;
+  }
+  //  ----------
   try {
     let result = await pool.query(sqlP);
     result = result.rowCount > 0 ? result.rows : null;

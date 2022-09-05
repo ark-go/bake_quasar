@@ -33,10 +33,31 @@
         ></field-select-territory>
       </q-item-section>
     </q-item>
+    <q-item>
+      <q-item-section>
+        <Field-Select
+          :sprav="bakeryRows"
+          label="Пекарня"
+          v-model:selectId="selectBakeryId"
+        ></Field-Select>
+      </q-item-section>
+    </q-item>
+    <q-item @click="$emit('onGetExcel')" clickable v-ripple>
+      <q-item-section side top>
+        <q-icon name="print" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Вывод в Excel</q-item-label>
+        <q-item-label caption
+          >Экспорт данных из выбранного диапазона дат, без учета торговой сети и
+          пекарни</q-item-label
+        >
+      </q-item-section>
+    </q-item>
   </q-list>
 </template>
 <script>
-import { defineComponent, ref } from "vue";
+import { defineComponent, ref, computed } from "vue";
 import { useSaleStore, storeToRefs } from "stores/saleStore";
 import FieldSelect from "./FieldSelect.vue";
 import FieldSelectTerritory from "./FieldSelectTerrytory.vue";
@@ -53,8 +74,20 @@ export default defineComponent({
       trademarkRows,
       selectedDateBetweenBakery,
       territoryRows,
+      bakeryRows,
     } = storeToRefs(useSaleStore());
     console.log("Выбрана строка", bakerySelectedRow.value);
+    const selectBakeryId = computed({
+      get: () => {
+        return bakerySelectedRow.value.id;
+      },
+      set: (val) => {
+        let bakery = bakeryRows.value.find((bakeryVal) => {
+          return bakeryVal.id == val;
+        });
+        bakerySelectedRow.value = bakery;
+      },
+    });
     function onClickEdit() {
       emit("onClickEdit");
     }
@@ -72,6 +105,8 @@ export default defineComponent({
       onClickNew,
       onDelete,
       sideExpand: ref(false),
+      bakeryRows,
+      selectBakeryId,
     };
   },
 });

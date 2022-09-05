@@ -1,8 +1,10 @@
 import { ref, nextTick } from "vue";
 import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { useSaleStore, storeToRefs } from "stores/saleStore";
+import { useTableFunc as useTableFuncParent } from "../tableFunc.js";
 import { date } from "quasar";
 export function useTableFunc(tabUrl) {
+  const { exportPriceExcel } = useTableFuncParent();
   const {
     articleBakeryRows,
     bakerySelectedRow,
@@ -128,6 +130,73 @@ export function useTableFunc(tabUrl) {
       console.log("Артикулы видимость ошибка", res?.error);
     }
   }
+  async function sendTextToTable(data, lastMulti) {
+    let command = {
+      cmd: "sendTextToTable",
+      data: data,
+      lastMulti: lastMulti, // стоит ли размножать если пустые
+      bakery_id: bakerySelectedRow.value.id,
+      trademark_id: trademarkId.value,
+    };
+    // command.historyDate = dateToDateUnix(spravStore.historyDate);
+    let mess = "текст";
+    let url = `/api/${tabUrl}`;
+    let res = await arkUtils.dataLoad(url, command, mess);
+    console.log("sendTextToTable", url, res);
+    if (res.result) {
+      return res.result;
+    } else {
+      console.log("sendTextToTable ошибка", res?.error);
+      return [];
+    }
+  }
+  // async function exportPriceExcel(dateBetween, trademark_id, bakery_id) {
+  //   let command = { cmd: "exportPriceExcel" };
+  //   command.dateBetween = {
+  //     from: dateToDateUnix(dateBetween.from),
+  //     to: dateToDateUnix(dateBetween.to),
+  //   };
+  //   command.excelFrom = dateBetween.from;
+  //   command.excelTo = dateBetween.to;
+  //   command.trademark_id = trademark_id;
+  //   command.bakery_id = bakery_id;
+  //   console.log("exportSaleExcel comand");
+  //   //   command.historyDate = dateToDateUnix(spravStore.historyDate);
+  //   let mess = "Подготовка Excel";
+  //   let url = "/api/exportSaleExcel";
+  //   let res = await arkUtils.dataLoad(url, command, mess);
+  //   console.log("exportPriceExcel возврат", res);
+  //   if (res.result) {
+  //     onClickGetExcel(res.result);
+  //     return true;
+  //   } else {
+  //     return null;
+  //   }
+  // }
+  // async function insertBufferToSale(rows) {
+  //   let command = {
+  //     cmd: "insertBufferToSale",
+  //     dateBetween: {
+  //       from: dateToDateUnix(selectedDateBetweenBakery.value.from),
+  //       to: dateToDateUnix(selectedDateBetweenBakery.value.to),
+  //     },
+  //     trademark_id: trademarkId.value,
+  //     bakery_id: bakerySelectedRow.value.id,
+  //     rows: rows,
+  //   };
+
+  //   console.log("insertBufferToSale comand");
+  //   //   command.historyDate = dateToDateUnix(spravStore.historyDate);
+  //   let mess = "Подготовка Excel";
+  //   let url = `/api/${tabUrl}`;
+  //   let res = await arkUtils.dataLoad(url, command, mess);
+  //   console.log("insertBufferToSale возврат", res);
+  //   if (res.result) {
+  //     return res.result;
+  //   } else {
+  //     return null;
+  //   }
+  // }
   function dateToDateUnix(dat) {
     if (!dat) {
       return null;
@@ -138,12 +207,48 @@ export function useTableFunc(tabUrl) {
     // dat - timeStamp
     return date.formatDate(dat, dateFormat.value);
   }
+  // function onClickGetExcel(data) {
+  //   if (data) {
+  //     const blob = b64toBlob(
+  //       data.bufferExcel,
+  //       "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet"
+  //     );
+  //     const blobUrl = URL.createObjectURL(blob);
+  //     const anchorTag = document.createElement("a");
+  //     anchorTag.href = blobUrl;
 
+  //     anchorTag.download = data.fileName; //"My PDF File.xlsx"
+  //     anchorTag.click();
+  //     URL.revokeObjectURL(blobUrl);
+  //   }
+  // }
+  // function b64toBlob(b64Data, contentType = "", sliceSize = 512) {
+  //   const byteCharacters = atob(b64Data);
+  //   const byteArrays = [];
+
+  //   for (let offset = 0; offset < byteCharacters.length; offset += sliceSize) {
+  //     const slice = byteCharacters.slice(offset, offset + sliceSize);
+
+  //     const byteNumbers = new Array(slice.length);
+  //     for (let i = 0; i < slice.length; i++) {
+  //       byteNumbers[i] = slice.charCodeAt(i);
+  //     }
+
+  //     const byteArray = new Uint8Array(byteNumbers);
+  //     byteArrays.push(byteArray);
+  //   }
+
+  //   const blob = new Blob(byteArrays, { type: contentType });
+  //   return blob;
+  // }
   return {
     dateToDateUnix,
     dateFormatDate,
     loadBakeryArticle,
     toggleHiddenArticle,
     addBakeryArticleOneDay,
+    sendTextToTable,
+    exportPriceExcel,
+    // insertBufferToSale,
   };
 }

@@ -54,19 +54,19 @@ RIGHT JOIN price_value prv ON prv.price_id = price.id -- все артикулы
     LEFT JOIN unit on unit.id = pvid.unit_id
     LEFT JOIN producttype as ptype on ptype.id = assort.producttype_id
 	--
-        LEFT JOIN LATERAL (select * from kagent_x_bakery_get_last(prb.bakery_id, $4 at time zone $1,true )) as kag
+        LEFT JOIN LATERAL (select * from kagent_x_bakery_get_last(prb.bakery_id, $4 at time zone $1,flase )) as kag
             ON kag.child_id = prb.bakery_id
         LEFT JOIN kagent ON kagent.id = kag.parent_id
 --
-        LEFT JOIN LATERAL (select * from kagent_x_bakery_own_get_last(prb.bakery_id, $4 at time zone $1,true )) as kagown
+        LEFT JOIN LATERAL (select * from kagent_x_bakery_own_get_last(prb.bakery_id, $4 at time zone $1,flase )) as kagown
         ON kagown.child_id = prb.bakery_id
         LEFT JOIN kagent as kagentown ON kagentown.id = kagown.parent_id
 --
-        LEFT JOIN LATERAL (select * from kagent_x_bakery_franch_get_last(prb.bakery_id, $4 at time zone $1,true )) as kagfranch
+        LEFT JOIN LATERAL (select * from kagent_x_bakery_franch_get_last(prb.bakery_id, $4 at time zone $1,flase )) as kagfranch
         ON kagfranch.child_id = prb.bakery_id
         LEFT JOIN kagent as kagentfranch ON kagentfranch.id = kagfranch.parent_id
 --
-       LEFT JOIN LATERAL (select * from trademark_x_bakery_get_last(prb.bakery_id, $4 at time zone $1,true )) as trdm
+       LEFT JOIN LATERAL (select * from trademark_x_bakery_get_last(prb.bakery_id, $4 at time zone $1,flase )) as trdm
        ON trdm.child_id = prb.bakery_id
        LEFT JOIN trademark  ON trademark.id = trdm.parent_id
 

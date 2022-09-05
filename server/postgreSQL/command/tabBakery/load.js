@@ -26,7 +26,8 @@ export async function load(req, res, tabname, timezone, idOne) {
    --  concat(ustm.u_fam,' ',ustm.u_name,' ',ustm.u_otch) as territory_manager_name,
     --  ustm.email as territory_manager_name,
       reg.name as region_name,
-      concat(usrm.u_fam,' ',substring(usrm.u_name,1,1),' ',substring(usrm.u_otch,1,1))  as region_manager_name
+      concat(usrm.u_fam,' ',substring(usrm.u_name,1,1),' ',substring(usrm.u_otch,1,1))  as region_manager_name,
+      trdm.name as trademark_name
     --  concat(usrm.u_fam,' ',usrm.u_name,' ',usrm.u_otch) as region_manager_name
     --  usrm.email as region_manager_name
     --  NullIf( (select count(*) from users_x_region_manager where parent_id = ${tabname}.id AND is_last = true ) 
@@ -41,6 +42,10 @@ export async function load(req, res, tabname, timezone, idOne) {
       LEFT JOIN LATERAL(select * from users_x_bakery_manager_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
               as ubm  ON ubm.child_id = ${tabname}.id
       LEFT JOIN users us ON us.id = ubm.parent_id
+
+      LEFT JOIN LATERAL(select * from trademark_x_bakery_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
+      as trdb  ON trdb.child_id = ${tabname}.id
+     LEFT JOIN trademark trdm ON trdm.id = trdb.parent_id
       --
       LEFT JOIN LATERAL(select * from kagent_x_bakery_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
               as kb  ON kb.child_id = ${tabname}.id

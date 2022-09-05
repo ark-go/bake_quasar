@@ -55,6 +55,20 @@ export const useSaleStore = defineStore("SaleStore", {
        */
       refTableArticle: null,
       /**
+       * артикулы полученные из буффера
+       */
+      articleBuffer: [],
+      /**
+       * артикулы полученные при объединении буфера с существующими артикулами
+       */
+      articleBufferForSale: [],
+      /**
+       * Строки из буфера с ошибками, если они были
+       * используется для проверки на лшибки
+       * кол-во ошибок, 0 - можно записываь
+       */
+      saveBufferErrorRows: [],
+      /**
        * Показать скрытые артикулы для пекарни
        */
       showHiddenArticle: false,

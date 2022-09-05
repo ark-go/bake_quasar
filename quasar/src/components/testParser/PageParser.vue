@@ -4,9 +4,24 @@
     class="flex flex-center"
     style="min-width: 360px"
   >
-    <q-table :rows="rows"> </q-table>
-    <q-input v-model="inputModel" label="Сюда"></q-input>
-    <q-btn @click="onClick">Клик</q-btn>
+    <q-list :style="pageMaxHeight" style="max-width: 600px; min-width: 600px">
+      <q-item class="column">
+        <q-item-section class="row no-wrap">
+          <q-input v-model="inputModel" label="Сюда"></q-input>
+          <q-btn @click="onClick">Клик</q-btn>
+        </q-item-section>
+      </q-item>
+      <q-item>
+        <q-item-section style="display: block">
+          <q-table
+            :rows="rows"
+            style="max-height: 50vh"
+            :pagination="pagination"
+          >
+          </q-table>
+        </q-item-section>
+      </q-item>
+    </q-list>
   </q-page>
 </template>
 
@@ -23,7 +38,9 @@ export default defineComponent({
     const useTable = useTableFunc();
     const pageSetup = usePagesSetupStore();
     const rows = ref([]);
-    const inputModel = ref("");
+    const inputModel = ref(
+      "https://www.sima-land.ru/instrumenty-dlya-dekorirovaniya/?c_id=47326&mode=infinite&per-page=20&sort=price&viewtype=list"
+    );
     pageSetup.currentPage = "Parser";
     const { cardMain } = storeToRefs(usePagesSetupStore());
     // const {fontSize} = toRefs(state)
@@ -31,7 +48,7 @@ export default defineComponent({
 
     function panelFnHeight(offset, height2) {
       if (!$q.fullscreen.isActive) {
-        console.log("Обычный Экран!");
+        //  console.log("Обычный Экран!");
         let marg = $q.platform.is.mobile ? 16 : 60; // Отступы окна
         let height = `calc(100vh - ${offset}px)`;
         let heightChild = `calc(100vh - ${offset}px - ${marg}px)`;
@@ -63,6 +80,9 @@ export default defineComponent({
       inputModel,
       onClick,
       rows,
+      pagination: ref({
+        rowsPerPage: 50,
+      }),
     };
   },
 });

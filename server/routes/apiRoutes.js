@@ -90,6 +90,8 @@ import { tabSale } from "../postgreSQL/command/tabSale/tabSale.js";
 
 import { exportPriceExcel } from "../modules/excel/exportPriceExcel/exportPriceExcel.js";
 import { exportSaleExcel } from "../modules/excel/exportSaleExcel/exportSaleExcel.js";
+import { chartQuery } from "../postgreSQL/command/chartQuery/chartQuery.js";
+
 import { testParser } from "../modules/excel/testParser/testParser.js";
 //import { pdfmain } from "../modules/PDF/pdfmain.js";
 //import { pdfMainLoad } from "../modules/PDF/pdfMainLoad.js";
@@ -217,6 +219,12 @@ export async function apiRoutes() {
     console.log("/exportSaleExcel");
     await exportSaleExcel(req, res);
   });
+  router.post("/chartQuery", async (req, res) => {
+    console.log("/chartQuery");
+    res.json(await chartQuery(req, res));
+    // await chartQuery(req, res);
+  });
+
   router.post("/testParser", async (req, res) => {
     console.log("/testParser");
     await testParser(req, res);

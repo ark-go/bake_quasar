@@ -33,6 +33,9 @@ export async function addBakeryArticleOneDay(
      ON CONFLICT (datesale, bakery_id, price_value_id) DO 
      UPDATE SET
      countsale = EXCLUDED.countsale,
+     kagent_id = EXCLUDED.kagent_id,
+     kagent_own_id = EXCLUDED.kagent_own_id,
+     kagent_franch_id = EXCLUDED.kagent_franch_id,
      user_id = EXCLUDED.user_id,
      user_date = CURRENT_TIMESTAMP
      RETURNING countsale

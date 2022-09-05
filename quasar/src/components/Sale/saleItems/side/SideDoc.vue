@@ -86,7 +86,45 @@
         >
       </q-item-section>
     </q-item>
+    <!-- <q-item
+      v-if="!checkDateSale && bakerySelectedRow?.id"
+      @click="onShowDialog"
+      clickable
+      v-ripple
+      :vdddddd-if="userStore.userInfo.email == 'Arkadii@yandex.ru'"
+    >
+      <q-item-section side top>
+        <q-icon name="dynamic_feed" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Буфер обмена</q-item-label>
+        <q-item-label caption>Ввод данных через буфер обмена</q-item-label>
+      </q-item-section>
+    </q-item> -->
+    <q-item
+      @click="onGetExcel"
+      clickable
+      v-ripple
+      :vrrrrrr-if="userStore.userInfo.email == 'Arkadii@yandex.ru'"
+    >
+      <q-item-section side top>
+        <q-icon name="print" />
+      </q-item-section>
+      <q-item-section>
+        <q-item-label>Excel</q-item-label>
+        <q-item-label caption>. . . </q-item-label>
+      </q-item-section>
+    </q-item>
   </q-list>
+  <!-- <Form-Manual-Data
+    :showDialog="showDialogBuffer"
+    @update:showDialog="$emit('update:showDialogBuffer', $event)"
+    @onSaveManualData="$emit('onSaveManualData', $event)"
+    @onSaveData="$emit('onSaveData', $event)"
+    @onClipboardError="$emit('onClipboardError')"
+    :rows="rows"
+    :visibleSendSave="visibleSendSave"
+  ></Form-Manual-Data> -->
 </template>
 <script>
 import { defineComponent, ref, computed } from "vue";
@@ -94,14 +132,25 @@ import { useSaleStore, storeToRefs } from "stores/saleStore";
 import FieldSelect from "./FieldSelect.vue";
 import SelectDateExt from "./SelectDateExt.vue";
 import FormSelectCard from "./FormSelectCard.vue";
+//import FormManualData from "./FormManualData.vue";
+import { useUserStore } from "src/stores/userStore";
 //import TabsTables from "./TabsTables.vue";
 export default defineComponent({
   name: "SideDoc",
   components: { FieldSelect, SelectDateExt, FormSelectCard },
-  props: ["refTable", "activeTab", "trademarkId"],
-  emits: ["update:filter"],
+  props: [
+    "refTable",
+    "activeTab",
+    "trademarkId",
+    "rows",
+    "visibleSendSave",
+    "showDialogBuffer",
+  ],
+  emits: ["update:filter", "update:showDialogBuffer"],
   setup(props, { emit }) {
     const saleStore = useSaleStore();
+    const userStore = useUserStore();
+
     const {
       bakerySelectedRow,
       bakeryRows,
@@ -109,6 +158,7 @@ export default defineComponent({
       showDoobleArticle,
       checkDateSale,
       selectedArticleBakeryRow,
+      trademarkId,
     } = storeToRefs(useSaleStore());
     console.log("Выбрана строка", bakerySelectedRow.value);
     const selectBakeryId = computed({
@@ -136,6 +186,15 @@ export default defineComponent({
     function onDelete() {
       emit("onDelete");
     }
+    function onShowDialog() {
+      console.log("onShowDialog..");
+      if (bakerySelectedRow.value.id && trademarkId.value) {
+        emit("update:showDialogBuffer", true);
+      }
+    }
+    function onGetExcel() {
+      emit("onGetExcel");
+    }
     return {
       bakeryRows,
       bakerySelectedRow,
@@ -153,6 +212,9 @@ export default defineComponent({
         console.log("countDays-2", val);
         emit("countDays", val);
       },
+      onShowDialog,
+      userStore,
+      onGetExcel,
     };
   },
 });

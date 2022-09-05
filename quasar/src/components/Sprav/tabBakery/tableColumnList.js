@@ -15,6 +15,13 @@ export const columns = [
     sortable: true,
   },
   {
+    name: "trademark_name",
+    label: "Торг.сеть",
+    align: "left",
+    field: "trademark_name",
+    sortable: true,
+  },
+  {
     name: "kagent_name",
     label: "Контрагент",
     align: "left",

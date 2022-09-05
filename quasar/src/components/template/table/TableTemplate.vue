@@ -37,7 +37,7 @@
           ></table-top-find>
           <q-space />
           <table-top-visible
-            v-if="!noTopColumnSelect"
+            v-if="!noTopColumnSelect && visibleColumns"
             v-model:visible-columns="visibleColumns"
             :columns="columns"
           ></table-top-visible>
@@ -143,7 +143,7 @@ export default defineComponent({
     },
     columns: {
       type: Array,
-      default: () => [],
+      default: undefined,
     },
 
     noTopBtn: {
@@ -191,6 +191,10 @@ export default defineComponent({
     const titlePanel = ref(!props.noTitlePanel);
     const filter = ref("");
     function reVisibleColumn() {
+      if (!props.columns) {
+        visibleColumns.value = undefined;
+        return;
+      }
       visibleColumns.value = [];
       props.columns.forEach((item, index, array) => {
         if (item.hidden == true) return;

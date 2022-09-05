@@ -35,7 +35,19 @@ export const columns = [
       if (row.article_original == row.article_buff) return "bg-green-2";
     },
   },
-
+  {
+    name: "count_sale_old",
+    label: "в базе",
+    align: "right",
+    field: "count_sale_old",
+    required: true, // нельзя выключить
+    sortable: true,
+    classes: (row) => {
+      if (!row.count_sale_old) return;
+      if (row.count_sale_old != row.count_buff) return "bg-red-2";
+      if (row.count_sale_old == row.count_buff) return "bg-green-2";
+    },
+  },
   {
     name: "article",
     label: "Артикул в пек.",
@@ -59,7 +71,7 @@ export const columns = [
   },
   {
     name: "count_sale11", //!!!!!!!!!!!!!!
-    label: "Кол-во",
+    label: "Кол-во ∑",
     align: "right",
     field: "count_sale11",
     required: true, // нельзя выключить

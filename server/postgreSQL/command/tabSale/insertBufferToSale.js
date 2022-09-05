@@ -73,7 +73,7 @@ export async function insertBufferToSale(req, res, tabname, timezone, idOne) {
       user_id, user_date)
       SELECT  
       -- время ставим клиентское, почему не понятно до сих пор
-      datesale at time zone $1, bakery_id, price_value_id, trademark_id, 
+      datesale , bakery_id, price_value_id, trademark_id, 
       kagent_id, kagent_own_id, kagent_franch_id,
       filename, countsale, price_id, description, 
       user_id, user_date

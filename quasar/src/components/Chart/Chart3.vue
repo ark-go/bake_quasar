@@ -84,6 +84,7 @@ export default defineComponent({
         //  type: "line",
 
         toolbar: {
+          autoSelected: "pan",
           show: true,
           offsetX: 0,
           offsetY: 0,

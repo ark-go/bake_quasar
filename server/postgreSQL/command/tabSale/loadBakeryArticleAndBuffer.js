@@ -57,7 +57,7 @@ export async function loadBakeryArticleAndBuffer(
     rowsBuffers.datesale as datesale_buff,
     to_char(rowsBuffers.datesale at time zone $1,  'DD.MM.YYYY') as datesale_str_buff,
     rowsBuffers.count as count_buff,
-         
+    sale.countsale as count_sale_old,     
     art.*,
 
     to_char(datestart at time zone $1,  'DD.MM.YYYY') as date_start
@@ -75,6 +75,9 @@ export async function loadBakeryArticleAndBuffer(
                             -- если перекрылось прайсом то берем дату старта и null - т.е. прайс не закрылся еще
                             (rowsBuffers.datesale >= art.datestart AND art.dateend IS null )
                          )
+    LEFT JOIN sale ON sale.price_value_id = art.id
+                            AND sale.datesale = rowsBuffers.datesale
+                            AND sale.bakery_id = rowsBuffers.bakery_id  
                      -- попадаем в диапазон потому что он есть
                     -- AND ( NOT art.dateend IS null AND rowsBuffers.datesale >= art.datestart AND  rowsBuffers.datesale <= art.dateend)
 
@@ -99,7 +102,7 @@ export async function loadBakeryArticleAndBuffer(
   try {
     let result = await pool.query(sqlP);
     result = result.rowCount > 0 ? result.rows : null;
-    // console.log("loadBakeryArticleAndBuffer", result, "body", req.body);
+    console.log("loadBakeryArticleAndBuffer", result, "body", req.body);
     // let mess = `Читаем Пекарни`;
     // botSendMessage(mess, req);
     return {

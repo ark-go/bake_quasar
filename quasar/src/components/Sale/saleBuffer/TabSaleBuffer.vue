@@ -35,11 +35,12 @@ import TablePanel from "./table/TablePanel.vue";
 import SideDoc from "./side/SideDoc.vue";
 import { useSaleStore, storeToRefs } from "stores/saleStore";
 import { useTableFunc } from "./tableFunc";
-import { copyToClipboard } from "quasar";
+import { useQuasar, copyToClipboard } from "quasar";
 export default defineComponent({
   name: "TabSaleItems",
   components: { TabPanelSplit, TablePanel, SideDoc },
   setup() {
+    const $q = useQuasar();
     const saleStore = useSaleStore();
     const {
       bakerySelectedRow,
@@ -141,7 +142,8 @@ export default defineComponent({
         clipMess += "\r\n";
       });
       await copyToClipboard(clipMess);
-      console.log("ERRROR:", clipMess);
+
+      $q.notify({ type: "positive", message: "Скопировано в буфер" });
     }
     async function onGetExcel() {
       await tableFunc.exportPriceExcel();

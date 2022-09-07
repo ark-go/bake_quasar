@@ -10,6 +10,7 @@ export const columns = [
       if (!row.article) return "bg-red-2";
       if (row.article_original == row.article_buff) return "bg-green-2";
     },
+    headerClasses: "bg-orange-2",
   },
   {
     name: "count_buff",
@@ -22,6 +23,7 @@ export const columns = [
       if (!row.article) return "bg-red-2";
       if (row.article_original == row.article_buff) return "bg-green-2";
     },
+    headerClasses: "bg-orange-2",
   },
   {
     name: "datesale_str_buff",
@@ -34,6 +36,7 @@ export const columns = [
       if (!row.article) return "bg-red-2";
       if (row.article_original == row.article_buff) return "bg-green-2";
     },
+    headerClasses: "bg-orange-2",
   },
   {
     name: "count_sale_old",
@@ -47,6 +50,7 @@ export const columns = [
       if (row.count_sale_old != row.count_buff) return "bg-red-2";
       if (row.count_sale_old == row.count_buff) return "bg-green-2";
     },
+    headerClasses: "bg-orange-2",
   },
   {
     name: "article",
@@ -70,10 +74,10 @@ export const columns = [
     hidden: true,
   },
   {
-    name: "count_sale11", //!!!!!!!!!!!!!!
+    name: "count_sale", //!!!!!!!!!!!!!!
     label: "Кол-во ∑",
     align: "right",
-    field: "count_sale11",
+    field: "count_sale",
     required: true, // нельзя выключить
     sortable: true,
     hidden: true,

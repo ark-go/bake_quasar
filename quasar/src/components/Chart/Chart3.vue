@@ -99,6 +99,22 @@ export default defineComponent({
             customIcons: [],
           },
         },
+        zoom: {
+          enabled: true,
+          type: "x",
+          autoScaleYaxis: false,
+          zoomedArea: {
+            fill: {
+              color: "#90CAF9",
+              opacity: 0.4,
+            },
+            stroke: {
+              color: "#0D47A1",
+              opacity: 0.4,
+              width: 1,
+            },
+          },
+        },
       },
 
       dataLabels: {

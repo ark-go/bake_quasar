@@ -16,15 +16,22 @@
       <div class="exit-dialog cursor-pointer" @click="onDialogCancel">
         <q-icon name="close" />
       </div>
-      <q-card-section>
+      <q-card-section
+        class="text-primary"
+        style="font-size: 1.4em; text-align: center"
+      >
         {{ title }}
       </q-card-section>
-      <q-card-section>
-        {{ message }}
-      </q-card-section>
+      <q-card-section v-html="message"> </q-card-section>
       <q-card-actions align="right">
-        <q-btn class="bg-red-3" label="OK" @click="onOKClick" />
-        <q-btn class="bg-blue-4" label="Отмена" @click="onDialogCancel" />
+        <q-btn flat rounded color="red-3" label="OK" @click="onOKClick" />
+        <q-btn
+          flat
+          rounded
+          color="blue-9"
+          label="Отмена"
+          @click="onDialogCancel"
+        />
       </q-card-actions>
     </q-card>
   </q-dialog>

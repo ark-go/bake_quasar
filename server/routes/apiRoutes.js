@@ -79,7 +79,10 @@ import { kagentBakeryFranch } from "../postgreSQL/command/kagentBakeryFranch/kag
 import { tabTrademark } from "../postgreSQL/command/tabTrademark/tabTrademark.js";
 import { trademarkBakery } from "../postgreSQL/command/trademarkBakery/trademarkBakery.js";
 import { tabPacktype } from "../postgreSQL/command/tabPacktype/tabPacktype.js";
+import { tabAffiliation } from "../postgreSQL/command/tabAffiliation/tabAffiliation.js";
+
 import { packtypeBakery } from "../postgreSQL/command/packtypeBakery/packtypeBakery.js";
+import { affiliationBakery } from "../postgreSQL/command/affiliationBakery/affiliationBakery.js";
 import { tabPrice } from "../postgreSQL/command/tabPrice/tabPrice.js";
 
 import { products } from "../postgreSQL/command/products/products.js";
@@ -554,10 +557,20 @@ export async function apiRoutes() {
     console.log("/tabPacktype", req.body?.cmd);
     res.json(await tabPacktype(req, res));
   });
+  router.post("/tabAffiliation", async (req, res) => {
+    console.log("/tabAffiliation", req.body?.cmd);
+    res.json(await tabAffiliation(req, res));
+  });
+
   router.post("/packtypeBakery", async (req, res) => {
     console.log("/packtypeBakery", req.body?.cmd);
     res.json(await packtypeBakery(req, res));
   });
+  router.post("/affiliationBakery", async (req, res) => {
+    console.log("/affiliationBakery", req.body?.cmd);
+    res.json(await affiliationBakery(req, res));
+  });
+
   router.post("/tabHelpPanels", async (req, res) => {
     console.log("/tabHelpPanels", req.body?.cmd);
     res.json(await tabHelpPanels(req, res));

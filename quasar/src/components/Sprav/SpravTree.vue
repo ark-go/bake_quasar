@@ -335,7 +335,20 @@ const dataTree = [
         ],
       },
       {
-        key: 38,
+        key: 39,
+        label: "Принадлежность (пекарни)",
+        helpCode: "Принадлежность вкладка",
+        tableName: "tabAffiliation",
+        tableType: "tabAffiliation",
+        component: "TabAffiliation", // расширение по умолчанию vue, будет TabTrademark.vue
+        // permiss: "Arkadii@yandex.ru",
+        buttonPanel: [
+          // name - название панели в TabManager.vue
+          { name: "affiliationBakery", label: "Пекарни", icon: "home" },
+        ],
+      },
+      {
+        key: 50,
         label: "Упаковка (пекарни)",
         helpCode: "Упаковка вкладка",
         tableName: "tabPacktype",
@@ -348,7 +361,7 @@ const dataTree = [
         ],
       },
       {
-        key: 39,
+        key: 51,
         label: "Города",
         tableName: "city",
         tableType: "city",

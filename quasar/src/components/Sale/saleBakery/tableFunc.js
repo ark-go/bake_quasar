@@ -4,8 +4,13 @@ import { useSaleStore, storeToRefs } from "stores/saleStore";
 import { useTableFunc as useTableFuncParent } from "../tableFunc.js";
 import { date } from "quasar";
 export function useTableFunc(tabUrl) {
-  const { trademarkRows, bakeryRows, articleBakeryRows, territoryRows } =
-    storeToRefs(useSaleStore());
+  const {
+    trademarkRows,
+    bakeryRows,
+    articleBakeryRows,
+    territoryRows,
+    bakerySelectedRow,
+  } = storeToRefs(useSaleStore());
   const { exportPriceExcel } = useTableFuncParent();
   const dateFormat = ref("DD.MM.YYYY");
   const arkUtils = useArkUtils();
@@ -40,6 +45,8 @@ export function useTableFunc(tabUrl) {
     }
   }
   async function loadBakery(trademarkId, dateBetween, territoryId) {
+    let aId = bakerySelectedRow.value?.id; // запомним если было выбрано
+    bakerySelectedRow.value = {}; // сбросим
     let command = {
       cmd: "loadBakery",
       trademark_id: trademarkId,
@@ -56,6 +63,11 @@ export function useTableFunc(tabUrl) {
     console.log("Пекарни", url, res);
     if (res.result) {
       bakeryRows.value = res.result;
+      if (aId) {
+        // если пропало то ставим пустой объект
+        bakerySelectedRow.value =
+          bakeryRows.value.find((val) => val.id == aId) || {};
+      }
     } else {
       bakeryRows.value = [];
     }

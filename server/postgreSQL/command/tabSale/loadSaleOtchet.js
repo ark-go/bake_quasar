@@ -39,7 +39,7 @@ export async function loadSaleOtchet(req, res, tabname, timezone, idOne) {
     concat(userreg.u_fam,' ',userreg.u_name,' ',userreg.u_otch) as manager_region,    
     territory.name as territory_name,
     concat(userterr.u_fam,' ',userterr.u_name,' ',userterr.u_otch) as manager_territory,    
-    
+    affiliation.name as affiliation_name,
     --concat(userter.u_fam,' ',userter.u_name,' ',userter.u_otch) as manager_territory,
     concat(users.u_fam,' ',users.u_name,' ',users.u_otch) as user_name    
     from sale
@@ -86,7 +86,10 @@ export async function loadSaleOtchet(req, res, tabname, timezone, idOne) {
     LEFT JOIN LATERAL (select * from users_x_region_manager_get_last(region.id,sale.datesale at time zone $1,false)) regionlast
               ON regionlast.child_id = region.id
     LEFT JOIN users userreg ON userreg.id = regionlast.parent_id
-
+    -- принадлежность
+    LEFT JOIN LATERAL (select * from affiliation_x_bakery_get_last(bakery.id,sale.datesale at time zone $1,false)) affil 
+              ON affil.child_id =  bakery.id 
+    LEFT JOIN affiliation ON affiliation.id = affil.parent_id
     -- 
 
     where sale.datesale >= $2 at time zone $1 AND sale.datesale <= $3 at time zone $1
@@ -103,7 +106,7 @@ export async function loadSaleOtchet(req, res, tabname, timezone, idOne) {
   try {
     let result = await pool.query(sqlP);
     result = result.rowCount > 0 ? result.rows : null;
-    console.log("loadSaleOtchet", result, req.body);
+    // console.log("loadSaleOtchet", result, req.body);
     // let mess = `Читаем Пекарни`;
     // botSendMessage(mess, req);
     return {

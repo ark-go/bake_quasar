@@ -2,8 +2,9 @@ import { ref, nextTick } from "vue";
 import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
 import { useSaleStore, storeToRefs } from "stores/saleStore";
 import { useTableFunc as useTableFuncParent } from "../tableFunc.js";
-import { date } from "quasar";
+import { date, useQuasar } from "quasar";
 export function useTableFunc(tabUrl) {
+  const $q = useQuasar();
   const { exportPriceExcel } = useTableFuncParent();
   const {
     articleBakeryRows,
@@ -228,6 +229,12 @@ export function useTableFunc(tabUrl) {
   //   }
   // }
   async function insertBufferToSale() {
+    let dial = await arkUtils.confirmDialog(
+      `<div style="color:#329bf7">Пекарня:<br><span style="font-size: 2em;"><b>${bakerySelectedRow.value.name}</b></span><br>` +
+        `Всего записей: ${articleBufferForSale.value.length}`,
+      "Вы хотите записать данные о продажах?</div>"
+    );
+    if (!dial) return;
     let command = {
       cmd: "insertBufferToSale",
       // dateBetween: {
@@ -246,6 +253,7 @@ export function useTableFunc(tabUrl) {
     let res = await arkUtils.dataLoad(url, command, mess); // Возвращает кол-во втавленых.Можно вернуть строки..
     console.log("insertBufferToSale возврат", res);
     if (res.result) {
+      $q.notify({ type: "positive", message: "Данные записаны." });
       articleBufferForSale.value = []; // очищаем то что якобы записали в базу
       articleBuffer.value = [];
       await loadBakeryArticleAndBuffer(); // перечитаем

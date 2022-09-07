@@ -5,11 +5,13 @@ import { axios } from "boot/axios";
 import { sanitizeDef } from "./sanitize.js";
 import { useRouter, useRoute } from "vue-router";
 import { useConfirmDelete } from "./confirmDelete.js";
+import { useConfirmDialog } from "./confirmDialog";
 
 export function useArkUtils() {
   const $q = useQuasar();
   const router = useRouter();
   const { confirmDelete } = useConfirmDelete();
+  const { confirmDialog } = useConfirmDialog();
   /**
    *
    * @param {string} url Адрес
@@ -141,5 +143,5 @@ export function useArkUtils() {
       };
     }
   }
-  return { dataLoad, confirmDelete };
+  return { dataLoad, confirmDelete, confirmDialog };
 }

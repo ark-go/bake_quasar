@@ -57,7 +57,7 @@ export async function load(req, res, tabname, timezone, idOne) {
       result: result,
     };
   } catch (err) {
-    console.log("Ошибка чтения ", tabname, err.toString());
+    console.log("Ошибка чтения-1 ", tabname, err.toString());
     return {
       error: err.toString(),
     };

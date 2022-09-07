@@ -53,6 +53,7 @@ export async function getDocuments(req, sheetValue) {
     row.push(el.brand);
     row.push(el.region);
     row.push(el.manager_region);
+    row.push(el.affiliation_name);
     row.push(el.product_type);
     row.push(el.assortment);
     row.push(el.product_prefix);
@@ -103,7 +104,9 @@ export async function getDocuments(req, sheetValue) {
       { name: "Мен. пекарни", filterButton: true },
       { name: "Бренд", filterButton: true },
       { name: "Регион", filterButton: true },
+
       { name: "Мен.регион", filterButton: true },
+      { name: "Принадлежность", filterButton: true },
       { name: "Тип прод.", filterButton: true },
       { name: "Ассорт", filterButton: true },
       { name: "Преф. прод.", filterButton: true },

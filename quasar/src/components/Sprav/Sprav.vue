@@ -180,6 +180,12 @@ export default defineComponent({
               import("./tabPacktype/TablePanel.vue")
             );
             break;
+          case "tabAffiliation":
+            console.log("case tree tabAffiliation");
+            currentTable.value = defineAsyncComponent(() =>
+              import("./tabAffiliation/TablePanel.vue")
+            );
+            break;
           // case "help":
           //   currentTable.value = HelpPanel;
           //   break;

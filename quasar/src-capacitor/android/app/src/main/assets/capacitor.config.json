@@ -1,0 +1,7 @@
+{
+  "appId": "ru.arkadii",
+  "appName": "bake",
+  "bundledWebRuntime": false,
+  "npmClient": "npm",
+  "webDir": "www"
+}

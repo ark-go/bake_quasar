@@ -78,10 +78,6 @@ export async function loadBakeryArticleAndBuffer(
     LEFT JOIN sale ON sale.price_value_id = art.id
                             AND sale.datesale = rowsBuffers.datesale
                             AND sale.bakery_id = rowsBuffers.bakery_id  
-                     -- попадаем в диапазон потому что он есть
-                    -- AND ( NOT art.dateend IS null AND rowsBuffers.datesale >= art.datestart AND  rowsBuffers.datesale <= art.dateend)
-
-                     -- art.dateend IS null AND rowsBuffers.datesale >= art.datestart AND  
 
 
      ORDER BY art.article ASC NULLS FIRST 

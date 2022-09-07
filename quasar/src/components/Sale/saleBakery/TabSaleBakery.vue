@@ -51,7 +51,7 @@ export default defineComponent({
         () => territoryId.value,
       ],
       async () => {
-        bakerySelectedRow.value = {}; // Сброс выбора печки
+        // bakerySelectedRow.value = {}; // Сброс выбора печки // снято  06-09-2022
         if (
           selectedDateBetweenBakery.value.from &&
           selectedDateBetweenBakery.value.to &&

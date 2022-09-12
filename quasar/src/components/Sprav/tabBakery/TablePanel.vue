@@ -94,11 +94,6 @@ export default defineComponent({
     const pagination = ref({
       rowsPerPage: 10,
     });
-    function reLoadComponent() {}
-    watchEffect(() => {
-      reLoadComponent(props.panelName);
-    });
-
     watch(
       () => spravStore.historyDate,
       async () => {

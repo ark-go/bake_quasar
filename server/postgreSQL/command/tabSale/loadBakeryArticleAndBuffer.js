@@ -98,7 +98,7 @@ export async function loadBakeryArticleAndBuffer(
   try {
     let result = await pool.query(sqlP);
     result = result.rowCount > 0 ? result.rows : null;
-    console.log("loadBakeryArticleAndBuffer", result, "body", req.body);
+    // console.log("loadBakeryArticleAndBuffer", "body", req.body);
     // let mess = `Читаем Пекарни`;
     // botSendMessage(mess, req);
     return {

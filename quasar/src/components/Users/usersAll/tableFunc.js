@@ -31,7 +31,7 @@ export function useTableFunc(nameTable, rows) {
       waitConfirm: treeRow.value?.meta?.waitConfirm,
     };
     console.log("хотим таблицу ", nameTable);
-    let mess = "Загрузка пекарен";
+    let mess = "Загрузка users";
     // let res = await arkUtils.dataLoad("/api/bakery", { cmd: "load" }, mess);
     let url = "/api/" + nameTable;
     let res = await arkUtils.dataLoad(url, command, mess);

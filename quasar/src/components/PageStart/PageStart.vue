@@ -1,5 +1,5 @@
 <template>
-  <q-page class="flex flex-center ark"> <menu-grid></menu-grid> </q-page>
+  <q-page class="flex justify-center ark"> <menu-grid></menu-grid> </q-page>
 </template>
 
 <script>

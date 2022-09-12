@@ -81,12 +81,20 @@
           style="padding: 0 16px 16px 16px"
           :style="{ maxHeight: maxBodyHeight }"
         >
-          <q-tab-panels v-model="tabModel" animated keep-alive>
-            <q-tab-panel name="main" style="padding: 0">
+          <q-tab-panels
+            v-model="tabModel"
+            animated
+            :keep-alive-max="keepAliveMax"
+            :keep-alive="keepAlive"
+            keep-alive-include="main"
+          >
+            <q-tab-panel v-if="keepAlive" name="main" style="padding: 0">
               <tab-sprav
                 v-if="splitHorizont"
                 :maxBodyHeight="maxBodyHeight"
                 :selectedNode="selectedNode"
+                :keepAliveMax="keepAliveMax"
+                v-model:keepAlive="keepAlive"
               >
                 <template v-slot:before>
                   <slot name="before"></slot>
@@ -150,8 +158,8 @@
 
 <script>
 // prettier-ignore
-import {ref,watch, onMounted, watchEffect, onUpdated, computed, nextTick, defineAsyncComponent, } from "vue";
-import { useRouter } from "vue-router";
+import {ref,watch, onMounted, watchEffect, onUpdated, computed, nextTick, onBeforeUnmount, onUnmounted, defineAsyncComponent, } from "vue";
+import { useRouter, onBeforeRouteLeave } from "vue-router";
 import PageSetupDialog from "./PageSetupDialog.vue";
 import SplitterSprav from "./SplitterSprav.vue";
 import TabSprav from "./TabSprav.vue";
@@ -198,7 +206,23 @@ export default {
     const menuDialogShow = ref(false);
     const currentTabComponent = ref();
     const historyOn = ref(false);
-
+    const keepAlive = ref(true);
+    const keepAliveMax = ref(10);
+    onBeforeUnmount(() => {
+      keepAlive.value = false;
+      console.log("arkCard sprav before unmount", keepAlive.value);
+    });
+    onUnmounted(() => {
+      console.log("arkCard sprav unmount", keepAlive.value);
+    });
+    onBeforeRouteLeave(async (to, from, next) => {
+      keepAliveMax.value = 0;
+      keepAlive.value = false;
+      console.log("arkCard sprav RouteLeave", keepAlive.value);
+      nextTick(() => {
+        next();
+      });
+    });
     watch(
       () => tabModel.value,
       () => {
@@ -247,9 +271,6 @@ export default {
       borderRadius: "3px",
     };
     watchEffect(() => {
-      console.log("refTopSection", refTopSection.value);
-    });
-    watchEffect(() => {
       splitHorizont.value = $q.screen.width < $q.screen.height;
     });
     watch(
@@ -273,7 +294,7 @@ export default {
         //    console.log("Новый Body", N, maxHeigh.value);
         maxBodyHeight.value = N;
       } catch (e) {
-        console.log("нет элемента. пропуск", e);
+        console.log("нет элемента. пропуск1");
         maxBodyHeight.value = maxHeigh.value; //! не правильно
       }
     }
@@ -347,6 +368,8 @@ export default {
       onClose() {
         emit("onClose");
       },
+      keepAlive,
+      keepAliveMax,
     };
   },
 };

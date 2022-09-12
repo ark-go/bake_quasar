@@ -14,6 +14,7 @@ rsync -avzh \
    --exclude .git/ \
    --exclude server/.env \
    --exclude server/config.js \
+   --exclude quasar/src-capacitor/ \
    --exclude quasar/node_modules/.cache/terser-webpack-plugin/
 
 ssh nodeuser@tsg-18.ru 'pm2 restart bake-vite'

@@ -103,10 +103,6 @@ export default defineComponent({
     const store = useBakeryStore();
     const rowToDialog = ref({});
 
-    function reLoadComponent() {}
-    watchEffect(() => {
-      reLoadComponent(props.panelName);
-    });
     watch(
       () => spravStore.historyDate,
       async () => {

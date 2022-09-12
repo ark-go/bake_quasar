@@ -52,7 +52,8 @@
     </q-header>
 
     <q-drawer side="left" v-model="leftDrawerOpen" overlay bordered>
-      <q-list>
+      <Menu-Side v-if="userInfo.email != 'Arkadii@yandex1.ru'"></Menu-Side>
+      <q-list v-if="userInfo.email == 'Arkadii@yandex.ru'">
         <q-item-label header> Выберите раздел </q-item-label>
 
         <EssentialLink
@@ -211,6 +212,7 @@ import { usePagesSetupStore, storeToRefs } from "stores/pagesSetupStore.js";
 import { useIoSocket } from "stores/ioSocket.js";
 import { useQuasar } from "quasar";
 import TestMove from "./TestMove.vue";
+import MenuSide from "src/components/MenuSide/MenuSide.vue";
 export default defineComponent({
   name: "MainLayout",
 
@@ -220,6 +222,7 @@ export default defineComponent({
     pdfDialog,
     RightItems,
     TestMove,
+    MenuSide,
   },
 
   setup() {

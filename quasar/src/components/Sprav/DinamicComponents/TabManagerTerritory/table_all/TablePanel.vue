@@ -84,11 +84,6 @@ export default defineComponent({
     const pagination = ref({
       rowsPerPage: 10,
     });
-    function reLoadComponent() {}
-    watchEffect(() => {
-      reLoadComponent(props.panelName);
-    });
-
     onMounted(async () => {
       rows.value = await tableFunc.loadTable();
     });

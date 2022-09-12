@@ -130,7 +130,7 @@
       :vrrrrrr-if="userStore.userInfo.email == 'Arkadii@yandex.ru'"
     >
       <q-item-section side top>
-        <q-icon name="print" />
+        <q-icon name="mdi-microsoft-excel" />
       </q-item-section>
       <q-item-section>
         <q-item-label>Excel</q-item-label>

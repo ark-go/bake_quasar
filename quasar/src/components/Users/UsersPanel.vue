@@ -11,6 +11,7 @@
         v-model="tabModel"
         animated
         keep-alive
+        keep-alive-include="main"
         class="maxBodyHeight"
       >
         <q-tab-panel name="main" style="padding: 0">

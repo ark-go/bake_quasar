@@ -76,7 +76,7 @@ export default defineComponent({
       rootOriginal.forEach((element) => {
         let root = tree.parse(element);
         var nodesDrop = root.all(function (node) {
-          console.log("rootttree", node);
+          // console.log("rootttree", node);
           return (
             node.model.permiss && node.model.permiss != "Arkadii@yandex.ru"
           );

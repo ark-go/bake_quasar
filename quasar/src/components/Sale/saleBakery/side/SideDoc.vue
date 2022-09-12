@@ -44,7 +44,7 @@
     </q-item>
     <q-item @click="$emit('onGetExcel')" clickable v-ripple>
       <q-item-section side top>
-        <q-icon name="print" />
+        <q-icon name="mdi-microsoft-excel" />
       </q-item-section>
       <q-item-section>
         <q-item-label>Вывод в Excel</q-item-label>

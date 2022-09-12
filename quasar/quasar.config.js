@@ -36,7 +36,7 @@ module.exports = configure(function (/* ctx */) {
     // https://github.com/quasarframework/quasar/tree/dev/extras
     extras: [
       // 'ionicons-v4',
-      // 'mdi-v6',
+      "mdi-v6",
       // 'fontawesome-v6',
       "eva-icons",
       // 'themify',
@@ -175,7 +175,7 @@ module.exports = configure(function (/* ctx */) {
 
     // https://v2.quasar.dev/quasar-cli/developing-pwa/configuring-pwa
     pwa: {
-      name: "Хлеб и Тандыр",
+      name: "Bread and Tandoor",
       workboxMode: "injectManifest", // default "generateSW"
       injectPwaMetaTags: true,
       swFilename: "sw.js",

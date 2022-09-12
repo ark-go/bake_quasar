@@ -69,7 +69,7 @@ import { useQuasar } from "quasar";
 import FormDialog from "./FormDialog.vue";
 //import { waitOnEventOrTimeout } from "app/public/pdfjs/web/viewer.js";
 export default defineComponent({
-  name: "TablePanel",
+  name: "TablePanelTerritory",
   components: {
     FormDialog,
     TableTemplate: defineAsyncComponent(() => {
@@ -103,10 +103,6 @@ export default defineComponent({
     const store = useBakeryStore();
     const rowToDialog = ref({});
 
-    function reLoadComponent() {}
-    watchEffect(() => {
-      reLoadComponent(props.panelName);
-    });
     watch(
       () => spravStore.historyDate,
       async () => {

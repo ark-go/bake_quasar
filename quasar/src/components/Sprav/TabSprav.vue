@@ -15,7 +15,7 @@
 
     <q-separator />
   </div>
-  <q-tab-panels v-model="tabModel" animated keep-alive>
+  <q-tab-panels v-model="tabModel" animated>
     <q-tab-panel
       name="treeTab"
       style="padding: 0"
@@ -35,19 +35,51 @@
 </template>
 
 <script>
-import { defineComponent, ref, computed, watchEffect, watch } from "vue";
+import {
+  defineComponent,
+  ref,
+  onUnmounted,
+  watchEffect,
+  watch,
+  onBeforeUnmount,
+  onDeactivated,
+} from "vue";
+import { useRouter, onBeforeRouteLeave } from "vue-router";
 //dataLoad(url, data, logInfo = "")
 export default defineComponent({
   name: "TabSprav",
   props: {
     maxBodyHeight: String,
     selectedNode: Object,
+    keepAlive: {
+      type: Boolean,
+      default: true,
+    },
+    keepAliveMax: {
+      type: Number,
+      default: 0,
+    },
   },
   components: {},
-  setup(props) {
+  setup(props, { emit }) {
     const refTabsButton = ref();
     const maxSubBodyHeight = ref("");
     const tabModel = ref("treeTab");
+    onBeforeUnmount(() => {
+      console.log("arkCard TabSprav sprav before unmount", props.keepAlive);
+      emit("update:keepAlive", false);
+    });
+    onUnmounted(() => {
+      console.log("arkCard TabSprav sprav unmount", props.keepAlive);
+    });
+    onDeactivated(() => {
+      console.log("arkCard TabSprav sprav deactivated", props.keepAlive);
+    });
+    onBeforeRouteLeave(async (to, from, next) => {
+      emit("update:keepAlive", false);
+      console.log("arkCard TabSprav sprav RouteLeave", keepAlive.value);
+      next();
+    });
     watch(
       () => props.selectedNode.key,
       () => {

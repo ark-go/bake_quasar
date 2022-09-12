@@ -1,6 +1,6 @@
 {
   "name": "bake-and-tandoor",
-  "version": "0.6.13",
+  "version": "0.6.15",
   "description": "bake and tandoor",
   "productName": "bake",
   "author": "Arkadii <arkadii@yandex.ru>",
@@ -32,6 +32,7 @@
     "socket.io-client": "^4.5.0",
     "tree-model": "^1.0.7",
     "vue": "^3.0.0",
+    "vue-draggable-next": "^2.1.1",
     "vue-i18n": "^9.0.0",
     "vue-router": "^4.0.0",
     "vue3-apexcharts": "^1.4.1"
@@ -42,7 +43,6 @@
     "@quasar/quasar-app-extension-qpdfviewer": "^2.0.0-alpha.6",
     "autoprefixer": "^10.4.2",
     "electron": "^20.1.1",
-    "electron-packager": "^16.0.0",
     "eslint": "^8.10.0",
     "eslint-config-prettier": "^8.1.0",
     "eslint-plugin-vue": "^8.5.0",

@@ -12,7 +12,7 @@ export async function save(req, res, tabname, timezone, idOne) {
   // для загрузки только группы печек
   //! table - help_panels
 
-  console.log("save help", req.body);
+  // console.log("save help", req.body);
   // return {
   //   result: [{}],
   // };

@@ -102,11 +102,6 @@ export default defineComponent({
     const spravStore = useSpravStore();
     const store = useBakeryStore();
     const rowToDialog = ref({});
-
-    function reLoadComponent() {}
-    watchEffect(() => {
-      reLoadComponent(props.panelName);
-    });
     watch(
       () => spravStore.historyDate,
       async () => {

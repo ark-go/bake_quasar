@@ -11,66 +11,95 @@ import merge from "merge";
 export const useStartPageStore = defineStore("StartPageStore", {
   state: () => {
     return {
-      listMenu: [
+      listMenuDef: [
         {
           id: 1,
-          title: "Продажи",
-          link: "/sale",
-          icon: "arrow_forward",
+          header: "Ввод данных",
           visible: true,
         },
         {
           id: 2,
-          title: "Продукция",
-          link: "/products",
-          icon: "arrow_forward",
+          title: "Продажи",
+          link: "/sale",
+          icon: "arrow_right",
           visible: true,
         },
         {
           id: 3,
-          title: "Документы Прайс",
-          link: "/price",
-          icon: "arrow_forward",
+          title: "Продукция<br>рецепты по ТТК",
+          link: "/products",
+          icon: "arrow_right",
           visible: true,
         },
         {
           id: 4,
-          title: "Пекарни",
-          link: "/bakery",
-          icon: "arrow_forward",
+          title: "Документы<br>прайсы",
+          link: "/price",
+          icon: "arrow_right",
           visible: true,
         },
         {
           id: 5,
-          title: "Контрагенты",
-          link: "/kagent",
-          icon: "arrow_forward",
+          header: "Отчеты",
           visible: true,
         },
         {
           id: 6,
-          title: "Справочники",
-          link: "/spravochnik",
-          icon: "arrow_forward",
-          visible: true,
-        },
-        {
-          id: 7,
-          title: "Пользователи (управляющие)",
-          link: "/departments",
-          icon: "arrow_forward",
-          visible: true,
-        },
-        {
-          id: 8,
           title: "Chart",
           link: "/charts/3",
           icon: "bar_chart",
           visible: true,
         },
+        {
+          id: 7,
+          header: "Справочники",
+          visible: true,
+        },
+        {
+          id: 8,
+          title: "Пекарни",
+          link: "/bakery",
+          icon: "arrow_right",
+          visible: true,
+        },
+        {
+          id: 9,
+          title: "Контрагенты",
+          link: "/kagent",
+          icon: "arrow_right",
+          visible: true,
+        },
+        {
+          id: 10,
+          title: "Продукция",
+          link: "/products",
+          icon: "arrow_right",
+          visible: true,
+          hiddenMenuCard: true, //  скрываем из кнопок на экране
+        },
+        {
+          id: 11,
+          header: "Администрирование",
+          visible: true,
+        },
+        {
+          id: 12,
+          title: "Пекарни<br>конфигурация",
+          link: "/spravochnik",
+          icon: "arrow_right",
+          visible: true,
+        },
+        {
+          id: 13,
+          title: "Пользователи<br>управляющие",
+          link: "/departments",
+          icon: "arrow_right",
+          visible: true,
+        },
       ],
+      listMenu: [],
       listMenuSorted: [],
-      toggleStorage: "11-09-2022-1",
+      toggleStorage: "13-09-2022-2",
       //  listMenu: [],
     };
   },
@@ -92,7 +121,7 @@ export const useStartPageStore = defineStore("StartPageStore", {
 
   getters: {
     listMenuSide: (state) => {
-      let buffList = [...state.listMenu]; //.copyWithin(-1);
+      let buffList = [...state.listMenuDef]; //.copyWithin(-1);
       state.listMenuSorted = ref(buffList);
       console.log("listMenuSide", buffList);
       //return buffList.sort(sortMenu);
@@ -111,6 +140,7 @@ export const useStartPageStore = defineStore("StartPageStore", {
     // },
   },
 });
+
 // для сортировки меню по id
 function sortMenu(a, b) {
   if (a.id < b.id) {
@@ -133,7 +163,10 @@ function copyObject(o) {
   return output;
 }
 const pageStart = useStartPageStore();
-
+pageStart.$state.listMenu = pageStart.$state.listMenuDef.filter(
+  (val) => !val.header
+);
+console.log(">D>D>D>D>", pageStart.$state.listMenu);
 // прочитаем при загрузке данные из компа
 const lockStat = localStorage.getItem("pageStart");
 // внимание надо объединить данные из кода и данные прочитанные из LocalStorage компа

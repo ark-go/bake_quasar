@@ -39,17 +39,18 @@
     @onAdd="addNew"
     :currentRow="currentRow"
     noExpandPanel
-    :noEditTable="true"
+    :noEditTable="false"
     :store="store"
     :rowsPerPage="0"
   >
   </Table-Template>
   <div v-else>не указана таблица</div>
-  <Form-Dialog
-    :currentRow="rowToDialog"
+  <Trademark-Dialog
+    :sprav="sprav"
+    :rowData="rowToDialog"
     v-model:showDialog="showDialog"
     @onSave="dialogSave"
-  ></Form-Dialog>
+  ></Trademark-Dialog>
 </template>
 <script>
 import {
@@ -66,12 +67,13 @@ import { columns } from "./tableColumnList.js";
 import { useBakeryStore } from "stores/bakeryStore.js";
 import { useSpravStore } from "stores/spravStore";
 import { useQuasar } from "quasar";
-import FormDialog from "./FormDialog.vue";
+//import FormDialog from "./FormDialog.vue";
+import TrademarkDialog from "./TrademarkDialog.vue";
 //import { waitOnEventOrTimeout } from "app/public/pdfjs/web/viewer.js";
 export default defineComponent({
   name: "TablePanel",
   components: {
-    FormDialog,
+    TrademarkDialog,
     TableTemplate: defineAsyncComponent(() => {
       return import("src/components/template/table/TableTemplate.vue");
     }),
@@ -102,6 +104,7 @@ export default defineComponent({
     const spravStore = useSpravStore();
     const store = useBakeryStore();
     const rowToDialog = ref({});
+    const sprav = ref({ brand: [] });
 
     watch(
       () => spravStore.historyDate,
@@ -115,12 +118,13 @@ export default defineComponent({
         // Ловим переключение складки
 
         if (spravStore.currentTab == "main") {
-          console.log("Поймал смену панели", spravStore.currentTab);
           await tableFunc.loadTable();
         }
       }
     );
     onMounted(async () => {
+      sprav.value.brand = await tableFunc.loadBrand(); // если нужны справочники
+      // console.log("brand ", sprav.value.brand);
       await tableFunc.loadTable(
         tableFunc.dateToDateUnix(spravStore.historyDate)
       );
@@ -181,6 +185,7 @@ export default defineComponent({
         store.selectedRow = row;
         emit("selectedRow", row); //! необходимо отдать для Sprav ? да и ваще полезно
       },
+      sprav,
     };
   },
 });

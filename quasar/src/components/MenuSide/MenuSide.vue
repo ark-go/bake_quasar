@@ -2,12 +2,22 @@
   <q-list>
     <q-item clickable @click="router.push({ path: '/' })">
       <q-item-section avatar>
-        <q-icon name="home" />
+        <q-icon name="home" color="blue-grey-4" />
       </q-item-section>
 
       <q-item-section>
-        <q-item-label>HOME</q-item-label>
-        <q-item-label caption> "На начальную страницу" </q-item-label>
+        <q-item-label>Главная</q-item-label>
+        <q-item-label caption> "в начало" </q-item-label>
+      </q-item-section>
+      <q-item-section side>
+        <q-checkbox
+          v-model="pinCheckbox"
+          label=""
+          checked-icon="mdi-pin"
+          unchecked-icon="mdi-pin-off"
+          color="green"
+          :keep-color="false"
+        />
       </q-item-section>
     </q-item>
     <q-separator />
@@ -21,7 +31,7 @@
 </template>
 
 <script>
-import { defineComponent } from "vue";
+import { defineComponent, ref } from "vue";
 import { useRouter, useRoute } from "vue-router";
 import MenuSideItems from "./MenuSideItems.vue";
 import { useStartPageStore, storeToRefs } from "src/stores/startPageStore";
@@ -44,6 +54,7 @@ export default defineComponent({
       onClick,
       listMenuSide,
       router,
+      pinCheckbox: ref(false),
     };
   },
 });

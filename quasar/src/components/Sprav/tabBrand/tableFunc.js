@@ -9,7 +9,7 @@ export function useTableFunc(rows, nameTable) {
   async function loadTable() {
     let command = { cmd: "load" };
     command.historyDate = dateToDateUnix(spravStore.historyDate);
-    let mess = "Сети";
+    let mess = "Бренды";
     let url = "/api/" + nameTable;
     let res = await arkUtils.dataLoad(url, command, mess);
     if (res.result) {
@@ -18,17 +18,7 @@ export function useTableFunc(rows, nameTable) {
       rows.value = [];
     }
   }
-  async function loadBrand() {
-    let command = { cmd: "loadBrand" };
-    let mess = "Бренды";
-    let url = "/api/" + nameTable;
-    let res = await arkUtils.dataLoad(url, command, mess);
-    if (res.result) {
-      return res.result;
-    } else {
-      return [];
-    }
-  }
+
   async function saveRowTable(row) {
     console.log("FFFFFFFFFFFFFFFF", row);
     if (row.id) {
@@ -81,6 +71,5 @@ export function useTableFunc(rows, nameTable) {
     deleteTable,
     dateToDateUnix,
     dateFormatDate,
-    loadBrand,
   };
 }

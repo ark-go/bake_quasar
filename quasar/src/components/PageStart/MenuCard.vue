@@ -16,7 +16,7 @@
   height: 100%;
   border-radius: 20px;
   font-weight: bold;
-  color: $primary;
+  color: indigo;
   font-size: 1.1rem;
 
   overflow-wrap: anywhere;
@@ -24,7 +24,7 @@
 }
 </style>
 <template>
-  <q-card class="menu-card">
+  <q-card v-if="!header && !hiddenMenuCard" class="menu-card">
     <!-- <q-img src="/images/1.jpg">
       <div class="absolute-bottom text-subtitle2 text-center">Title</div>
     </q-img> -->
@@ -33,9 +33,7 @@
       class="flex q-px-none flex-center menu-card-section shadow-10"
       @click="router.push({ path: link })"
     >
-      <span>
-        {{ title }}
-      </span>
+      <span v-html="title"> </span>
     </q-card-section>
     <!-- <div class="absolute-bottom text-center">{{ title }}</div>
     <q-slide-transition>
@@ -53,7 +51,7 @@ import { useRouter, useRoute } from "vue-router";
 export default defineComponent({
   name: "MenuCard",
   components: {},
-  props: ["title", "link"],
+  props: ["title", "link", "header", "hiddenMenuCard"],
   setup() {
     const router = useRouter();
     return { router };

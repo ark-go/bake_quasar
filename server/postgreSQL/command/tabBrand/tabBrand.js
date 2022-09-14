@@ -1,5 +1,4 @@
 import { load } from "./load.js";
-import { loadBrand } from "./loadBrand.js";
 import { add } from "./add.js";
 import { update } from "./update.js";
 import { del } from "./del.js";
@@ -21,7 +20,7 @@ import { botSendMessage } from "../../../tg/startTgBot.js";
  * @param {*} res
  * @returns
  */
-export async function tabTrademark(req, res) {
+export async function tabBrand(req, res) {
   let timezone = req?.headers?.timezone
     ? req.headers.timezone
     : "Europe/Moscow";
@@ -29,7 +28,7 @@ export async function tabTrademark(req, res) {
   let mess = "Таблица территории, cmd: " + req.body?.cmd;
   botSendMessage(mess, req);
 
-  let tabname = "trademark";
+  let tabname = "brand";
   console.log("tabname", req.body);
   switch (req.body.cmd) {
     case "load":

@@ -15,7 +15,9 @@ export async function load(req, res, tabname, timezone, idOne) {
       SELECT
       ${tabname}.id,
       ${tabname}.name as name,
-
+      brand.id as brand_id,
+      brand.name as brand_name,
+      
       NullIf( (select count(*) from trademark_x_bakery_get_bakery_ondate(${tabname}.id, $1 AT TIME ZONE $2) )
       ,0) as bakery_count
      -- concat(ustm.u_fam,' ',ustm.u_name,' ',ustm.u_otch) as territory_manager_name,
@@ -25,6 +27,8 @@ export async function load(req, res, tabname, timezone, idOne) {
     --  ,0) as bakery_count
 
       from ${tabname}
+      LEFT JOIN brand ON brand.id = ${tabname}.brand_id
+
       -- LEFT JOIN LATERAL(select * from trademark_x_bakery_get_last(${tabname}.id,$1 AT TIME ZONE $2) ) 
       --          as tb  ON tb.child_id = ${tabname}.id
       --  LEFT JOIN bakery bkr ON bkr.id = tb.parent_id

@@ -1,7 +1,7 @@
 <template>
   <!-- <div class="flex flex-center"> Привет.?? </div> -->
   <div class="column q-py-sm" style="align-items: center">
-    <div
+    <!-- <div
       class="menu-grid"
       v-if="userStore.userInfo.email == 'Arkadii@yandex3.ru'"
     >
@@ -41,18 +41,7 @@
           Продукция
         </div>
       </q-img>
-      <!-- <q-img
-      src="/images/1.jpg"
-      loading="lazy"
-      spinner-color="white"
-      img-class="img-menu cursor-pointer"
-      :img-style="{ cursor: 'pointer' }"
-      @click="router.push({ path: '/docprice' })"
-    >
-      <div class="absolute-bottom text-subtitle1 text-center cursor-pointer">
-        Цены
-      </div>
-    </q-img> -->
+      
       <q-img
         src="/images/1.jpg"
         loading="lazy"
@@ -98,7 +87,7 @@
         @click="router.push({ path: '/price' })"
       >
         <div class="absolute-bottom text-subtitle1 text-center cursor-pointer">
-          Документы Прайс
+          Документы
         </div>
       </q-img>
       <q-img
@@ -113,10 +102,10 @@
           Тест
         </div>
       </q-img>
-    </div>
+    </div> -->
 
     <draggable
-      v-if="userStore.userInfo.email == 'Arkadii@yandex.ru'"
+      v-if="userStore.userInfo.email != '1Arkadii@yandex.ru'"
       tag="transition-group"
       item-key="id"
       class="flex row col-2 justify-center drag-menu"
@@ -127,8 +116,7 @@
         class="text-center"
         v-for="element in listMenu"
         :key="element.id"
-        :title="element.title"
-        :link="element.link"
+        v-bind="element"
       >
       </Menu-Card>
     </draggable>
@@ -162,6 +150,7 @@ export default defineComponent({
     const userStore = useUserStore();
     const startPage = useStartPageStore();
     const { listMenu } = storeToRefs(useStartPageStore());
+
     // const listMenu = computed({
     //   get: () => {
     //     return startPage.listMenu;

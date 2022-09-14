@@ -42,7 +42,7 @@ export async function accessCheck(req, res, next) {
     case "/photo":
     case "/specstore":
     case "/tables/users":
-    // case "/price":
+    // case "/spravochnik":
     //   itog = req.session.user.email == "Arkadii@yandex.ru";
     //   break;
     case "/tables":

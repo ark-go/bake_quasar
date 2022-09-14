@@ -8,17 +8,11 @@ export async function update(req, res, tabname, timezone, idOne) {
     text: /*sql*/ `
       UPDATE ${tabname} SET
       name = $2,
-      brand_id = $3,
-      user_id = $4
+      user_id = $3
       where ${tabname}.id = $1
       
 `,
-    values: [
-      req.body.row.id,
-      req.body.row.name,
-      req.body.row.brand_id,
-      req.session.user.id,
-    ],
+    values: [req.body.row.id, req.body.row.name, req.session.user.id],
   };
   try {
     console.log("xxxxxxx", sqlP);

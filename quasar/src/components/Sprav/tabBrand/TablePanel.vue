@@ -39,7 +39,7 @@
     @onAdd="addNew"
     :currentRow="currentRow"
     noExpandPanel
-    :noEditTable="true"
+    :noEditTable="false"
     :store="store"
     :rowsPerPage="0"
   >
@@ -66,6 +66,7 @@ import { columns } from "./tableColumnList.js";
 import { useBakeryStore } from "stores/bakeryStore.js";
 import { useSpravStore } from "stores/spravStore";
 import { useQuasar } from "quasar";
+//import FormDialog from "./FormDialog.vue";
 import FormDialog from "./FormDialog.vue";
 //import { waitOnEventOrTimeout } from "app/public/pdfjs/web/viewer.js";
 export default defineComponent({
@@ -83,12 +84,12 @@ export default defineComponent({
     },
     tableName: {
       type: String,
-      default: "tabKagent", // для запроса с сервера
+      default: "tabTrademark", // для запроса с сервера
     },
     tableInfo: Object,
     title: {
       type: String,
-      default: "Контрагенты сетей",
+      default: "Торговые сети",
     },
     panelName: String,
   },
@@ -115,12 +116,12 @@ export default defineComponent({
         // Ловим переключение складки
 
         if (spravStore.currentTab == "main") {
-          console.log("Поймал смену панели", spravStore.currentTab);
           await tableFunc.loadTable();
         }
       }
     );
     onMounted(async () => {
+      // console.log("brand ", sprav.value.brand);
       await tableFunc.loadTable(
         tableFunc.dateToDateUnix(spravStore.historyDate)
       );

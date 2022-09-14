@@ -3,6 +3,7 @@
     <q-th
       v-if="['multiple', 'single'].includes(selection)"
       style="text-align: left"
+      auto-width
     >
       <!-- eslint-disable-next-line vue/no-mutating-props  -->
       <!-- eslint-disable vue/no-mutating-props  -->
@@ -21,6 +22,7 @@
       :key="col.name"
       :props="props"
       class="arkadii-table-header"
+      auto-width="false"
     >
       {{ col.label }}
     </q-th>
@@ -29,6 +31,7 @@
       style="text-align: center"
     >
     </q-th>
+    <!-- <q-th v-else></q-th> -->
   </q-tr>
 </template>
 

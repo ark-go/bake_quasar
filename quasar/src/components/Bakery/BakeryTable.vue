@@ -1,6 +1,25 @@
 <template>
   <div class="column no-wrap">
-    <q-table
+    <Table-Template
+      title="Пекарни"
+      :tableName="tableName"
+      :rows="rows"
+      :columns="columns"
+      yesBtnEdit
+      yesBtnDelete
+      @onInfoRow="onInfoRow"
+      @onBtnDelete="onDelete"
+      @onBtnEdit="onEdit"
+      @onRowClick="onRowClick"
+      @onAdd="onAdd"
+      :currentRow="currentRow"
+      noExpandPanel
+      :noEditTable="noEditTable"
+      :store="store"
+      :rowsPerPage="0"
+    >
+    </Table-Template>
+    <!-- <q-table
       style="min-width: 100px"
       dense
       :filter="filter"
@@ -89,7 +108,7 @@
           input-class="text-orange-10"
         />
       </template>
-    </q-table>
+    </q-table> -->
   </div>
   <bakery-dialog
     :rowData="rowCurrent"
@@ -101,12 +120,12 @@
 </template>
 
 <script>
-import { defineComponent, ref, onMounted } from "vue";
+import { defineComponent, defineAsyncComponent, ref, onMounted } from "vue";
 import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
-import NoDataFooter from "components/NoDataFooter.vue";
+//import NoDataFooter from "components/NoDataFooter.vue";
 import BakeryDialog from "./BakeryDialog.vue";
-import TableBody from "./TableBody.vue";
-import FindTable from "./FindTable.vue";
+//import TableBody from "./TableBody.vue";
+//import FindTable from "./FindTable.vue";
 import { useQuasar } from "quasar";
 //import { Meta } from "quasar";
 export default defineComponent({
@@ -122,10 +141,13 @@ export default defineComponent({
   },
   emits: [],
   components: {
-    NoDataFooter,
-    TableBody,
+    // NoDataFooter,
+    //  TableBody,
     BakeryDialog,
-    FindTable,
+    // FindTable,
+    TableTemplate: defineAsyncComponent(() => {
+      return import("src/components/template/table/TableTemplate.vue");
+    }),
   },
   setup(props, { emit }) {
     const $q = useQuasar();
@@ -134,6 +156,7 @@ export default defineComponent({
     const visibleColumns = ref([]);
     const showDialog = ref(false);
     const rowCurrent = ref({});
+    const currentRow = ref({});
     //const visibleOffDefault = ref([]);
     //const columns = ref([]);
     onMounted(async () => {
@@ -263,6 +286,7 @@ export default defineComponent({
       onSave,
       rowCurrent,
       rows,
+      currentRow,
       filter: ref(""),
       paginationСatalog: ref({
         rowsPerPage: 10,
@@ -337,30 +361,35 @@ let columns = [
     label: "Адрес",
     align: "left",
     field: "address",
+    hidden: true,
   },
   {
     name: "dateopen",
     label: "Открыто",
     align: "left",
     field: "dateopen",
+    hidden: true,
   },
   {
     name: "dateclose",
     label: "Закрыто",
     align: "left",
     field: "dateclose",
+    hidden: true,
   },
   {
     name: "area",
     label: "Площадь",
     align: "left",
     field: "area",
+    hidden: true,
   },
   {
     name: "kolbakers",
     label: "Кол.пекарей",
     align: "left",
     field: "kolbakers",
+    hidden: true,
   },
   {
     name: "ispack",
@@ -391,18 +420,21 @@ let columns = [
     label: "Описание",
     align: "left",
     field: "description",
+    hidden: true,
   },
   {
     name: "user_email",
     label: "EMail",
     align: "left",
     field: "user_email",
+    hidden: true,
   },
   {
     name: "user_date",
     label: "Дата ред.",
     align: "left",
     field: "user_date",
+    hidden: true,
   },
 ];
 </script>

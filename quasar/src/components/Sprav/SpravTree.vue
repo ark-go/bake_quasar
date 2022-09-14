@@ -31,11 +31,15 @@
       :no-selection-unset="true"
       :filter="filter"
     >
-      <template v-slot:body-description="prop">
-        <span class="text-weight-thin" style="font-size: 0.8em">{{
-          prop.node.description
-        }}</span>
-      </template>
+      <!-- <template v-slot:default-body="prop">
+        <div
+          v-if="prop.node.description"
+          class="text-weight-thin"
+          style="font-size: 0.8em"
+        >
+          {{ prop.node.description }}
+        </div>
+      </template> -->
       <template v-slot:default-header="prop">
         <div class="row items-center" @click="clickTreeNode(prop.node.key)">
           <div class="">{{ prop.node.label }}</div>
@@ -60,12 +64,13 @@ export default defineComponent({
   emits: ["update:selectedNode"],
   setup(props, { emit }) {
     const userStore = useUserStore();
-    const expanded = ref([]);
+    const expanded = ref([1]);
     const selected = ref(null);
     const refTree = ref(null);
     const filter = ref("");
     const filterRef = ref(null);
     const dataTreeFilter = ref([]);
+
     onMounted(() => {
       dataTreeFilter.value = dataTreePermiss(dataTree);
       console.log("ЮЗЕР: ", userStore.userInfo.email);
@@ -172,51 +177,61 @@ export default defineComponent({
  *  Без указания tableType, считается таблица по умолчанию [id,name]
  */
 const dataTree = [
+  // {
+  //   key: 10,
+  //   label: "Контрагенты",
+  //   helpCode: "TreeHelp-1", //! менять коды нельзя.. это ключи в базу данных
+  //   //icon: "restaurant_menu",
+  //   children: [
+  //     {
+  //       key: 11,
+  //       label: "Вид контрагента",
+  //       tableName: "kagentvid",
+  //     },
+  //     { key: 12, label: "Вид регистрации", tableName: "kagentvidreg" },
+  //     { key: 13, label: "Группы контрагента", tableName: "kagentgroup" },
+  //   ],
+
+  //   // { label: " ? Вид регистрации", tableName: "kage+ntvidreg" },
+  //   // { label: " ? Вид контрагента", tableName: "kage+ntvid" },
+  // },
+  // {
+  //   key: 2,
+  //   label: "Торговые сети",
+  //   helpCode: "TreeHelp-2", //! менять коды нельзя.. это ключи в базу данных
+  //   // icon: "room_service",
+  //   disabled: false,
+  //   children: [
+  //     { key: 21, label: "Бренды", tableName: "brand" },
+  //     {
+  //       key: 22,
+  //       label: "Сети",
+  //       tableName: "trademark",
+  //       tableType: "trademark",
+  //       //children: [{ key: 28, label: "Бреxxxнды", tableName: "brand" }],
+  //     }, //tableName: "brand"
+  //   ],
+  // },
   {
     key: 1,
-    label: "Контрагенты",
-    helpCode: "TreeHelp-1", //! менять коды нельзя.. это ключи в базу данных
-    //icon: "restaurant_menu",
-    children: [
-      {
-        key: 11,
-        label: "Вид контрагента",
-        tableName: "kagentvid",
-      },
-      { key: 12, label: "Вид регистрации", tableName: "kagentvidreg" },
-      { key: 13, label: "Группы контрагента", tableName: "kagentgroup" },
-    ],
-
-    // { label: " ? Вид регистрации", tableName: "kage+ntvidreg" },
-    // { label: " ? Вид контрагента", tableName: "kage+ntvid" },
-  },
-  {
-    key: 2,
-    label: "Торговые сети",
-    helpCode: "TreeHelp-2", //! менять коды нельзя.. это ключи в базу данных
-    // icon: "room_service",
-    disabled: false,
-    children: [
-      { key: 21, label: "Бренды", tableName: "brand" },
-      {
-        key: 22,
-        label: "Сети",
-        tableName: "trademark",
-        tableType: "trademark",
-        //children: [{ key: 28, label: "Бреxxxнды", tableName: "brand" }],
-      }, //tableName: "brand"
-    ],
-  },
-  {
-    key: 3,
-    label: "Пекарни структура",
+    label: "Конфигурация",
+    description: " настройка установка назначение размещение управление",
     helpCode: "TreeHelp-3", //! менять коды нельзя.. это ключи в базу данных
     // icon: "room_service",
     disabled: false,
+    expandable: true,
     children: [
       {
+        key: 311,
+        label: "Пекарни",
+        helpCode: "Пекарни вкладка", //! менять коды нельзя.. это ключи в базу данных
+        // icon: "room_service",
+        tableType: "tabBakeryMain", // для выбора
+        tableName: "tabBakeryMain", // хрен знает
+      },
+      {
         key: 31,
-        label: "Пекарни (помещения с тандыром)",
+        label: "Пекарни (тест)",
         //tableName: "bakery", // tableType: "bakery",
         tableName: "tabBakery", // имя для запроса на сервер
         tableType: "tabBakery", //! убрать после замены всех таблиц - не скоро, оперделяет что таблица внешняя
@@ -282,14 +297,39 @@ const dataTree = [
         label: "Контрагенты",
         helpCode: "Контрагенты вкладка", //! менять коды нельзя.. это ключи в базу данных
         // icon: "room_service",
+        tableType: "tabKagentMain", // для выбора
+        tableName: "tabKagentMain", // хрен знает
         disabled: false,
         children: [
+          {
+            key: 10,
+            label: "Справочники",
+            helpCode: "TreeHelp-1", //! менять коды нельзя.. это ключи в базу данных
+            //icon: "restaurant_menu",
+            children: [
+              {
+                key: 11,
+                label: "Вид контрагента",
+                tableName: "kagentvid",
+              },
+              { key: 12, label: "Вид регистрации", tableName: "kagentvidreg" },
+              {
+                key: 13,
+                label: "Группы контрагента",
+                tableName: "kagentgroup",
+              },
+            ],
+
+            // { label: " ? Вид регистрации", tableName: "kage+ntvidreg" },
+            // { label: " ? Вид контрагента", tableName: "kage+ntvid" },
+          },
           {
             key: 41,
             label: "Торговых сетей (пекарни)",
             tableName: "tabKagent",
             tableType: "tabKagent",
             component: "TabKagent", // расширение по умолчанию vue, будет TabKagent.vue
+            helpCode: "TreeHelp-2",
             //  permiss: "Arkadii@yandex.ru",
             buttonPanel: [
               // name - название панели в TabManager.vue
@@ -332,6 +372,15 @@ const dataTree = [
         buttonPanel: [
           // name - название панели в TabManager.vue
           { name: "trademarkBakery", label: "Пекарни", icon: "home" },
+        ],
+        children: [
+          {
+            key: 371,
+            label: "Бренды",
+            tableName: "tabBrand",
+            tableType: "tabBrand",
+            //  component: "tabBrand",
+          },
         ],
       },
       {
@@ -382,7 +431,7 @@ const dataTree = [
   //   ],
   // },
   // {
-  //   key: 10,
+  //   key: 11110,
   //   label: "Разное",
   //   // icon: "room_service",
   //   disabled: false,

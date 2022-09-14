@@ -1,6 +1,6 @@
 <template>
   <div class="column no-wrap">
-    <div class="row" style="justify-content: space-between">
+    <!-- <div class="row" style="justify-content: space-between">
       <q-input ref="filterRef" dense v-model="filter" label="Поиск">
         <template v-slot:append>
           <q-icon
@@ -13,8 +13,27 @@
         </template>
       </q-input>
       <q-btn dense flat color="primary" @click="addNew()">ДОБАВИТЬ</q-btn>
-    </div>
-    <q-table
+    </div> -->
+    <Table-Template
+      title="Контрагенты"
+      :tableName="tableName"
+      :rows="rows"
+      :columns="columns"
+      yesBtnEdit
+      yesBtnDelete
+      @onInfoRow="onInfoRow"
+      @onBtnDelete="onBtnDelete"
+      @onBtnEdit="addNew"
+      @onRowClick="onRowClick"
+      @onAdd="addNew"
+      :currentRow="currentRow"
+      noExpandPanel
+      :noEditTable="false"
+      :store="store"
+      :rowsPerPage="0"
+    >
+    </Table-Template>
+    <!-- <q-table
       style="min-width: 100px; display: grid"
       dense
       :filter="filter"
@@ -60,7 +79,7 @@
       <template v-slot:no-data="dataslot">
         <no-data-footer :dataslot="dataslot"></no-data-footer>
       </template>
-    </q-table>
+    </q-table> -->
   </div>
   <kagent-dialog
     v-model:allData="allDataDialog"
@@ -97,6 +116,7 @@
 <script>
 import {
   defineComponent,
+  defineAsyncComponent,
   ref,
   onMounted,
   computed,
@@ -105,17 +125,20 @@ import {
   unref,
 } from "vue";
 import { useArkUtils } from "src/utils/arkUtils"; // const arkUtils = useArkUtils();
-import NoDataFooter from "components/NoDataFooter.vue";
+//import NoDataFooter from "components/NoDataFooter.vue";
 import KagentDialog from "components/Kagent/KagentDialog.vue";
-import KagentTableBody from "components/Kagent/KagentTableBody.vue";
+//import KagentTableBody from "components/Kagent/KagentTableBody.vue";
 import { Meta } from "quasar";
 
 export default defineComponent({
   name: "SpravTable",
   components: {
-    NoDataFooter,
-    KagentTableBody,
+    // NoDataFooter,
+    //  KagentTableBody,
     KagentDialog,
+    TableTemplate: defineAsyncComponent(() => {
+      return import("src/components/template/table/TableTemplate.vue");
+    }),
   },
   setup(props) {
     const arkUtils = useArkUtils();
@@ -127,7 +150,7 @@ export default defineComponent({
     //   // тест для проверки не импользуется в работе
     //   console.log("Возврат 1", allDataDialog);
     // });
-
+    const currentRow = ref({});
     const showDialog = ref(false);
     const showDialogDelete = ref(false);
     const confirmDelete = ref({});
@@ -148,7 +171,7 @@ export default defineComponent({
       console.log("Колонки показать", visibleColumns.value);
     }
     async function onBtnDelete(val) {
-      nameElement.value = val.row.name;
+      nameElement.value = val.name;
       confirmDelete.value._dataFromConfirm = val;
       showDialogDelete.value = true;
     }
@@ -156,6 +179,7 @@ export default defineComponent({
       let mess = "Загрузка контрагентов";
       let res = await arkUtils.dataLoad("/api/kagentLoad", {}, mess);
       if (res.result) {
+        onRowClick;
         rows.value = res.result;
       } else {
         tableName.value = res?.error;
@@ -168,22 +192,22 @@ export default defineComponent({
     });
     async function onBtnEdit(val) {}
 
-    async function addNew(rowForEdit, newAddRow) {
+    async function addNew(rowForEdit) {
       allDataDialog.value = {};
       allDataDialog.value.franchising = false;
       allDataDialog.value.owncompany = false;
       allDataDialog.value.meta = {};
 
       if (rowForEdit) {
-        console.log("addNew-Edit", rowForEdit.row);
-        allDataDialog.value.id = rowForEdit.row.id;
-        allDataDialog.value.name = rowForEdit.row.name;
-        allDataDialog.value.inn = rowForEdit.row.inn;
-        allDataDialog.value.franchising = rowForEdit.row.franchising;
-        allDataDialog.value.owncompany = rowForEdit.row.owncompany;
-        allDataDialog.value.meta = rowForEdit.row.meta;
-        allDataDialog.value.vidreg_id = rowForEdit.row.vidreg_id;
-        //        allDataDialog.value.trademark_id = rowForEdit.row.trademark_id;
+        // 13-09-22 убираем row  rowForEdit.row.id
+        console.log("addNew-Edit", rowForEdit);
+        allDataDialog.value.id = rowForEdit.id;
+        allDataDialog.value.name = rowForEdit.name;
+        allDataDialog.value.inn = rowForEdit.inn;
+        allDataDialog.value.franchising = rowForEdit.franchising;
+        allDataDialog.value.owncompany = rowForEdit.owncompany;
+        allDataDialog.value.meta = rowForEdit.meta;
+        allDataDialog.value.vidreg_id = rowForEdit.vidreg_id;
         console.log("edit row", allDataDialog.value);
       }
 
@@ -263,8 +287,13 @@ export default defineComponent({
         return false;
       }
     }
+    function onRowClick(val) {
+      console.log("onRowClick", val);
+    }
     return {
       editMode,
+      onRowClick,
+      currentRow,
       allDataDialog,
       showDialog,
       nameElement,
@@ -273,8 +302,8 @@ export default defineComponent({
       forSave,
       kagentDel,
       async onDeleteConfirm(val) {
-        console.log("delete", val._dataFromConfirm.row.id);
-        await kagentDel(val._dataFromConfirm.row.id);
+        console.log("delete", val._dataFromConfirm.id);
+        await kagentDel(val._dataFromConfirm.id);
       },
 
       dblClickRow() {},
@@ -286,7 +315,7 @@ export default defineComponent({
       addNew,
       onBtnEdit,
       paginationСatalog: ref({
-        rowsPerPage: 10,
+        rowsPerPage: 50,
       }),
       filter: ref(""),
     };
@@ -343,12 +372,14 @@ const columnsA = ref([
     label: "Е-Mail",
     align: "left",
     field: "user_email",
+    hidden: true,
   },
   {
     name: "user_date",
     label: "Дата",
     align: "left",
     field: "user_date",
+    hidden: true,
   },
 ]);
 </script>

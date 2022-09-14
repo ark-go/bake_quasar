@@ -1,11 +1,12 @@
 <template>
-  <q-item v-if="visible" clickable @click="onClick(link)">
+  <q-item-label dense header v-if="header">{{ header }}</q-item-label>
+  <q-item dense v-if="visible && !header" clickable @click="onClick(link)">
     <q-item-section v-if="icon" avatar>
-      <q-icon :name="icon" />
+      <q-icon :name="icon" color="blue-grey-4" />
     </q-item-section>
 
     <q-item-section>
-      <q-item-label>{{ title }}</q-item-label>
+      <q-item-label v-html="title"></q-item-label>
       <q-item-label caption>
         {{ caption }}
       </q-item-label>
@@ -23,7 +24,10 @@ export default defineComponent({
       type: String,
       required: true,
     },
-
+    header: {
+      type: String,
+      required: true,
+    },
     caption: {
       type: String,
       default: "",

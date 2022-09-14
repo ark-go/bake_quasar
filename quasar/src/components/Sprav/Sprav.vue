@@ -1,6 +1,7 @@
 <template>
+  <!-- :title="spravStore.selectedNode.pathStr ? 'Cправочник' : 'Cправочники'" -->
   <ark-card
-    :title="spravStore.selectedNode.pathStr ? 'Cправочник' : 'Cправочники'"
+    title="Конфигурация пекарен"
     :pageMaxHeight="pageMaxHeight"
     :subTitle="subTitle"
     :style="{ width: cardMain.width.curr + 'px', maxWidth: '98vw' }"
@@ -48,6 +49,7 @@ import SpravTable from "components/Sprav/SpravTable.vue";
 import TradeMarkTable from "components/Trademark/TrademarkTable.vue";
 //import BakeryTable from "components/Bakery/BakeryTable.vue";
 import CityTable from "components/City/Table.vue";
+import BrandTable from "./tabBrand/TablePanel.vue";
 import ArkCard from "./ArkCard.vue";
 import HelpPanel from "components/HelpPanel/HelpPanel.vue";
 //import NoTable from "components/Sprav/NoTable.vue";
@@ -121,6 +123,9 @@ export default defineComponent({
           case "trademark":
             currentTable.value = TradeMarkTable;
             break;
+          case "tabBrand":
+            currentTable.value = BrandTable;
+            break;
           case "city":
             currentTable.value = CityTable;
             break;
@@ -138,6 +143,12 @@ export default defineComponent({
               import("./tabBakery/TablePanel.vue")
             );
             break;
+          case "tabBakeryMain":
+            console.log("case tree tabBakeryMain");
+            currentTable.value = defineAsyncComponent(() =>
+              import("components/Bakery/BakeryTable.vue")
+            );
+            break;
           case "tabTerritory":
             console.log("case tree tabTerritory");
             currentTable.value = defineAsyncComponent(() =>
@@ -148,6 +159,12 @@ export default defineComponent({
             console.log("case tree tabRegion");
             currentTable.value = defineAsyncComponent(() =>
               import("./tabRegion/TablePanel.vue")
+            );
+            break;
+          case "tabKagentMain":
+            console.log("case tree tabKagentMain");
+            currentTable.value = defineAsyncComponent(() =>
+              import("components/Kagent/KagentTable.vue")
             );
             break;
           case "tabKagent":

@@ -77,6 +77,7 @@ import { kagentBakery } from "../postgreSQL/command/kagentBakery/kagentBakery.js
 import { kagentBakeryOwn } from "../postgreSQL/command/kagentBakeryOwn/kagentBakeryOwn.js";
 import { kagentBakeryFranch } from "../postgreSQL/command/kagentBakeryFranch/kagentBakeryFranch.js";
 import { tabTrademark } from "../postgreSQL/command/tabTrademark/tabTrademark.js";
+import { tabBrand } from "../postgreSQL/command/tabBrand/tabBrand.js";
 import { trademarkBakery } from "../postgreSQL/command/trademarkBakery/trademarkBakery.js";
 import { tabPacktype } from "../postgreSQL/command/tabPacktype/tabPacktype.js";
 import { tabAffiliation } from "../postgreSQL/command/tabAffiliation/tabAffiliation.js";
@@ -544,6 +545,11 @@ export async function apiRoutes() {
     console.log("/tabTrademark", req.body?.cmd);
     res.json(await tabTrademark(req, res));
   });
+  router.post("/tabBrand", async (req, res) => {
+    console.log("/tabBrand", req.body?.cmd);
+    res.json(await tabBrand(req, res));
+  });
+
   router.post("/trademarkBakery", async (req, res) => {
     console.log("/trademarkBakery", req.body?.cmd);
     res.json(await trademarkBakery(req, res));
